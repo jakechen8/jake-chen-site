@@ -1,0 +1,47 @@
+---
+title: "On Trust in Systems That Can't Explain Themselves"
+date: "2025-01-15"
+excerpt: "We extend trust to systems we don't understand every day. The question is whether we're doing it wisely."
+tags: ["Trust", "AI Systems", "Autonomy"]
+published: true
+---
+
+There is a specific kind of vertigo that comes from realizing you trust a system you cannot explain.
+
+I felt it the first time I watched an autonomous vehicle make a decision — a smooth, confident lane change — with no visible reasoning, no indicator of uncertainty, no explanation for why *now* and not two seconds later. The car did the right thing. I have no idea why.
+
+This isn't new. We extend trust to systems we don't understand every day: the antilock brakes that pulse faster than any human reflex, the autocorrect that intuits intent, the credit algorithm that determines a loan. Most of the time, it works. The question I keep returning to is whether *working most of the time* is the right frame for deciding how much trust to extend.
+
+## The verification problem
+
+Trust, in human relationships, is a dynamic process. We extend it incrementally, observe behavior, update our assessment. We can ask questions. We can read context. We have, however imperfectly, some model of the other agent's motivations and reasoning.
+
+With modern AI systems, this process breaks down. You can't ask the model why it made a decision and expect a reliable answer. The explanation it offers, if any, may be post-hoc rationalization rather than a trace of actual computation. The system that produces the output and the system that explains the output may not be the same system at all.
+
+This creates what I think of as the verification gap: the distance between what a system does and what we can confirm about *how and why* it does it.
+
+Narrow this gap and trust becomes warranted. Widen it and trust becomes faith — and faith is a poor foundation for systems with real consequences.
+
+## What earns trust when transparency is unavailable
+
+If we can't verify the reasoning, what can we evaluate?
+
+**Track record under adversarial conditions.** A system that performs well on benchmarks and distribution-shifted inputs is more trustworthy than one that aces the standard eval. The question isn't "how does it perform?" but "how does it fail, and when?"
+
+**Failure mode predictability.** Counterintuitively, a system with well-understood failure modes may be more trustworthy than one with better average performance. If I know *when* something will go wrong, I can design for it. Unknown unknowns are the real problem.
+
+**Calibrated uncertainty.** Does the system know what it doesn't know? A model that outputs confident scores when it should be uncertain is not just less accurate — it's actively misleading. Calibration is a proxy for epistemic honesty.
+
+**Institutional accountability.** Trust in systems often runs through trust in institutions. Who deployed this? Who is responsible for its behavior? What are the incentives to catch and correct errors? These aren't technical questions, but they're as important as the technical ones.
+
+## The honest position
+
+I don't think we have good answers to the verification gap yet. We have useful proxies, promising research directions, and a growing set of institutional practices. But the fundamental problem — that the most capable systems are often the least interpretable — remains.
+
+What I've found useful is to treat trust not as a binary but as a surface. In some conditions, under some inputs, for some decision types, a system can be trusted. The map of that surface is what we should be building — not a global verdict of "trustworthy" or "not."
+
+The vertigo doesn't go away. But it becomes navigable when you stop asking "do I trust this?" and start asking "what, exactly, do I trust this to do?"
+
+---
+
+*If this sparked something, I'd genuinely like to hear your reaction — particularly if you disagree. Email is at the bottom.*

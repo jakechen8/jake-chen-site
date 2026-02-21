@@ -1,0 +1,272 @@
+/* Fonts loaded via <link> in layout head — see layout.tsx */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg: #FAFAF9;
+  --fg: #18181B;
+  --fg-muted: #52525B;
+  --fg-subtle: #A1A1AA;
+  --border: #E4E4E7;
+  --accent: #2563EB;
+  --accent-muted: rgba(37, 99, 235, 0.08);
+}
+
+.dark {
+  --bg: #09090B;
+  --fg: #FAFAFA;
+  --fg-muted: #A1A1AA;
+  --fg-subtle: #71717A;
+  --border: #27272A;
+  --accent: #60A5FA;
+  --accent-muted: rgba(96, 165, 250, 0.1);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--fg);
+  font-family: "DM Sans", system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* Selection */
+::selection {
+  background: var(--accent-muted);
+  color: var(--fg);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 3px;
+}
+
+/* Focus */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* Prose overrides for MDX */
+.prose {
+  color: var(--fg);
+  --tw-prose-body: var(--fg);
+  --tw-prose-headings: var(--fg);
+  --tw-prose-lead: var(--fg-muted);
+  --tw-prose-links: var(--accent);
+  --tw-prose-bold: var(--fg);
+  --tw-prose-counters: var(--fg-muted);
+  --tw-prose-bullets: var(--border);
+  --tw-prose-hr: var(--border);
+  --tw-prose-quotes: var(--fg);
+  --tw-prose-quote-borders: var(--accent);
+  --tw-prose-captions: var(--fg-muted);
+  --tw-prose-code: var(--fg);
+  --tw-prose-pre-code: var(--fg);
+  --tw-prose-pre-bg: var(--border);
+  --tw-prose-th-borders: var(--border);
+  --tw-prose-td-borders: var(--border);
+}
+
+.prose h1,
+.prose h2,
+.prose h3,
+.prose h4 {
+  font-family: "DM Serif Display", Georgia, serif;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+}
+
+.prose h2 {
+  font-size: 1.5rem;
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 0.5rem;
+}
+
+.prose blockquote {
+  border-left: 2px solid var(--accent);
+  color: var(--fg-muted);
+  font-style: italic;
+}
+
+.prose code {
+  font-family: "DM Mono", 'Courier New', monospace;
+  font-size: 0.85em;
+  background: var(--accent-muted);
+  padding: 0.15em 0.4em;
+  border-radius: 3px;
+}
+
+.prose pre code {
+  background: transparent;
+  padding: 0;
+}
+
+.prose pre {
+  background: var(--border) !important;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+}
+
+/* Nav underline animation */
+.nav-link {
+  position: relative;
+}
+
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: var(--accent);
+  transition: width 0.25s ease;
+}
+
+.nav-link:hover::after,
+.nav-link.active::after {
+  width: 100%;
+}
+
+/* Tag pill */
+.tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.2rem 0.65rem;
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border-radius: 100px;
+  border: 1px solid var(--border);
+  color: var(--fg-muted);
+  background: transparent;
+  transition: all 0.15s ease;
+}
+
+.tag:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-muted);
+}
+
+/* Post card hover */
+.post-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.post-card:hover {
+  transform: translateY(-1px);
+}
+
+/* Divider rule */
+.rule {
+  border: none;
+  border-top: 1px solid var(--border);
+}
+
+/* Accent text */
+.text-accent {
+  color: var(--accent);
+}
+
+/* Muted text */
+.text-muted {
+  color: var(--fg-muted);
+}
+
+.text-subtle {
+  color: var(--fg-subtle);
+}
+
+/* Button variants */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1.25rem;
+  background: var(--fg);
+  color: var(--bg);
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+  text-decoration: none;
+}
+
+.btn-primary:hover {
+  opacity: 0.85;
+  transform: translateY(-1px);
+}
+
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1.25rem;
+  background: transparent;
+  color: var(--fg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  transition: all 0.15s ease;
+  text-decoration: none;
+}
+
+.btn-ghost:hover {
+  border-color: var(--fg);
+  transform: translateY(-1px);
+}
+
+/* Input */
+.input {
+  width: 100%;
+  padding: 0.6rem 0.875rem;
+  background: var(--bg);
+  color: var(--fg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-family: "DM Sans", sans-serif;
+  transition: border-color 0.15s ease;
+  outline: none;
+}
+
+.input:focus {
+  border-color: var(--accent);
+}
+
+.input::placeholder {
+  color: var(--fg-subtle);
+}
+
+/* Animate utilities */
+.animate-on-load {
+  opacity: 0;
+  animation: fadeUp 0.6s ease-out forwards;
+}
