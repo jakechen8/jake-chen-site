@@ -6,8 +6,8 @@ export default function JsonLd() {
     '@type': 'Person',
     name: 'Jake Chen',
     url: siteUrl,
-    description: 'Building autonomous systems at Waymo. Writing about trust, autonomy, and AI.',
-    jobTitle: 'Autonomous Systems',
+    description: 'Exploring how autonomous systems move from code into the physical world — and the trust infrastructure required to make them scale.',
+    jobTitle: 'Strategy Lead',
     worksFor: {
       '@type': 'Organization',
       name: 'Waymo',
@@ -23,7 +23,7 @@ export default function JsonLd() {
     name: 'Jake Chen',
     url: siteUrl,
     description:
-      'Writing about trust, autonomy, and how intelligent systems interact with the real world.',
+      'Essays on autonomy, trust, and the systems beneath AI.',
     author: {
       '@type': 'Person',
       name: 'Jake Chen',

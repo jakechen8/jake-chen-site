@@ -20,19 +20,20 @@ export default function Nav() {
       className="sticky top-0 z-50 w-full border-b"
       style={{
         borderColor: 'var(--border)',
-        backgroundColor: 'var(--bg)',
-        backdropFilter: 'blur(8px)',
-        WebkitBackdropFilter: 'blur(8px)',
+        backgroundColor: 'rgba(250, 250, 248, 0.92)',
+        backdropFilter: 'blur(20px)',
+        WebkitBackdropFilter: 'blur(20px)',
+        // Dark mode: backgroundColor: 'rgba(20, 20, 20, 0.92)'
       }}
     >
-      <div className="mx-auto flex h-14 max-w-4xl items-center justify-between px-5 sm:px-8">
+      <div className="mx-auto flex h-16 max-w-4xl items-center justify-between px-5 sm:px-8">
         {/* Wordmark */}
         <Link
           href="/"
           className="font-display text-lg tracking-tight transition-opacity hover:opacity-70"
           style={{ color: 'var(--fg)' }}
         >
-          JC
+          Jake Chen
         </Link>
 
         {/* Desktop nav */}

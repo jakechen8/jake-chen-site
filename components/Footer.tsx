@@ -10,8 +10,11 @@ export default function Footer() {
     >
       <div className="mx-auto flex max-w-4xl flex-col gap-6 px-5 py-10 sm:flex-row sm:items-center sm:justify-between sm:px-8">
         <div className="space-y-1">
-          <p className="font-display text-sm" style={{ color: 'var(--fg)' }}>
+          <p className="font-display text-base" style={{ color: 'var(--fg)' }}>
             Jake Chen
+          </p>
+          <p className="text-xs" style={{ color: 'var(--fg-subtle)' }}>
+            Autonomy · Trust · Systems
           </p>
           <p className="text-xs" style={{ color: 'var(--fg-subtle)' }}>
             &copy; {year}
@@ -23,6 +26,7 @@ export default function Footer() {
             { href: '/writing', label: 'Writing' },
             { href: '/about', label: 'About' },
             { href: '/contact', label: 'Contact' },
+            { href: 'https://linkedin.com/in/jiakechen', label: 'LinkedIn', external: true },
             { href: '/feed.xml', label: 'RSS', external: true },
           ].map(({ href, label, external }) => (
             <Link

@@ -14,8 +14,8 @@ export const metadata: Metadata = {
     template: '%s | Jake Chen',
   },
   description:
-    'Building autonomous systems at Waymo. Writing about how intelligent machines earn trust in the real world.',
-  keywords: ['Jake Chen', 'Waymo', 'autonomous systems', 'AI', 'trust', 'autonomy', 'self-driving'],
+    'Exploring how autonomous systems move from code into the physical world — and the trust infrastructure required to make them scale.',
+  keywords: ['Jake Chen', 'autonomous systems', 'AI trust', 'autonomy', 'governance', 'infrastructure', 'deployment'],
   authors: [{ name: 'Jake Chen', url: siteUrl }],
   creator: 'Jake Chen',
   openGraph: {
@@ -24,7 +24,7 @@ export const metadata: Metadata = {
     url: siteUrl,
     title: 'Jake Chen',
     description:
-      'Building autonomous systems at Waymo. Writing about trust, autonomy, and AI.',
+      'Exploring how autonomous systems move from code into the physical world — and the trust infrastructure required to make them scale.',
     siteName: 'Jake Chen',
     images: [
       {
@@ -38,7 +38,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'Jake Chen',
-    description: 'Building autonomous systems at Waymo. Writing about trust, autonomy, and AI.',
+    description: 'Exploring how autonomous systems move from code into the physical world — and the trust infrastructure required to make them scale.',
     images: ['/api/og'],
   },
   robots: {
@@ -69,7 +69,7 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link
-          href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300;1,9..40,400&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
           rel="stylesheet"
         />
         <link

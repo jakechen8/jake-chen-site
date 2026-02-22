@@ -5,7 +5,7 @@ import EmailCapture from '@/components/EmailCapture'
 
 export const metadata: Metadata = {
   title: 'Writing',
-  description: 'Essays on trust, verification, autonomy, and AI systems.',
+  description: 'Essays on autonomy, trust, and the systems beneath AI.',
 }
 
 export default async function WritingPage() {
@@ -14,7 +14,7 @@ export default async function WritingPage() {
 
   return (
     <div className="mx-auto max-w-4xl px-5 sm:px-8">
-      <div className="py-16 sm:py-20">
+      <div className="py-16 sm:py-24">
         {/* Header */}
         <div className="mb-12 max-w-xl">
           <p
@@ -30,8 +30,8 @@ export default async function WritingPage() {
             Essays &amp; Ideas
           </h1>
           <p className="text-base leading-relaxed" style={{ color: 'var(--fg-muted)' }}>
-            Long-form thinking on trust, autonomy, and how intelligent
-            systems interact with the real world. Published when ready.
+            Long-form thinking on how intelligent systems scale in the real world —
+            and what determines whether they succeed. Published when ready.
           </p>
         </div>
 
@@ -59,7 +59,7 @@ export default async function WritingPage() {
               Essays incoming.
             </p>
             <p className="mt-2 text-sm" style={{ color: 'var(--fg-subtle)' }}>
-              Subscribe below to be notified when the first one drops.
+              Subscribe below to be the first to read them.
             </p>
           </div>
         ) : (
@@ -81,22 +81,24 @@ export default async function WritingPage() {
           className="mt-16 rounded-lg border p-6 sm:p-8"
           style={{ borderColor: 'var(--border)' }}
         >
+          <p className="section-tag mb-3">
+            On Autonomy, Trust &amp; the Systems Beneath AI
+          </p>
           <h2
             className="mb-2 font-display text-xl font-normal tracking-tight"
             style={{ color: 'var(--fg)' }}
           >
-            Subscribe to new essays
+            Thoughtful essays on how intelligent systems scale
           </h2>
-          <p className="mb-4 text-sm" style={{ color: 'var(--fg-muted)' }}>
-            Or grab the{' '}
+          <p className="mb-5 text-sm" style={{ color: 'var(--fg-subtle)' }}>
+            No noise. No hype. Just signal. Or grab the{' '}
             <a
               href="/feed.xml"
               className="underline underline-offset-2 transition-colors hover:text-[color:var(--accent)]"
-              style={{ color: 'var(--fg-muted)', textDecorationColor: 'var(--border)' }}
+              style={{ color: 'var(--fg-subtle)', textDecorationColor: 'var(--border)' }}
             >
               RSS feed
-            </a>{' '}
-            for your reader.
+            </a>.
           </p>
           <div className="max-w-md">
             <EmailCapture compact />

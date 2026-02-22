@@ -11,15 +11,15 @@ const config: Config = {
   theme: {
     extend: {
       fontFamily: {
-        display: ['"DM Serif Display"', 'Georgia', ...fontFamily.serif],
-        sans: ['"DM Sans"', 'system-ui', ...fontFamily.sans],
-        mono: ['"DM Mono"', 'ui-monospace', ...fontFamily.mono],
+        display: ['"Playfair Display"', 'Georgia', ...fontFamily.serif],
+        sans: ['"Inter"', 'system-ui', ...fontFamily.sans],
+        mono: ['"JetBrains Mono"', 'ui-monospace', ...fontFamily.mono],
       },
       colors: {
         accent: {
-          DEFAULT: '#2563EB',
-          light: '#60A5FA',
-          dark: '#1D4ED8',
+          DEFAULT: '#B45309',
+          light: '#D97706',
+          dark: '#92400E',
         },
       },
       typography: {
@@ -28,12 +28,12 @@ const config: Config = {
             maxWidth: '68ch',
             color: 'var(--tw-prose-body)',
             a: {
-              color: '#2563EB',
+              color: '#B45309',
               textDecoration: 'underline',
-              textDecorationColor: 'rgba(37,99,235,0.4)',
+              textDecorationColor: 'rgba(180,83,9,0.4)',
               textUnderlineOffset: '3px',
               '&:hover': {
-                textDecorationColor: '#2563EB',
+                textDecorationColor: '#B45309',
               },
             },
           },
