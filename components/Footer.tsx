@@ -24,6 +24,7 @@ export default function Footer() {
         <nav className="flex flex-wrap gap-5">
           {[
             { href: '/writing', label: 'Writing' },
+            { href: '/thinking', label: 'Thinking' },
             { href: '/about', label: 'About' },
             { href: '/contact', label: 'Contact' },
             { href: 'https://linkedin.com/in/jiakechen', label: 'LinkedIn', external: true },

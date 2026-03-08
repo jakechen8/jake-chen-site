@@ -3,16 +3,47 @@ import type { Metadata } from 'next'
 import { getAllPosts } from '@/lib/posts'
 import PostCard from '@/components/PostCard'
 import EmailCapture from '@/components/EmailCapture'
+import ReadingCard from '@/components/ReadingCard'
 
 export const metadata: Metadata = {
-  title: 'Jake Chen',
+  title: 'Jake Chen — Strategy, AI, and the Systems Beneath',
   description:
-    'Exploring how autonomous systems move from code into the physical world — and the trust infrastructure required to make them scale.',
+    'Exploring how autonomous systems move from code into the physical world — and the trust infrastructure required to make them scale. 15+ years in strategy across Waymo, McKinsey, and the companies building what comes next.',
+  alternates: {
+    canonical: 'https://jake-chen.com',
+  },
 }
+
+const readingList = [
+  {
+    title: 'Situational Awareness',
+    author: 'Leopold Aschenbrenner',
+    url: 'https://situational-awareness.ai/',
+    note: 'The most important piece on where AI capability is heading and what it means for institutions.',
+  },
+  {
+    title: 'The Bitter Lesson',
+    author: 'Rich Sutton',
+    url: 'http://www.incompleteideas.net/IncIdeas/BitterLesson.html',
+    note: 'Why general methods that leverage computation always win. Still the most underrated essay in AI.',
+  },
+  {
+    title: 'Thinking in Systems',
+    author: 'Donella Meadows',
+    url: 'https://www.chelseagreen.com/product/thinking-in-systems/',
+    note: 'The mental model that underlies everything I write about governance and infrastructure.',
+  },
+  {
+    title: 'Working in Public',
+    author: 'Nadia Asparouhova',
+    url: 'https://press.stripe.com/working-in-public',
+    note: 'How open-source maintenance maps to the coordination problems AI is now creating at scale.',
+  },
+]
 
 export default async function HomePage() {
   const posts = await Promise.resolve(getAllPosts())
-  const recentPosts = posts.slice(0, 3)
+  const recentPosts = posts.slice(0, 4)
 
   return (
     <div className="mx-auto max-w-4xl px-5 sm:px-8">
@@ -26,6 +57,16 @@ export default async function HomePage() {
         />
 
         <div className="relative z-10 max-w-2xl">
+          <div className="animate-fade-up mb-4">
+            <span
+              className="inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-medium"
+              style={{ background: 'var(--accent-light)', color: 'var(--accent)' }}
+            >
+              <span className="h-1.5 w-1.5 rounded-full" style={{ background: 'var(--accent)' }} />
+              Strategy Lead at Waymo
+            </span>
+          </div>
+
           <h1
             className="animate-fade-up font-display text-4xl font-normal leading-tight tracking-tight sm:text-5xl lg:text-6xl"
             style={{ color: 'var(--fg)' }}
@@ -37,15 +78,15 @@ export default async function HomePage() {
             className="animate-fade-up-delay mt-6 text-lg leading-relaxed sm:text-xl"
             style={{ color: 'var(--fg-muted)' }}
           >
-            I explore how autonomous systems move from code into the physical
-            world &mdash; and the trust infrastructure required to make them scale.
+            I write about how AI reshapes strategy, coordination, and trust —
+            from autonomous vehicles to the protocols that will define the next platform era.
           </p>
 
           <p
             className="animate-fade-up-delay mt-4 text-base leading-relaxed"
             style={{ color: 'var(--fg-subtle)' }}
           >
-            15+ years in strategy across Waymo, McKinsey, and the companies
+            15+ years in strategy across Waymo, McKinsey, HubSpot, Microsoft, and the companies
             building what comes next.
           </p>
 
@@ -75,14 +116,32 @@ export default async function HomePage() {
             {
               title: 'Trust at Scale',
               desc: 'What does it take for an autonomous system to earn trust — not just pass a benchmark? The gap between lab performance and real-world reliability is where most systems fail.',
+              icon: (
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                </svg>
+              ),
             },
             {
-              title: 'Intelligence Meets Physics',
-              desc: "When AI leaves the screen and enters the road, the failure modes change. How systems navigate uncertainty in environments that don\u2019t forgive errors.",
+              title: 'AI Strategy & Coordination',
+              desc: "When intelligence gets cheap, coordination gets expensive. How organizations redesign decision rights, escalation paths, and workflows for the AI era.",
+              icon: (
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="10" />
+                  <line x1="2" y1="12" x2="22" y2="12" />
+                  <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+                </svg>
+              ),
             },
             {
               title: 'The Invisible Infrastructure',
-              desc: "Governance, incentives, verification, safety cases. The systems beneath the system — the ones nobody wants to build but everyone depends on.",
+              desc: "Governance, protocols, verification, safety cases. The systems beneath the system — the ones nobody wants to build but everyone depends on.",
+              icon: (
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="2" y="7" width="20" height="14" rx="2" ry="2" />
+                  <path d="M16 7V5a4 4 0 0 0-8 0v2" />
+                </svg>
+              ),
             },
           ].map((pillar, i) => (
             <div
@@ -90,6 +149,9 @@ export default async function HomePage() {
               className="pillar-card animate-fade-up"
               style={{ animationDelay: `${i * 0.1}s`, animationFillMode: 'both' }}
             >
+              <div className="pillar-icon">
+                {pillar.icon}
+              </div>
               <h3
                 className="font-display text-lg font-normal tracking-tight"
                 style={{ color: 'var(--fg)' }}
@@ -145,6 +207,30 @@ export default async function HomePage() {
           </div>
         </section>
       )}
+
+      <hr className="rule" />
+
+      {/* What I'm Reading */}
+      <section className="py-16 sm:py-20">
+        <div className="mb-8">
+          <p className="section-tag mb-4">Influences</p>
+          <h2
+            className="font-display text-2xl font-normal tracking-tight"
+            style={{ color: 'var(--fg)' }}
+          >
+            What I&apos;m Reading
+          </h2>
+          <p className="mt-2 text-sm" style={{ color: 'var(--fg-subtle)' }}>
+            The essays and books shaping how I think about AI, systems, and strategy.
+          </p>
+        </div>
+
+        <div className="grid gap-4 sm:grid-cols-2">
+          {readingList.map((item) => (
+            <ReadingCard key={item.title} item={item} />
+          ))}
+        </div>
+      </section>
 
       <hr className="rule" />
 

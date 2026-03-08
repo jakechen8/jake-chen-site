@@ -4,6 +4,7 @@ import { ThemeProvider } from '@/components/ThemeProvider'
 import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
 import JsonLd from '@/components/JsonLd'
+import ScrollToTop from '@/components/ScrollToTop'
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://jake-chen.com'
 
@@ -15,7 +16,7 @@ export const metadata: Metadata = {
   },
   description:
     'Exploring how autonomous systems move from code into the physical world — and the trust infrastructure required to make them scale.',
-  keywords: ['Jake Chen', 'autonomous systems', 'AI trust', 'autonomy', 'governance', 'infrastructure', 'deployment'],
+  keywords: ['Jake Chen', 'AI strategy', 'autonomous systems', 'AI trust', 'autonomy', 'governance', 'infrastructure', 'AI coordination', 'vibe coding', 'agent protocols', 'AI governance', 'Waymo strategy'],
   authors: [{ name: 'Jake Chen', url: siteUrl }],
   creator: 'Jake Chen',
   openGraph: {
@@ -87,6 +88,7 @@ export default function RootLayout({
             <main className="flex-1">{children}</main>
             <Footer />
           </div>
+          <ScrollToTop />
         </ThemeProvider>
       </body>
     </html>

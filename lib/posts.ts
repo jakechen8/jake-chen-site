@@ -13,6 +13,8 @@ export interface PostMeta {
   tags?: string[]
   readingTime?: string
   published?: boolean
+  series?: string
+  seriesOrder?: number
 }
 
 export interface Post extends PostMeta {
@@ -46,6 +48,8 @@ export function getAllPosts(): PostMeta[] {
         tags: data.tags || [],
         readingTime: rt.text,
         published: data.published !== false,
+        series: data.series || undefined,
+        seriesOrder: data.seriesOrder || undefined,
       }
     })
     .filter((p): p is PostMeta => p !== null)
@@ -78,6 +82,8 @@ export function getPost(slug: string): Post | null {
     readingTime: rt.text,
     content,
     published: data.published !== false,
+    series: data.series || undefined,
+    seriesOrder: data.seriesOrder || undefined,
   }
 }
 

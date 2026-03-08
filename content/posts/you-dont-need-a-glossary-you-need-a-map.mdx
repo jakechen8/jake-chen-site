@@ -1,0 +1,313 @@
+---
+title: "You Don't Need a Glossary. You Need a Map."
+date: "2025-06-10"
+excerpt: "A new asymmetry is emerging in software. People can ship changes before they can explain the repo. Execution got cheaper faster than literacy."
+tags: ["Software", "Vibe Coding", "Developer Experience"]
+published: true
+---
+
+I think we are watching a new asymmetry emerge in software.
+
+People can now ship working changes to websites before they can fully explain the repo they are working in. They can update a hero section, restyle a component, wire a form, or launch a landing page while still feeling only half-literate in the file tree in front of them.
+
+That is the upside of vibe coding: execution got cheaper faster than literacy.
+
+It is also why so many smart people open a modern web project and immediately hit a wall of nouns: `app/`, `layout.tsx`, `route.ts`, `components/`, `lib/`, `.env.local`, `package-lock.json`, Tailwind classes, `localhost:3000`, GitHub Actions, terminal output, and a lot of tooling that feels obvious only after someone has already internalized it.
+
+Most beginner explainers miss the shape of the problem. They either give you an encyclopedia of terms or a motivational pep talk. Neither helps when you are staring at a real codebase.
+
+The problem is not missing definitions. It is missing compression.
+
+A modern website repo is not random. It is a small number of patterns repeated across frameworks. Once you can see those patterns, most of the vocabulary collapses.
+
+> You do not need to memorize every noun. You need a model that tells you why the nouns exist.
+
+## The three questions that decode almost any file
+
+When I open an unfamiliar website repo, I usually ask three questions:
+
+1. **Where does this run?** In the browser, on the server, or during the build/tooling step?
+2. **Why is this file special?** Because another file imports it, or because the framework recognizes its name?
+3. **What bucket is it in?** Route, component, style, helper/data, asset, config, secret, or generated output?
+
+If you can answer those three questions, most of the repo stops feeling like trivia and starts feeling like structure.
+
+## 1. A website repo is not one program
+
+This is the first thing that should be taught more explicitly.
+
+A modern website repo is usually three systems living together.
+
+**Browser code** handles what the user experiences directly: clicks, typing, menus, animations, form state, client-side navigation, and anything that depends on the DOM.
+
+**Server code** handles the things that should not live in the browser: database access, protected APIs, authentication checks, secret keys, and sometimes the first render of the page.
+
+**Build/tooling code** turns source files into a shippable app. It compiles TypeScript, bundles modules, transforms CSS, runs linters, and produces production output.
+
+That is why these projects feel more complex than they used to. You are not looking at one program. You are looking at several layers coordinated by a framework and toolchain.
+
+Even simple terms make more sense once you anchor them to this model.
+
+`localhost:3000` just means: this project is currently running on your own machine, listening on door 3000.
+
+An environment variable is just configuration injected from outside the codebase, often because it is secret or environment-specific.
+
+A build command is not "making the website." It is turning your source files into output that the browser or server can actually run.
+
+Once you ask *where does this run?*, a surprising amount of confusion disappears.
+
+## 2. Some files are special because you import them. Others are special because the framework discovers them.
+
+This is the second big distinction most explanations skip.
+
+A file like `components/Button.tsx` is usually special because some other file imports it:
+
+```tsx
+import Button from "@/components/Button"
+```
+
+That is a normal code relationship. If nobody imports that file, it usually does nothing.
+
+But a file like `app/page.tsx` or `app/layout.tsx` in a Next.js App Router project is special for a different reason. The framework is looking for those filenames and locations. You did not import them manually. The framework discovered them because they are part of its file conventions.
+
+That means there are really two categories of "important files" in a modern repo:
+
+- **Imported files**: ordinary modules, components, helpers, hooks
+- **Convention files**: files the framework treats as special because of their name or placement
+
+This single distinction makes a lot of the modern web stack feel less magical.
+
+If renaming a file would break the app even though nothing imports it directly, you are probably looking at a convention file.
+
+A lot of what feels like complexity is really just convention.
+
+## 3. Most files fit into a small set of buckets
+
+Once you stop staring at filenames one by one, the project gets much easier to read.
+
+Most website repos are some mix of these buckets.
+
+### Routes and pages
+
+These become URLs or respond to URL-based requests.
+
+Examples: `app/page.tsx`, `app/blog/[slug]/page.tsx`, `layout.tsx`, `loading.tsx`, `error.tsx`, `not-found.tsx`, `route.ts`, `index.html`.
+
+**Human translation:** this is the layer that decides what lives at which address, and what the app does when that address is hit.
+
+### Components
+
+Reusable pieces of interface.
+
+Examples: `Button.tsx`, `Navbar.tsx`, `PricingCard.tsx`, `Hero.tsx`.
+
+**Human translation:** the screen-level building blocks.
+
+### Styles
+
+The files or class strings that decide what things look like.
+
+Examples: `globals.css`, `button.module.css`, Tailwind classes inside `.tsx` files.
+
+**Human translation:** spacing, color, type, layout, states, and responsiveness.
+
+### Helpers, data, and hooks
+
+The connective tissue.
+
+Examples: `lib/utils.ts`, `lib/api.ts`, `lib/db.ts`, `hooks/useUser.ts`.
+
+**Human translation:** boring but important logic that does not belong directly inside the UI.
+
+### Assets
+
+Static things the app needs.
+
+Examples: `public/logo.svg`, `favicon.ico`, `hero.jpg`, `robots.txt`.
+
+**Human translation:** files that are served or referenced as-is.
+
+### Config and dependencies
+
+The files that tell the project how to run.
+
+Examples: `package.json`, `tsconfig.json`, `vite.config.ts`, `next.config.ts`, `eslint.config.js`, lockfiles.
+
+**Human translation:** the control panel.
+
+### Secrets and generated output
+
+Two different categories that beginners often confuse.
+
+Secrets live in files like `.env.local`. These hold configuration values such as API keys, database URLs, and environment-specific settings.
+
+Generated output includes folders like `node_modules/`, `.next/`, and `dist/`. These are produced by tools. They matter, but they are not where you should normally hand-edit code.
+
+**Human translation:** secrets are the keyring; generated folders are the machine room.
+
+> If you only open one root file first in an unfamiliar repo, open `package.json`. It usually tells you the framework, the scripts, and the basic shape of the project faster than anything else.
+
+## Tailwind, translated into plain English
+
+Tailwind is often where a repo starts to feel opaque.
+
+The simplest way to understand it is this:
+
+**Tailwind is not a replacement for CSS. It is a way of writing CSS decisions directly in the markup using small, single-purpose classes.**
+
+Traditional approach:
+
+```html
+<button class="primary-button">Buy now</button>
+```
+
+```css
+.primary-button {
+  padding: 8px 16px;
+  border-radius: 9999px;
+  background: black;
+  color: white;
+  font-size: 14px;
+}
+```
+
+Tailwind approach:
+
+```html
+<button class="rounded-full bg-black px-4 py-2 text-sm text-white hover:opacity-90 md:px-5">
+  Buy now
+</button>
+```
+
+That long class string looks noisy at first, but it is usually just a compressed list of style decisions:
+
+- `rounded-full` = fully rounded corners
+- `bg-black` = black background
+- `px-4 py-2` = horizontal and vertical padding
+- `text-sm text-white` = small white text
+- `hover:opacity-90` = when hovered, reduce opacity slightly
+- `md:px-5` = on medium screens and up, increase horizontal padding
+
+Once you realize that prefixes like `hover:` and `md:` are just conditions — state and breakpoint variants — Tailwind becomes much less mysterious.
+
+The key idea is not to memorize every class. It is to learn how to read the string as a sentence.
+
+## What you can usually touch without breaking everything
+
+Most repos become less intimidating the moment someone tells you what is safe to edit.
+
+I think in three zones.
+
+### Green: usually safe
+
+- copy
+- headings and buttons
+- component markup
+- Tailwind class strings
+- ordinary CSS values
+- images and icons
+- Markdown/MDX content
+
+This is where most "improve the site" work lives.
+
+### Yellow: edit deliberately
+
+- `layout.tsx`
+- `route.ts`
+- `.env.local`
+- `next.config.ts`
+- `vite.config.ts`
+- `tsconfig.json`
+- auth or database helpers
+
+These files are not off limits. They just affect routing, build behavior, secrets, or application-wide logic, so they deserve intention.
+
+### Red: do not freestyle
+
+- `node_modules/`
+- `.next/`
+- `dist/`
+- lockfiles by hand
+- generated artifacts
+- destructive commands you do not understand
+
+If you are editing generated output to "fix" the app, you are usually patching the wrong layer.
+
+## My fifteen-minute walkthrough for an unknown repo
+
+If I had to onboard a smart non-engineer into a website codebase quickly, I would use this sequence.
+
+1. **Open `package.json`.** Identify the framework, scripts, and key dependencies.
+2. **Find the entry surface.** Look for `app/`, `pages/`, `src/`, or `index.html`.
+3. **Find the shared UI.** Open `components/`, or search for a button, nav, card, or form.
+4. **Find the global styles.** Look for `globals.css`, `styles/`, or Tailwind usage in components.
+5. **Find the real-world connection points.** Look for `.env*`, `lib/`, `api/`, `db.ts`, `auth.ts`, or external client setup.
+6. **Run the app and change one tiny thing.** Change a headline. Swap one image. Add margin to one element. Establish a safe feedback loop before you attempt architecture.
+
+This sequence matters because it turns the repo from an abstract taxonomy problem into a concrete system you can navigate.
+
+## Terminal and GitHub in one page
+
+You do not need a terminal identity. You need a minimal mental model.
+
+The **terminal** is a text interface for talking to your computer. The **shell** is the interpreter inside it. A **command** is an instruction.
+
+That is all.
+
+`pwd` asks where you are. `ls` asks what is here. `cd` changes folders. `npm install` installs dependencies. `npm run dev` starts the local development server.
+
+If you see `localhost:3000`, read it as "this project is running on my machine, on door 3000."
+
+Git is similar. It sounds more mythologized than it is.
+
+A **repo** is the project with history. A **commit** is a save point. A **branch** is a parallel line of work. A **pull request** is a request to merge one branch into another. A **GitHub Action** or **CI** job is an automated check — build, test, type, lint, or deploy — running on your branch or pull request.
+
+That is already enough to remove most of the mystery.
+
+## Three prompts worth saving
+
+One reason people get bad AI help on codebases is that they ask questions that are too broad. Better prompts make the interaction more legible.
+
+### 1. Explain this file before changing it
+
+> Explain this file in plain English. Tell me: (1) whether it runs in the browser, server, or build step, (2) what role it plays in the project, (3) what would likely break if I changed it carelessly, (4) whether it is safe for a beginner to edit, (5) the smallest reasonable change I could make here.
+
+### 2. Make the smallest possible diff
+
+> I want to make this change in a website project: [describe the change]. Do not code yet. First tell me: the smallest possible diff, the exact files you would change, why each file belongs to the change, what could accidentally break, how I would roll back. Optimize for the least risky change, not the fanciest one.
+
+### 3. Find the first real error
+
+> This terminal output or CI log failed. Find the first real error, not the cascade of later errors. Then tell me: what failed, the most likely cause, the safest next command or file to inspect, what not to touch yet, how confident you are.
+
+These prompts are effective because they ask for structure, scope control, and risk awareness — not just code.
+
+## The deeper shift
+
+The deeper point here is not that everyone needs to become a frontend engineer.
+
+It is that more people can now work inside software systems before the naming conventions fully make sense to them. Vibe coding made that possible. The result is a new literacy gap: not a gap in talent, but a gap in models.
+
+That gap does not get closed by shame, and it does not get closed by throwing fifty definitions at someone.
+
+It gets closed by better compression.
+
+A modern website repo is not an infinite list of nouns. It is a system with a few stable questions:
+
+- Where does this run?
+- Why is this file special?
+- What bucket is it in?
+
+Once you can answer those, the repo stops feeling like a wall of jargon and starts feeling like a map.
+
+And a map is enough to make the next edit non-accidental.
+
+## Test your map
+
+Think you've got the model? Try the Repo Decoder — eight quick questions to see if the three-question framework has clicked.
+
+<RepoDecoder />
+
+---
+
+*If this framework changed how you see a codebase, I'd like to hear about it — especially the part that didn't click yet.*

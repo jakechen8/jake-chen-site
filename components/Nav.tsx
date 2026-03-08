@@ -9,6 +9,7 @@ const navLinks = [
   { href: '/', label: 'Home' },
   { href: '/about', label: 'About' },
   { href: '/writing', label: 'Writing' },
+  { href: '/thinking', label: 'Thinking' },
   { href: '/contact', label: 'Contact' },
 ]
 
@@ -20,10 +21,9 @@ export default function Nav() {
       className="sticky top-0 z-50 w-full border-b"
       style={{
         borderColor: 'var(--border)',
-        backgroundColor: 'rgba(250, 250, 248, 0.92)',
+        backgroundColor: 'var(--nav-bg)',
         backdropFilter: 'blur(20px)',
         WebkitBackdropFilter: 'blur(20px)',
-        // Dark mode: backgroundColor: 'rgba(20, 20, 20, 0.92)'
       }}
     >
       <div className="mx-auto flex h-16 max-w-4xl items-center justify-between px-5 sm:px-8">
