@@ -1,47 +1,136 @@
 ---
 title: "On Trust in Systems That Can't Explain Themselves"
 date: "2025-01-15"
-excerpt: "We extend trust to systems we don't understand every day. The question is whether we're doing it wisely."
+excerpt: "Your credit card company trusts an AI to prevent fraud. Your bank trusts an AI to approve loans. The real question: what are they actually trusting it to do?"
 tags: ["Trust", "AI Systems", "Autonomy"]
 published: true
 ---
 
-There is a specific kind of vertigo that comes from realizing you trust a system you cannot explain.
+You're driving down the highway. The car merges smoothly into the next lane, judges the gap correctly, does the speed math, and completes the move.
 
-I felt it the first time I watched an autonomous vehicle make a decision — a smooth, confident lane change — with no visible reasoning, no indicator of uncertainty, no explanation for why *now* and not two seconds later. The car did the right thing. I have no idea why.
+Your autonomous vehicle just made dozens of micro-decisions. You trusted it. Did you verify any of it? Could you explain why it chose that exact moment?
 
-This isn't new. We extend trust to systems we don't understand every day: the antilock brakes that pulse faster than any human reflex, the autocorrect that intuits intent, the credit algorithm that determines a loan. Most of the time, it works. The question I keep returning to is whether *working most of the time* is the right frame for deciding how much trust to extend.
+No. You just trusted it worked.
 
-## The verification problem
+That's the vertigo of modern AI: **we're comfortable trusting systems we can't explain.**
 
-Trust, in human relationships, is a dynamic process. We extend it incrementally, observe behavior, update our assessment. We can ask questions. We can read context. We have, however imperfectly, some model of the other agent's motivations and reasoning.
+And we do it constantly. Credit card fraud detection flags your purchase as suspicious, and a model somewhere decides whether it's okay. A bank's algorithm decides if you get a mortgage. A hiring tool screens your resume. These systems make billion-dollar decisions daily, and none of them can explain their reasoning in a way that would hold up in court.
 
-With modern AI systems, this process breaks down. You can't ask the model why it made a decision and expect a reliable answer. The explanation it offers, if any, may be post-hoc rationalization rather than a trace of actual computation. The system that produces the output and the system that explains the output may not be the same system at all.
+The question isn't whether this is new. It's whether we're doing it wisely.
 
-This creates what I think of as the verification gap: the distance between what a system does and what we can confirm about *how and why* it does it.
+## The gap between what systems do and why they do it
 
-Narrow this gap and trust becomes warranted. Widen it and trust becomes faith — and faith is a poor foundation for systems with real consequences.
+Here's the core problem: **you can't actually ask an AI why it did something and get a reliable answer.**
 
-## What earns trust when transparency is unavailable
+You can ask a person why they denied your loan. They'll give you reasons. You might not like them, but they're rooted in something—past experience, explicit criteria, judgment calls they can defend.
 
-If we can't verify the reasoning, what can we evaluate?
+You ask an AI why it denied your loan, and it can give you an explanation. But that explanation is often a *post-hoc guess* about its own behavior, not the actual reasoning process. The system that made the decision and the system that explains the decision are sometimes different things.
 
-**Track record under adversarial conditions.** A system that performs well on benchmarks and distribution-shifted inputs is more trustworthy than one that aces the standard eval. The question isn't "how does it perform?" but "how does it fail, and when?"
+This is what I call the **verification gap**: the distance between what a system does and what you can confirm about *how and why* it does it.
 
-**Failure mode predictability.** Counterintuitively, a system with well-understood failure modes may be more trustworthy than one with better average performance. If I know *when* something will go wrong, I can design for it. Unknown unknowns are the real problem.
+With human systems, the gap is small. Someone decided. They have reasons. You can audit them.
 
-**Calibrated uncertainty.** Does the system know what it doesn't know? A model that outputs confident scores when it should be uncertain is not just less accurate — it's actively misleading. Calibration is a proxy for epistemic honesty.
+With AI systems, the gap is enormous. The system made a decision. The reasons are opaque. You can't audit them.
 
-**Institutional accountability.** Trust in systems often runs through trust in institutions. Who deployed this? Who is responsible for its behavior? What are the incentives to catch and correct errors? These aren't technical questions, but they're as important as the technical ones.
+Close that gap, and trust becomes reasonable. Widen it, and trust becomes a bet. The question is: what kind of bet should you be making?
 
-## The honest position
+## Why "working most of the time" isn't enough
 
-I don't think we have good answers to the verification gap yet. We have useful proxies, promising research directions, and a growing set of institutional practices. But the fundamental problem — that the most capable systems are often the least interpretable — remains.
+Your antilock brakes work by pulsing hydraulics 100 times a second—faster than any human could respond. You don't understand the mechanism. You trust them anyway.
 
-What I've found useful is to treat trust not as a binary but as a surface. In some conditions, under some inputs, for some decision types, a system can be trusted. The map of that surface is what we should be building — not a global verdict of "trustworthy" or "not."
+Why? Because they fail predictably. You know what happens if they fail. You've tested them. They work consistently.
 
-The vertigo doesn't go away. But it becomes navigable when you stop asking "do I trust this?" and start asking "what, exactly, do I trust this to do?"
+Modern AI doesn't fail predictably. It works 98% of the time and then suddenly does something completely wrong. And you won't know why until someone complains.
+
+A fraud detection system that blocks 99% of actual fraud is successful. A fraud detection system that also blocks 2% of legitimate transactions might be acceptable. But what about a system that blocks 0.1% of legitimate transactions but sometimes blocks all transactions from a specific geographic region by accident?
+
+Same win rate. Very different properties. One you can design around. The other you can't predict.
+
+This is why "working well on average" is a dangerous frame for trusting AI systems.
+
+## What you can actually evaluate
+
+If you can't see inside the black box, what can you measure?
+
+**1. How does it fail under stress?**
+
+Test the system with weird inputs. Contradiction. Ambiguity. Edge cases. A system that handles these gracefully—by escalating to humans or being honest about uncertainty—is more trustworthy than one that confidently makes up answers.
+
+Put a fraud detector in front of transactions from a country it's never seen. Does it escalate to a human, or does it guess? That's the test.
+
+**2. How predictable are the failure modes?**
+
+A system that you know fails on inputs with contradictory signals is more trustworthy than a system that sometimes fails mysteriously. If you understand when something is likely to go wrong, you can design around it.
+
+"Our hiring model is biased against candidates with nontraditional backgrounds" is bad. "Our hiring model works great on structured resume data but fails on unstructured cover letters" is fixable.
+
+**3. Does it know what it doesn't know?**
+
+A model that outputs 95% confidence when it should output 40% confidence is actively lying to you. A model that correctly calibrates its uncertainty—"I'm 50% sure on this one"—is being honest.
+
+This matters because downstream systems will trust the confidence scores. If they're wrong, cascading failures happen.
+
+**4. Who's accountable if it breaks?**
+
+A system deployed by a company that has insurance, audit processes, and clear responsibility is more trustworthy than one deployed by someone with "move fast and break things" ethos.
+
+This isn't a technical question. It's an institutional one. But it matters as much as the technical questions.
+
+If the AI makes a bad decision, is there a person who stands behind it? Or is it just "the algorithm decided"?
+
+## The real framework: mapping trust, not giving verdicts
+
+Here's what I've learned: **stop asking "is this trustworthy?" and start asking "what, exactly, am I trusting this to do?"**
+
+Trust isn't binary. It's contextual.
+
+You trust Google Maps to tell you the fastest route because:
+- It fails gracefully (worst case: you take a longer road)
+- You can easily verify (you'll know if you're lost)
+- The consequences are mild
+- It's been tested by millions of people
+
+You should NOT trust an untested hiring AI because:
+- It fails opaquely
+- You can't easily verify
+- The consequences are high (person's career)
+- It's only been tested on your data
+
+Same confidence scores. Wildly different trust profiles.
+
+The map you need is: **In which contexts, for which decision types, with which consequences, is this system worth trusting?**
+
+That's more useful than "is it trustworthy or not?"
+
+## What to do about this
+
+If you're deploying an AI system:
+
+- **Start with low stakes.** Use it for recommendations or checks, not final decisions. Let humans override easily.
+- **Build in observability.** Log what the system decided and why (even if the "why" is just its confidence score). You'll need that audit trail.
+- **Test edge cases deliberately.** Don't just test on your training data. Test on weird inputs, contradictions, ambiguities.
+- **Have a plan for when it fails.** Not if. When. Who overrides it? How do humans know they should? What's the escalation?
+- **Measure what matters.** Not "accuracy on test set." Measure the actual business consequence of wrong decisions. Are they expensive? Are they reversible? How often do they happen?
+
+If you're being subjected to an AI system:
+
+- **Ask who's responsible.** Not the company. Who, specifically, made the decision to deploy this and who stands behind it?
+- **Ask for failure modes.** Not "how accurate is it?" Ask "what kinds of decisions might it get wrong? Do you know?"
+- **Request human override paths.** If the system makes a consequential decision about you, you should be able to talk to a human.
+- **Pay attention to calibration.** If the system is confident about things that are actually uncertain, that's a red flag.
+
+## The vertigo is the point
+
+I won't pretend we have this solved. We don't.
+
+The most capable AI systems are often the least interpretable. The safer systems are often less capable. There's a fundamental tradeoff, and we're still learning how to navigate it.
+
+The vertigo—that feeling of trusting something you can't explain—isn't going away soon.
+
+But it becomes manageable when you stop asking "should I trust this?" and start asking "in what specific situations, with what safeguards, for what decisions, can I reasonably trust this?"
+
+That map is harder to build than a simple yes/no. But it's the only one that actually works.
 
 ---
 
-*If this sparked something, I'd genuinely like to hear your reaction — particularly if you disagree. Email is at the bottom.*
+*I'd genuinely like to hear your take on this, especially if you've deployed AI systems and learned hard lessons about trust.*

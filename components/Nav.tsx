@@ -7,9 +7,10 @@ import clsx from 'clsx'
 
 const navLinks = [
   { href: '/', label: 'Home' },
-  { href: '/about', label: 'About' },
   { href: '/writing', label: 'Writing' },
   { href: '/thinking', label: 'Thinking' },
+  { href: '/play', label: 'Play' },
+  { href: '/about', label: 'About' },
   { href: '/contact', label: 'Contact' },
 ]
 

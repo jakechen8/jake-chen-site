@@ -1,40 +1,73 @@
 import type { Metadata } from 'next'
+import Image from 'next/image'
 import Link from 'next/link'
 
 export const metadata: Metadata = {
   title: 'About',
-  description: 'Jake Chen — 15+ years in strategy. Exploring how intelligence leaves the lab and enters the physical world.',
+  description: 'Jake Chen — 15+ years in strategy across Waymo, McKinsey, HubSpot, and Microsoft. Writing about how AI reshapes organizations.',
 }
 
 export default function AboutPage() {
   return (
-    <div className="mx-auto max-w-4xl px-5 sm:px-8">
+    <div className="mx-auto max-w-5xl px-5 sm:px-8">
       <div className="py-16 sm:py-24">
-        {/* Header */}
-        <div className="mb-16">
-          <p
-            className="mb-3 text-xs font-medium uppercase tracking-widest"
-            style={{ color: 'var(--accent)' }}
-          >
-            About
-          </p>
-          <h1
-            className="font-display text-4xl font-normal tracking-tight sm:text-5xl"
-            style={{ color: 'var(--fg)' }}
-          >
-            Jake Chen
-          </h1>
+        {/* Hero header with photo */}
+        <div className="mb-16 grid items-start gap-10 lg:grid-cols-[1fr_250px]">
+          <div>
+            <p
+              className="mb-3 text-xs font-medium uppercase tracking-widest"
+              style={{ color: 'var(--accent)' }}
+            >
+              About
+            </p>
+            <h1
+              className="mb-6 font-display text-4xl font-normal tracking-tight sm:text-5xl"
+              style={{ color: 'var(--fg)' }}
+            >
+              Jake Chen
+            </h1>
+            <p
+              className="text-lg leading-relaxed"
+              style={{ color: 'var(--fg-muted)' }}
+            >
+              I think about the business side of AI — not which model is best, but what
+              changes for leaders, organizations, and strategy when intelligence becomes
+              cheap and abundant.
+            </p>
+          </div>
+
+          <div className="hidden lg:block">
+            <div
+              className="relative h-64 w-full overflow-hidden rounded-xl border-2"
+              style={{ borderColor: 'var(--border-strong)' }}
+            >
+              <Image
+                src="/images/headshot.png"
+                alt="Jake Chen"
+                fill
+                className="object-cover"
+                priority
+              />
+            </div>
+          </div>
         </div>
 
         <div className="grid gap-16 lg:grid-cols-[1fr_280px]">
           {/* Main Content */}
           <div className="space-y-6">
-            {/* Headshot */}
-            <div
-              className="h-28 w-28 overflow-hidden rounded-full border-2"
-              style={{ borderColor: 'var(--border)' }}
-            >
-              <img src="/images/headshot.png" alt="Jake Chen" className="h-full w-full object-cover" />
+            {/* Mobile photo */}
+            <div className="lg:hidden">
+              <div
+                className="relative h-48 w-48 overflow-hidden rounded-xl border-2"
+                style={{ borderColor: 'var(--border-strong)' }}
+              >
+                <Image
+                  src="/images/headshot.png"
+                  alt="Jake Chen"
+                  fill
+                  className="object-cover"
+                />
+              </div>
             </div>
 
             <div className="h-0.5 w-12" style={{ backgroundColor: 'var(--accent)' }} />
@@ -45,84 +78,60 @@ export default function AboutPage() {
               style={{ color: 'var(--fg-muted)' }}
             >
               <p>
-                I think about how intelligence leaves the lab and enters the physical
-                world — and the invisible infrastructure required to make it trustworthy.
+                For the past six years, I&apos;ve been a Strategy Lead at{' '}
+                <span style={{ color: 'var(--fg)' }} className="font-medium">Waymo</span>,
+                advising the executive team on go-to-market, pricing, and competitive strategy
+                for autonomous mobility. It&apos;s given me a front-row seat to what happens
+                when AI leaves the lab and enters the real world.
               </p>
               <p>
-                For the past six years, I&apos;ve worked at{' '}
-                <span style={{ color: 'var(--fg)' }}>Waymo</span> as a Strategy Lead,
-                advising the executive team on questions that sit at the intersection of
-                autonomy, market readiness, and trust. Before that, I was an Engagement
-                Manager at{' '}
-                <span style={{ color: 'var(--fg)' }}>McKinsey &amp; Company</span>,
-                where I worked across technology, financial services, and retail on
-                go-to-market, pricing, and growth strategy.
+                Before Waymo, I was an Engagement Manager at{' '}
+                <span style={{ color: 'var(--fg)' }} className="font-medium">McKinsey &amp; Company</span>,
+                working across technology, financial services, and retail on growth strategy,
+                pricing, and M&amp;A. My earlier career includes analytics at{' '}
+                <span style={{ color: 'var(--fg)' }} className="font-medium">HubSpot</span>,
+                product strategy at{' '}
+                <span style={{ color: 'var(--fg)' }} className="font-medium">Microsoft</span>,
+                and five years of management consulting at{' '}
+                <span style={{ color: 'var(--fg)' }} className="font-medium">Deloitte</span>.
               </p>
               <p>
-                My earlier career spans analytics at HubSpot, product strategy at
-                Microsoft, and five years of management consulting at Deloitte —
-                building customer scoring models, launching digital video platforms,
-                and designing data infrastructure. Across 15+ years, the through-line
-                has been the same: understanding how complex systems create and
-                capture value.
+                The through-line across 15+ years: understanding how complex systems create
+                and capture value — and what breaks when they scale.
               </p>
               <p>
                 I hold an MBA from{' '}
-                <span style={{ color: 'var(--fg)' }}>MIT Sloan</span> and a double
-                major in Finance and Information Systems from the University of
-                Minnesota. I write not to build an audience, but to think more
-                clearly about problems that resist easy answers.
+                <span style={{ color: 'var(--fg)' }} className="font-medium">MIT Sloan</span> and
+                a double major in Finance and Information Systems from the University of Minnesota.
               </p>
             </div>
 
-            {/* What I think about */}
-            <div className="pt-6">
-              <h2
-                className="mb-4 font-display text-xl font-normal tracking-tight"
-                style={{ color: 'var(--fg)' }}
-              >
-                What I think about
-              </h2>
-              <ul
-                className="space-y-2 text-sm"
-                style={{ color: 'var(--fg-muted)' }}
-              >
-                {[
-                  'How autonomous systems earn trust under real-world conditions',
-                  'The verification gap between what a system does and what we can confirm about why',
-                  'Why deployment looks nothing like the benchmark',
-                  'Governance and incentive design for AI in physical systems',
-                  'The infrastructure nobody wants to build but everyone depends on',
-                ].map((item) => (
-                  <li key={item} className="flex items-start gap-2">
-                    <span
-                      className="mt-1.5 h-1 w-1 shrink-0 rounded-full"
-                      style={{ backgroundColor: 'var(--accent)' }}
-                    />
-                    {item}
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            {/* Career */}
+            {/* Career timeline */}
             <div className="pt-10">
               <h2
-                className="mb-8 font-display text-xl font-normal tracking-tight"
+                className="mb-8 font-display text-2xl font-normal tracking-tight"
                 style={{ color: 'var(--fg)' }}
               >
                 Career
               </h2>
               <div className="space-y-8">
                 {[
-                  { year: '2019 — Present', title: 'Strategy Lead', company: 'Waymo', desc: 'Advise the executive team on go-to-market, pricing, and competitive strategy for autonomous mobility.' },
-                  { year: '2016 — 2019', title: 'Engagement Manager', company: 'McKinsey & Company', desc: 'TMT, Financial Services, and Retail. Growth strategy, pricing, M&A, and multi-year roadmaps.' },
-                  { year: '2015 — 2016', title: 'Analytics & Insights', company: 'HubSpot', desc: 'Prospect scoring models and A/B testing for inbound conversion.' },
-                  { year: '2015', title: 'Program Manager', company: 'Microsoft', desc: 'Office 365 product strategy — onboarding, churn, and retention analysis.' },
-                  { year: '2009 — 2014', title: 'Consultant → Senior Consultant', company: 'Deloitte', desc: 'Customer acquisition, video delivery platforms, data warehousing. Five years across TMT and financial services.' },
+                  { year: '2019 — Present', title: 'Strategy Lead', company: 'Waymo', desc: 'Executive-level strategy for autonomous mobility. Go-to-market, pricing, and competitive positioning.' },
+                  { year: '2016 — 2019', title: 'Engagement Manager', company: 'McKinsey & Company', desc: 'TMT, Financial Services, Retail. Growth strategy, pricing, M&A, and multi-year roadmaps.' },
+                  { year: '2015 — 2016', title: 'Analytics & Insights', company: 'HubSpot', desc: 'Prospect scoring models and A/B testing for inbound conversion optimization.' },
+                  { year: '2015', title: 'Program Manager', company: 'Microsoft', desc: 'Office 365 product strategy — onboarding, churn analysis, and retention.' },
+                  { year: '2009 — 2014', title: 'Consultant → Senior Consultant', company: 'Deloitte', desc: 'Five years across TMT and financial services. Customer acquisition, data infrastructure, and platform strategy.' },
                 ].map((item, idx) => (
-                  <div key={idx} className="value-item">
-                    <p className="text-xs font-medium uppercase tracking-widest" style={{ color: 'var(--accent)' }}>
+                  <div
+                    key={idx}
+                    className="group relative pl-6"
+                    style={{ borderLeft: '2px solid var(--border-strong)' }}
+                  >
+                    <div
+                      className="absolute -left-[5px] top-1 h-2 w-2 rounded-full"
+                      style={{ background: 'var(--accent)' }}
+                    />
+                    <p className="text-xs font-semibold uppercase tracking-widest" style={{ color: 'var(--accent)' }}>
                       {item.year}
                     </p>
                     <h3 className="mt-1 font-display text-base font-normal" style={{ color: 'var(--fg)' }}>
@@ -138,7 +147,7 @@ export default function AboutPage() {
             {/* Education */}
             <div className="pt-10">
               <h2
-                className="mb-6 font-display text-xl font-normal tracking-tight"
+                className="mb-6 font-display text-2xl font-normal tracking-tight"
                 style={{ color: 'var(--fg)' }}
               >
                 Education
@@ -160,40 +169,18 @@ export default function AboutPage() {
                 </div>
               </div>
             </div>
-
-            {/* Service */}
-            <div className="pt-10">
-              <h2
-                className="mb-6 font-display text-xl font-normal tracking-tight"
-                style={{ color: 'var(--fg)' }}
-              >
-                Service
-              </h2>
-              <div className="space-y-5">
-                {[
-                  { role: 'Strategy Committee', org: 'The SF Market', period: '2020 — Present' },
-                  { role: 'Board of Advisors', org: 'Multiplying Good', period: '2010 — 2014' },
-                  { role: 'Treasurer', org: 'St. Paul Public Schools Foundation', period: '2012 — 2014' },
-                ].map((item, idx) => (
-                  <div key={idx}>
-                    <h3 className="font-display text-base font-normal" style={{ color: 'var(--fg)' }}>{item.role}</h3>
-                    <p className="text-sm" style={{ color: 'var(--fg-subtle)' }}>{item.org} · {item.period}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
           </div>
 
           {/* Sidebar */}
           <aside className="space-y-8">
             <div className="rounded-lg border p-5" style={{ borderColor: 'var(--border)' }}>
-              <h3 className="mb-4 text-xs font-medium uppercase tracking-widest" style={{ color: 'var(--fg-subtle)' }}>
+              <h3 className="mb-4 text-xs font-semibold uppercase tracking-widest" style={{ color: 'var(--fg-subtle)' }}>
                 At a glance
               </h3>
               <dl className="space-y-3">
                 {[
                   { label: 'Current', value: 'Waymo' },
-                  { label: 'Focus', value: 'Autonomy & Trust' },
+                  { label: 'Focus', value: 'AI Strategy & Trust' },
                   { label: 'Education', value: 'MIT Sloan MBA' },
                   { label: 'Previously', value: 'McKinsey & Company' },
                   { label: 'Experience', value: '15+ years' },
@@ -207,15 +194,16 @@ export default function AboutPage() {
             </div>
 
             <div className="rounded-lg border p-5" style={{ borderColor: 'var(--border)' }}>
-              <h3 className="mb-4 text-xs font-medium uppercase tracking-widest" style={{ color: 'var(--fg-subtle)' }}>
-                Elsewhere
+              <h3 className="mb-4 text-xs font-semibold uppercase tracking-widest" style={{ color: 'var(--fg-subtle)' }}>
+                Connect
               </h3>
               <div className="space-y-2">
                 {[
                   { label: 'LinkedIn', href: 'https://linkedin.com/in/jiakechen' },
+                  { label: 'Email', href: '/contact' },
                   { label: 'RSS Feed', href: '/feed.xml' },
                 ].map(({ label, href }) => (
-                  <a
+                  <Link
                     key={label}
                     href={href}
                     target={href.startsWith('http') ? '_blank' : undefined}
@@ -225,11 +213,10 @@ export default function AboutPage() {
                   >
                     {label}
                     <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M5 3H3a1 1 0 0 0-1 1v5a1 1 0 0 0 1 1h5a1 1 0 0 0 1-1V7" />
-                      <polyline points="8 1 11 1 11 4" />
-                      <line x1="5" y1="7" x2="11" y2="1" />
+                      <line x1="2" y1="6" x2="10" y2="6" />
+                      <polyline points="6.5 2.5 10 6 6.5 9.5" />
                     </svg>
-                  </a>
+                  </Link>
                 ))}
               </div>
             </div>
