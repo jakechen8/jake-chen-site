@@ -6,103 +6,101 @@ tags: ["Software", "Vibe Coding", "Developer Experience"]
 published: true
 ---
 
-I spent the first decade of my career in strategy — consulting, then tech. I was the person who built the business case, not the product. Code was someone else's job.
+I spent the first ten years outside engineering. Strategy. Consulting. Tech. I built business cases. Someone else wrote code.
 
-Then I started building side projects. I wanted to understand not just what could be built, but how. Not because I was trying to become a full-time engineer, but because I realized that a founder who can't read code is like a CEO who can't read a P&L. You can delegate the work, but you can't delegate the judgment.
+Then I started building things on the side. Not because I wanted to become a full-time engineer — I didn't. But I realized that a founder who can't read code is like a CEO who can't read a P&L. You can delegate the work. You can't delegate the judgment.
 
-That decision changed how I think about products, architecture, and what's actually hard versus what just sounds hard.
+That changed how I think about products and architecture and what's actually hard versus what just sounds hard.
 
-But getting there required something most tutorials skip: a mental model for why modern codebases look the way they do.
+But getting there required something tutorials skip: a way to think about why modern codebases look the way they do.
 
-## The asymmetry of modern software
+## Execution is faster than literacy now
 
-Your marketing manager just shipped a landing page redesign without opening a terminal. Three months ago, that was impossible. Today it's normal.
+Your marketing manager shipped a landing page redesign yesterday. No terminal. Three months ago, that was impossible. Today it's normal.
 
-They don't fully understand the codebase. They can't explain the build system. They probably don't know what a `tsconfig.json` does. But they can make changes, and those changes ship.
+They don't fully understand the codebase. They can't explain the build system. They have no idea what `tsconfig.json` does. But they made changes. Those changes shipped.
 
-That's the asymmetry: **execution got faster than literacy.** Tools like Cursor, Vercel, and AI copilots let you deploy code before you understand it. Powerful — until you hit a wall and need to know what's actually happening.
+That's the asymmetry: **execution got way faster than understanding.** Cursor, Vercel, AI copilots — these tools let you deploy code before you understand it. That's powerful until you hit a wall and need to know what's actually happening.
 
-Open a modern web project and you see: `app/`, `layout.tsx`, `route.ts`, `components/`, `lib/`, `.env.local`, `package-lock.json`, Tailwind classes, `localhost:3000`, GitHub Actions. It feels like you need a glossary of 200 terms.
+Open a modern web project. You see `app/`, `layout.tsx`, `route.ts`, `components/`, `lib/`, `.env.local`, `package-lock.json`, Tailwind, `localhost:3000`, GitHub Actions. It feels like you need a glossary of 200 terms.
 
-You don't. You need a map — a way to think about why these things exist at all.
+You don't. You need a map.
 
-## Three questions that make any repo legible
+## Three questions that make a repo legible
 
 When I open an unfamiliar codebase, I ask three questions:
 
 **Where does this run?** Browser? Server? During the build?
 
-**Why is this file special?** Does another file import it, or does the framework discover it automatically by name?
+**Why is this file special?** Does another file import it, or does the framework just... know about it automatically?
 
-**What type of file is it?** Route? Component? Style? Helper? Config? Secret? Generated output?
+**What type of file is it?** Route? Component? Style? Helper? Config? Secret? Something generated?
 
-Answer those three and the repo stops being a mystery. It becomes a system you can navigate.
+Answer those three and the mystery goes away. It becomes a system you can navigate.
 
-This is the framework I wish someone had given me when I first started reading code. Every tutorial I found dumped vocabulary. What I needed was structure.
+This is the framework I wish someone had given me when I started reading code. Every tutorial dumped vocabulary. What I needed was structure.
 
-## A website repo is three systems, not one
+## A website is three systems in one folder
 
-This is the foundational insight most explanations get wrong. A modern web project isn't one program. It's three:
+This is the insight most explanations get wrong. A modern web project isn't one program. It's three:
 
-**Browser code** — what runs in the user's browser. Clicks, forms, state, animations, DOM manipulation. Client-side interactivity.
+**Browser code** — runs in the user's browser. Clicks, forms, state, animations, DOM stuff. Interactivity.
 
-**Server code** — what runs on your machine or hosting provider. Database access, secret keys, authentication, API logic. Sometimes the initial page render.
+**Server code** — runs on your machine or your hosting provider. Database, secret keys, authentication, API logic. Sometimes the initial page render.
 
-**Build/tooling code** — what runs during deployment. Compiles TypeScript, bundles modules, optimizes assets, runs tests. Produces the shippable version.
+**Build code** — runs during deployment. Compiles TypeScript, bundles modules, optimizes images, runs tests. Makes the shippable version.
 
-That's why these projects feel complex: you're coordinating three separate runtime environments in a single folder.
+That's why these projects feel complex. You're coordinating three separate runtime environments in a single folder.
 
-Once you know that, confusing terms clarify immediately. `localhost:3000` is the development server (server layer). `.env.local` is secret configuration (server layer). `npm run build` compiles everything for production (tooling layer).
+Once you know that, confusing terms start making sense. `localhost:3000` is the development server (server layer). `.env.local` is secret configuration (server layer). `npm run build` compiles everything (tooling layer).
 
 The vocabulary only makes sense once you know which layer it belongs to.
 
-## Imported files vs. discovered files
+## Imported vs. discovered — this distinction matters
 
-This distinction matters more than most explanations acknowledge.
+**Imported files** are normal modules. Someone's code explicitly imports them. Remove the import, the file does nothing. Example: `components/Button.tsx`.
 
-**Imported files** are normal modules — someone's code explicitly imports them. Remove the import, the file does nothing. Example: `components/Button.tsx`.
+**Convention files** are discovered by the framework automatically based on name or location. You never import them. The framework just knows. Example: `app/page.tsx` in Next.js — the framework sees that file and makes it a route.
 
-**Convention files** are discovered by the framework automatically based on name or location. You never import them. The framework just knows. Example: `app/page.tsx` in Next.js — the framework sees a `page.tsx` in the `app/` directory and makes it a route.
+This distinction is where all the "magic" comes from in modern frameworks. Rename a file and the app breaks even though nothing imports it? That's framework discovery. Understanding this one thing turned codebases from mystical to mechanical for me.
 
-This distinction is the source of most "magic" in modern frameworks. If renaming a file breaks the app even though nothing imports it, you've hit framework discovery. Understanding this turned codebases from mystical to mechanical for me.
+## Files fit into a few patterns
 
-## All files fit into a few standard buckets
-
-Stop categorizing files one by one. Recognize patterns:
+Stop categorizing files one by one. Learn the patterns:
 
 **Routes and pages** — what becomes a URL. `app/page.tsx`, `app/blog/[slug]/page.tsx`, `route.ts`, `layout.tsx`.
 
-**Components** — reusable UI elements. `Button.tsx`, `Navbar.tsx`, `Card.tsx`.
+**Components** — reusable UI pieces. `Button.tsx`, `Navbar.tsx`, `Card.tsx`.
 
-**Styles** — CSS and design. `globals.css`, Tailwind utility classes inline.
+**Styles** — CSS and design. `globals.css`, Tailwind classes inline.
 
 **Helpers and hooks** — business logic and connective tissue. `lib/utils.ts`, `lib/api.ts`, `hooks/useUser.ts`.
 
-**Assets** — static files served as-is. `public/logo.svg`, `favicon.ico`.
+**Assets** — static files. `public/logo.svg`, `favicon.ico`.
 
 **Config and dependencies** — project instructions. `package.json`, `next.config.ts`, `tsconfig.json`.
 
 **Secrets and generated files** — `.env.local` (never commit), `node_modules/` and `.next/` (never hand-edit).
 
-Start with `package.json` — it tells you the framework, scripts, and overall shape immediately.
+Start with `package.json`. It tells you the framework, the scripts, the overall shape. Everything else follows.
 
 ## Why this matters for founders
 
-I'm building toward starting a company. And the single biggest upgrade to my judgment as a future founder has been learning to read code — not write it from scratch, but read it well enough to evaluate architecture decisions, understand tradeoffs, and have real conversations with engineers.
+I'm building toward starting a company. And the biggest upgrade to my judgment as a future founder has been learning to read code — not write it from scratch, but read it well enough to evaluate architecture decisions, understand tradeoffs, and have real conversations with engineers.
 
-A strategy person who can read a codebase can spot when a technical decision is driven by convenience rather than the right architecture. They can evaluate whether a vendor's "proprietary platform" is actually just a wrapper around open-source tools. They can tell when an engineering estimate is conservative versus when the problem is genuinely hard.
+A strategy person who can read a codebase can spot when a technical decision is driven by convenience rather than being the right thing. They can tell if a vendor's "proprietary platform" is just a wrapper around open-source tools. They can feel when an engineering estimate is conservative versus when the problem is genuinely hard.
 
-You don't need to be a full-time engineer. You need enough literacy to be a credible technical decision-maker. The three-question framework above is how I built that literacy.
+You don't need to be a full-time engineer. You need enough literacy to be a credible technical decision-maker. The three questions above are how I built that.
 
 ## The five-minute repo walkthrough
 
-When I'm evaluating a codebase — my own or someone else's — I use this sequence:
+When I'm evaluating a codebase — my own or someone else's — I do this:
 
-1. Open `package.json`. What framework? What scripts? What's the basic shape?
-2. Find the entry point. Look for `app/`, `pages/`, `src/`, or `index.html`.
+1. Open `package.json`. What framework? What scripts? What's the shape?
+2. Find the entry point. `app/`, `pages/`, `src/`, or `index.html`.
 3. Find the components. Open `components/` and see what reusable pieces exist.
-4. Find the styles. `globals.css`? Or Tailwind inline?
-5. Run the app and change something small. Change a headline. Get one successful feedback loop before attempting anything structural.
+4. Find the styles. `globals.css`? Tailwind inline?
+5. Run the app and change something small. A headline. Get one successful feedback loop before attempting anything structural.
 
 Fifteen minutes. After that, the repo stops being abstract and becomes navigable.
 
@@ -114,4 +112,4 @@ Think you've got it? Try the Repo Decoder — eight quick questions to see if th
 
 ---
 
-*If you're a non-engineer who learned to read code and it changed your work, I'd like to hear how. This is a skill I think more strategy and business people should invest in.*
+*If you're a non-engineer who learned to read code and it changed your work, I'd like to hear about it. This is a skill I think more strategy and business people should invest in.*

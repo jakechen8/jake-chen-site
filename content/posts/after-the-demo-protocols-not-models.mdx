@@ -8,65 +8,73 @@ series: "After the Demo"
 seriesOrder: 2
 ---
 
-Your best-in-class AI model just topped the benchmark. Now your Sales team asks: "Can it talk to our CRM?"
+You've built the best AI model. State-of-the-art. Actually tops the benchmark.
 
-"Not directly, but your engineers could build an integration..."
+Then Sales asks: "Can it talk to Salesforce?"
 
-Meanwhile, a competitor with a middling model has twelve pre-built integrations — Salesforce, HubSpot, Marketo, Slack. Their tool just plugs in.
+"Well, your engineering team would need to build an integration..."
 
-Guess which one wins the enterprise deal?
+Meanwhile your competitor with a mediocre model just plugged into twelve systems. Salesforce, HubSpot, Marketo, Slack, Stripe, Zapier. Their tool just works. It plugs in.
 
-I've watched this dynamic play out repeatedly. In complex autonomous systems, the AI's intelligence matters enormously — but so does the integration layer that connects it to infrastructure, control systems, and downstream applications. The system that plugs in cleanly scales. The one that requires custom engineering for every connection doesn't.
+And guess what? Your company loses the deal.
 
-## Why this matters more than model quality
+I've watched this dynamic play out. The intelligence of the system matters a lot. But so does the integration layer. The system that plugs in cleanly scales. The one that needs custom engineering for every single connection doesn't.
 
-For the last two years, every AI conversation was about which model is best. That made sense when the model was the only variable.
+## Why the best model loses
 
-We're entering a different phase. The models are good enough. Claude, GPT-4, Gemini — they're all capable. Differentiation is moving elsewhere.
+For two years all the AI conversation was "which model is best." That made sense when the model was the only variable.
 
-It's moving to integration.
+We're past that now. Claude works. GPT-4 works. Gemini works. The models are good enough. Intelligence got commoditized faster than anyone predicted.
 
-The pattern repeats from every technology wave. TCP/IP wasn't the fastest protocol — it became the standard because everyone built on it. HTTP wasn't the most elegant — it powered the web because everything spoke it. REST APIs weren't perfect — they unified how systems communicate. OAuth was boring — it solved authentication at scale.
+Differentiation moved somewhere else. Integration.
 
-The common thread: the companies that owned the protocol didn't necessarily own the market, but they owned the gateway to it. The protocol sets the rules. Everything else negotiates with it.
+And this pattern repeats in every platform wave. TCP/IP wasn't the fastest protocol. It became the standard because everyone could build on it. HTTP wasn't elegant. It powered the web because everything spoke it. REST wasn't perfect. It unified how systems communicate. OAuth was boring. But it solved authentication at scale.
 
-## Why AI agents make this even more important
+The company that owned the protocol didn't necessarily own the market. But it owned the gateway. The protocol set the rules. Everything else negotiated with it.
 
-In previous waves, the things integrating were passive. A database waits to be queried. An API waits for a request. They don't have agency.
+<IntegrationRace />
 
-AI agents are different. They're semi-autonomous. They make decisions, initiate actions, negotiate terms. That creates new integration requirements:
+## Why AI agents make this actually matter
 
-**Authentication** — can I verify you are who you claim to be? **Trust** — if you ask my system to do something, can I be confident it won't cause damage? **Permissions** — what access should you have, and what requires human approval? **Error handling** — when something breaks, how do we recover gracefully?
+In older platform waves, the things integrating were passive. A database waits for a query. An API waits for a request. They don't do anything on their own.
 
-In the old API world, your CRM answers questions. In the agent world, your CRM might execute a transaction. That's a fundamentally different category of integration risk.
+AI agents are different. They're semi-autonomous. They initiate things. They make decisions. They execute transactions. That creates a whole new category of integration problems:
 
-The companies building protocols that solve these problems will own the plumbing. And in platform wars, the plumbing company often wins more than the application company.
+**Trust.** If an agent asks your system to do something, can you be confident it won't blow things up? **Permissions.** What should this agent be allowed to do, and what needs approval? **Authentication.** Can I actually verify you are who you claim to be? **Error handling.** When something breaks, how do we recover without the agent's owner even knowing?
 
-## What this means for product strategy
+In the old world, your CRM answers questions. It's a safe read operation. In the agent world, your CRM might execute a transaction. That's a different risk category entirely.
 
-If you're building anything that other teams or systems will use:
+The companies that build protocols solving these problems become infrastructure. And in platform wars, infrastructure usually wins more than the application layer.
 
-**Make yourself easy to connect to.** This isn't a nice-to-have. It's competitive advantage.
+## What product strategy should actually be
 
-Document everything for machines, not just humans. If your API is described only in a PDF, agents can't reason about it — give them structured specifications. Build for non-human clients: your system authenticates users today, but soon it needs to authenticate services. Invest in stable, predictable behavior — systems integrating with you can't handle magic; they need obvious failure modes, not surprising ones. Design for delegation — an agent calling your system needs to know in advance what requires approval and what it can do autonomously.
+If you're building anything that other teams or systems will need to use:
+
+**Make yourself easy to connect to.** This isn't nice-to-have. This is competitive advantage.
+
+Document everything in a way machines can actually read. If your API is described in a PDF, agents can't reason about it. Give them structured specs. Stop documenting only for humans. Your system authenticates users today. Soon it needs to authenticate services.
+
+Build for stable, predictable behavior. Systems integrating with you can't handle magic. They need failure modes that are obvious, not surprising. Design for delegation. An agent calling your system needs to know upfront what requires approval and what it can do on its own.
 
 The companies that get this right become infrastructure. The ones that don't become islands.
 
-## The mobile parallel
+<MythReality myth="The company with the best AI model wins the enterprise deal." reality="The company that plugs into twelve systems on day one wins — because integration compounds faster than intelligence." />
 
-When the App Store launched, thousands of apps competed. The winners weren't always the best-engineered. They were the ones with deep links, share extensions, and solid integrations with contacts, location, and photos.
+## The App Store parallel
 
-Slack didn't win because its UX was best. It won because it integrated everything — email, GitHub, Jira, Google Drive, Stripe. You could live in Slack without leaving.
+When the App Store launched, thousands of apps competed. The ones that won weren't always the best engineered. They were the ones with deep links, share extensions, solid integration with contacts and location and photos.
 
-The same dynamic is starting for AI. The tools that integrate everything become the surface you live in. The tools that don't become specialized utilities — useful but limited.
+Slack didn't win because the UX was best. It won because everything plugged into it. Email, GitHub, Jira, Google Drive, Stripe. You could live in Slack and never leave.
 
-## The practical move
+Same dynamic is starting for AI. The tools that integrate everything become the environment you live in. The tools that don't become specialist utilities. Useful. Limited.
 
-If you're a product leader: audit your integration story. How many systems can plug into yours? Invest in the boring plumbing — your marketing and engineering teams want new features, but the CEO wants a tool that doesn't require custom engineering. Think about your APIs like a product, not an afterthought. Plan for agent-first design — your next CRM customer might be an AI system, not a person.
+## The move
 
-If you're evaluating vendors: ask about integration roadmap, not feature roadmap. Look for protocol thinking — does the vendor invest in standards, or force you into their ecosystem?
+If you're a product leader: audit your integration story. How many systems can actually plug into yours? The boring plumbing matters more than the feature roadmap. Your engineering team wants new features. Your CEO wants a tool that doesn't need custom engineering for every connection. Treat your API like a product. Plan for agents as first-class clients. Your next customer might not be a person.
 
-The model is table stakes. The protocol is competitive advantage.
+If you're evaluating vendors: ask about the integration roadmap, not the feature roadmap. Look for protocol thinking. Does the vendor invest in standards, or lock you into their ecosystem?
+
+The model is table stakes. The protocol is advantage.
 
 ---
 

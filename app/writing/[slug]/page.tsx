@@ -6,6 +6,12 @@ import { MDXRemote } from 'next-mdx-remote/rsc'
 import ReadingProgress from '@/components/ReadingProgress'
 import TableOfContents from '@/components/TableOfContents'
 import RepoDecoder from '@/components/RepoDecoder'
+import ScenarioChoice from '@/components/ScenarioChoice'
+import MythReality from '@/components/MythReality'
+import PulseCheck from '@/components/PulseCheck'
+import AnimatedStat from '@/components/AnimatedStat'
+import TrustMatrix from '@/components/TrustMatrix'
+import IntegrationRace from '@/components/IntegrationRace'
 import SeriesNav from '@/components/SeriesNav'
 
 interface Props {
@@ -13,7 +19,13 @@ interface Props {
 }
 
 const mdxComponents = {
-  RepoDecoder: RepoDecoder,
+  RepoDecoder,
+  ScenarioChoice,
+  MythReality,
+  PulseCheck,
+  AnimatedStat,
+  TrustMatrix,
+  IntegrationRace,
 }
 
 export async function generateStaticParams() {

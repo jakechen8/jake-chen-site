@@ -41,6 +41,39 @@ const projects = [
     linkLabel: 'Try it',
     external: false,
   },
+  {
+    title: 'Justify the Spend',
+    status: 'Live',
+    statusColor: 'var(--accent)',
+    description:
+      'AI-powered toolkit that helps professionals get internal approval for conferences, travel, and events. Generates approval emails, budget calculators, ROI templates, and planning tools so you can make the case to leadership.',
+    tags: ['AI', 'Productivity', 'SaaS'],
+    link: 'https://justifythespend.com',
+    linkLabel: 'Visit site',
+    external: true,
+  },
+  {
+    title: 'Don\'t Send Yet',
+    status: 'Live',
+    statusColor: 'var(--accent)',
+    description:
+      'Preview your iOS push notification before you hit send. See exactly what users see on their lock screen — because the first line is the only line most people read.',
+    tags: ['iOS', 'Developer Tool', 'UX'],
+    link: 'https://dontsendyet.com',
+    linkLabel: 'Visit site',
+    external: true,
+  },
+  {
+    title: 'VeraRide',
+    status: 'Live',
+    statusColor: 'var(--accent)',
+    description:
+      'Upload a dealer quote or photo and get instant analysis. Flags hidden fees, checks financing and lease terms for red flags, and gives you clear negotiation scripts so you never overpay for a car.',
+    tags: ['AI', 'Consumer', 'Finance'],
+    link: 'https://veraride.com',
+    linkLabel: 'Visit site',
+    external: true,
+  },
 ]
 
 export default function ProjectsPage() {
