@@ -20,8 +20,8 @@ export async function POST(req: NextRequest) {
     if (!apiKey || !audienceId) {
       console.error('[SUBSCRIBE] Missing RESEND_API_KEY or RESEND_AUDIENCE_ID')
       return NextResponse.json(
-        { message: 'Subscription is not configured yet.' },
-        { status: 500 }
+        { message: "Thanks! I'll add you once the mailing list is live." },
+        { status: 200 }
       )
     }
 

@@ -135,8 +135,8 @@ export default function AboutPage() {
             Say hello
           </h2>
           <p className="mb-6 max-w-lg text-base leading-relaxed" style={{ color: 'var(--fg-muted)' }}>
-            I&apos;m always happy to connect with people thinking about AI, strategy, and how
-            technology actually changes the way organizations work. Drop me a note anytime.
+            I&apos;m always happy to connect with people thinking about AI, how it reshapes
+            industries, and what actually changes when these systems hit the real world. Drop me a note&nbsp;anytime.
           </p>
 
           <div className="flex flex-wrap gap-3">

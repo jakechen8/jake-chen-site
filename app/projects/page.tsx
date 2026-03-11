@@ -24,11 +24,11 @@ const projects = [
     status: 'Live',
     statusColor: 'var(--accent)',
     description:
-      'This site — built from scratch with Next.js 14, TypeScript, Tailwind, and MDX. Dark mode, RSS feed, dynamic OG images, reading progress, and a custom design system. No templates.',
-    tags: ['Next.js', 'TypeScript', 'MDX'],
-    link: 'https://github.com/jiakechen',
-    linkLabel: 'Source',
-    external: true,
+      'This site — designed and coded from scratch. Next.js 14, TypeScript, Tailwind, MDX. Custom design system, dark mode, dynamic OG images, reading progress bar. Zero templates.',
+    tags: ['Next.js', 'TypeScript', 'Design'],
+    link: '/',
+    linkLabel: 'You\'re looking at it',
+    external: false,
   },
   {
     title: 'Repo Decoder',

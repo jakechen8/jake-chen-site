@@ -8,7 +8,7 @@ export async function GET(req: NextRequest) {
   const title = searchParams.get('title') || 'Jake Chen'
   const subtitle =
     searchParams.get('subtitle') ||
-    'Strategy lead at Waymo. Writing about AI systems, trust, and the infrastructure that makes autonomy work.'
+    'Strategy lead at Waymo. Writing about how AI reshapes decisions, organizations, and the systems that run them.'
   const tags = searchParams.get('tags')?.split(',').filter(Boolean) || []
 
   const isHomepage = title === 'Jake Chen'

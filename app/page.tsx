@@ -110,7 +110,7 @@ export default async function HomePage() {
                 Writing about
               </p>
               <p className="text-sm leading-relaxed" style={{ color: 'var(--fg)' }}>
-                AI governance as a growth function. Why protocols, not models, win platform wars. Trust in systems that can&apos;t explain themselves.
+                What happens when AI systems start making real decisions. Second-order effects. The gap between what gets announced and what actually&nbsp;ships.
               </p>
             </div>
             <div className="now-card">
@@ -169,8 +169,8 @@ export default async function HomePage() {
               Join the conversation
             </h2>
             <p className="mb-8 text-sm leading-relaxed" style={{ color: 'var(--fg-subtle)' }}>
-              I send essays when they&apos;re ready &mdash; clear thinking on AI strategy, governance,
-              and what actually changes when intelligent systems hit the real world. No spam, no schedule.
+              I send essays when they&apos;re ready &mdash; honest thinking on how AI is reshaping
+              decisions, industries, and the systems we rely on. No spam, no&nbsp;schedule.
             </p>
             <EmailCapture compact />
           </div>

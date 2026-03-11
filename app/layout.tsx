@@ -15,8 +15,8 @@ export const metadata: Metadata = {
     template: '%s | Jake Chen',
   },
   description:
-    'Strategy lead at Waymo. Writing about AI systems, trust, governance, and the infrastructure that makes autonomy work.',
-  keywords: ['Jake Chen', 'AI strategy', 'autonomous systems', 'Waymo', 'AI trust', 'autonomy', 'governance', 'infrastructure', 'AI coordination', 'agent protocols', 'AI governance', 'founder'],
+    'Strategy lead at Waymo. Writing about how AI reshapes decisions, organizations, and the systems that run them.',
+  keywords: ['Jake Chen', 'AI strategy', 'autonomous systems', 'Waymo', 'AI impact', 'autonomy', 'second-order effects', 'AI infrastructure', 'AI coordination', 'agent protocols'],
   authors: [{ name: 'Jake Chen', url: siteUrl }],
   creator: 'Jake Chen',
   openGraph: {
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
     url: siteUrl,
     title: 'Jake Chen',
     description:
-      'Strategy lead at Waymo. Writing about AI systems, trust, governance, and the infrastructure that makes autonomy work.',
+      'Strategy lead at Waymo. Writing about how AI reshapes decisions, organizations, and the systems that run them.',
     siteName: 'Jake Chen',
     images: [
       {
@@ -39,7 +39,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'Jake Chen',
-    description: 'Strategy lead at Waymo. Writing about AI systems, trust, governance, and the infrastructure that makes autonomy work.',
+    description: 'Strategy lead at Waymo. Writing about how AI reshapes decisions, organizations, and the systems that run them.',
     images: ['/api/og'],
   },
   robots: {

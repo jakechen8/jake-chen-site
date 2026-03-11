@@ -27,7 +27,7 @@ export default function JsonLd() {
       'Autonomous Systems',
       'AI Strategy',
       'Trust Infrastructure',
-      'AI Governance',
+      'AI Impact',
       'Platform Strategy',
       'Organizational Design',
     ],

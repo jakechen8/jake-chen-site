@@ -5,7 +5,7 @@ import EmailCapture from '@/components/EmailCapture'
 
 export const metadata: Metadata = {
   title: 'Writing',
-  description: 'Essays on AI strategy, autonomous systems, trust infrastructure, and the coordination challenges of the AI era. By Jake Chen.',
+  description: 'Essays on how AI reshapes decisions, organizations, and the systems we build around them. By Jake Chen.',
 }
 
 export default async function WritingPage() {
@@ -55,8 +55,8 @@ export default async function WritingPage() {
             Essays &amp; Ideas
           </h1>
           <p className="text-base leading-relaxed" style={{ color: 'var(--fg-muted)' }}>
-            Long-form thinking on AI strategy, governance, and what actually changes when
-            intelligent systems hit the real world. Published when ready.
+            How AI is reshaping decisions, organizations, and the systems we rely on &mdash;
+            the second-order effects nobody talks about. Published when&nbsp;ready.
           </p>
         </div>
 
