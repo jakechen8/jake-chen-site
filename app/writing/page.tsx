@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { getAllPosts, getAllTags, getPost } from '@/lib/posts'
+import { getAllPosts, getPost } from '@/lib/posts'
 import PostCard from '@/components/PostCard'
 import EmailCapture from '@/components/EmailCapture'
 
@@ -10,7 +10,6 @@ export const metadata: Metadata = {
 
 export default async function WritingPage() {
   const posts = await Promise.resolve(getAllPosts())
-  const tags = await Promise.resolve(getAllTags())
 
   // Group series posts
   const seriesMap = new Map<string, typeof posts>()
@@ -28,7 +27,6 @@ export default async function WritingPage() {
     }
   })
 
-  // Sort series posts by seriesOrder
   seriesMap.forEach((seriesPosts) => {
     seriesPosts.sort((a, b) => {
       const aFull = getPost(a.slug)
@@ -45,7 +43,7 @@ export default async function WritingPage() {
         {/* Header */}
         <div className="mb-12 max-w-xl">
           <p
-            className="mb-3 text-xs font-medium uppercase tracking-widest"
+            className="mb-3 text-xs font-semibold uppercase tracking-widest"
             style={{ color: 'var(--accent)' }}
           >
             Writing
@@ -57,25 +55,14 @@ export default async function WritingPage() {
             Essays &amp; Ideas
           </h1>
           <p className="text-base leading-relaxed" style={{ color: 'var(--fg-muted)' }}>
-            Long-form thinking on how intelligent systems scale in the real world —
-            and what determines whether they succeed. Published when ready.
+            Long-form thinking on AI strategy, governance, and what actually changes when
+            intelligent systems hit the real world. Published when ready.
           </p>
         </div>
 
-        {/* Tags */}
-        {tags.length > 0 && (
-          <div className="mb-8 flex flex-wrap gap-2">
-            {tags.map((tag) => (
-              <span key={tag} className="tag">
-                {tag}
-              </span>
-            ))}
-          </div>
-        )}
-
         {/* Series */}
         {seriesEntries.map(([seriesName, seriesPosts]) => (
-          <div key={seriesName} className="mb-8">
+          <div key={seriesName} className="mb-10">
             <div className="mb-4 flex items-center gap-3">
               <div
                 className="inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-medium"
@@ -91,14 +78,8 @@ export default async function WritingPage() {
               </div>
             </div>
             <div className="grid gap-4">
-              {seriesPosts.map((post, i) => (
-                <div
-                  key={post.slug}
-                  className="animate-fade-up"
-                  style={{ animationDelay: `${i * 0.08}s`, animationFillMode: 'both' }}
-                >
-                  <PostCard post={post} featured={false} />
-                </div>
+              {seriesPosts.map((post) => (
+                <PostCard key={post.slug} post={post} featured={false} />
               ))}
             </div>
           </div>
@@ -106,7 +87,7 @@ export default async function WritingPage() {
 
         {/* Standalone posts */}
         {standalonePosts.length > 0 && (
-          <div className="mb-8">
+          <div className="mb-10">
             {seriesEntries.length > 0 && (
               <h2
                 className="mb-4 font-display text-xl font-normal tracking-tight"
@@ -117,13 +98,7 @@ export default async function WritingPage() {
             )}
             <div className="grid gap-4">
               {standalonePosts.map((post, i) => (
-                <div
-                  key={post.slug}
-                  className="animate-fade-up"
-                  style={{ animationDelay: `${i * 0.08}s`, animationFillMode: 'both' }}
-                >
-                  <PostCard post={post} featured={i === 0 && seriesEntries.length === 0} />
-                </div>
+                <PostCard key={post.slug} post={post} featured={i === 0 && seriesEntries.length === 0} />
               ))}
             </div>
           </div>
@@ -140,28 +115,22 @@ export default async function WritingPage() {
             >
               Essays incoming.
             </p>
-            <p className="mt-2 text-sm" style={{ color: 'var(--fg-subtle)' }}>
-              Subscribe below to be the first to read them.
-            </p>
           </div>
         )}
 
         {/* Subscribe */}
         <div
-          className="mt-16 rounded-lg border p-6 sm:p-8"
+          className="mt-12 rounded-lg border p-6 sm:p-8"
           style={{ borderColor: 'var(--border)' }}
         >
-          <p className="section-tag mb-3">
-            On Autonomy, Trust &amp; the Systems Beneath AI
-          </p>
           <h2
             className="mb-2 font-display text-xl font-normal tracking-tight"
             style={{ color: 'var(--fg)' }}
           >
-            Thoughtful essays on how intelligent systems scale
+            Get the essays
           </h2>
           <p className="mb-5 text-sm" style={{ color: 'var(--fg-subtle)' }}>
-            No noise. No hype. Just signal. Or grab the{' '}
+            No noise. Published when ready. Or grab the{' '}
             <a
               href="/feed.xml"
               className="underline underline-offset-2 transition-colors hover:text-[color:var(--accent)]"

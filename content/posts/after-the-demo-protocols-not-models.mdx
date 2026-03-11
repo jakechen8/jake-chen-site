@@ -8,101 +8,65 @@ series: "After the Demo"
 seriesOrder: 2
 ---
 
-Your best-in-class AI model just beat all the competitors on the benchmark.
+Your best-in-class AI model just topped the benchmark. Now your Sales team asks: "Can it talk to our CRM?"
 
-Now your Sales team asks: "Can your system talk to our CRM?"
+"Not directly, but your engineers could build an integration..."
 
-"Well, not directly, but your engineers could build an integration..."
-
-Meanwhile, your competitor—with a middling model—has 12 pre-built integrations. It works with Salesforce, HubSpot, Marketo, and Slack. Buying their tool means it *just plugs in*.
+Meanwhile, a competitor with a middling model has twelve pre-built integrations — Salesforce, HubSpot, Marketo, Slack. Their tool just plugs in.
 
 Guess which one wins the enterprise deal?
 
+I've watched this dynamic play out repeatedly. At Waymo, the vehicle's intelligence matters enormously — but so does the integration layer that connects it to mapping, fleet management, rider apps, and city infrastructure. The system that plugs in cleanly scales. The one that requires custom engineering for every connection doesn't.
+
 ## Why this matters more than model quality
 
-For the last two years, every AI conversation was "which model is best?" That made sense when models were the only variable.
+For the last two years, every AI conversation was about which model is best. That made sense when the model was the only variable.
 
-But we're entering a different phase. The models are now basically good enough. Claude 3.5, GPT-4, Gemini 2—they're all capable. The differentiation moves elsewhere.
+We're entering a different phase. The models are good enough. Claude, GPT-4, Gemini — they're all capable. Differentiation is moving elsewhere.
 
-**It moves to integration.**
+It's moving to integration.
 
-Here's the pattern from every previous technology wave:
+The pattern repeats from every technology wave. TCP/IP wasn't the fastest protocol — it became the standard because everyone built on it. HTTP wasn't the most elegant — it powered the web because everything spoke it. REST APIs weren't perfect — they unified how systems communicate. OAuth was boring — it solved authentication at scale.
 
-- **TCP/IP**: Not the fastest protocol. But it became the standard because everyone built on top of it.
-- **HTTP**: Not the most elegant solution. But it powered the web because everything spoke it.
-- **REST APIs**: Not perfect. But they unified how systems talk to each other.
-- **OAuth**: Boring. But it solved authentication in a way that worked at scale.
+The common thread: the companies that owned the protocol didn't necessarily own the market, but they owned the gateway to it. The protocol sets the rules. Everything else negotiates with it.
 
-The common thread: **the companies that owned the protocol didn't necessarily own the market, but they owned the gateway to it.**
-
-The protocol sets the rules. Everything else has to negotiate with it.
-
-## Why AI makes this even more important
+## Why AI agents make this even more important
 
 In previous waves, the things integrating were passive. A database waits to be queried. An API waits for a request. They don't have agency.
 
-AI agents are different. They're semi-autonomous. They make decisions. They initiate actions. They negotiate terms.
+AI agents are different. They're semi-autonomous. They make decisions, initiate actions, negotiate terms. That creates new integration requirements:
 
-That creates new requirements for integration:
+**Authentication** — can I verify you are who you claim to be? **Trust** — if you ask my system to do something, can I be confident it won't cause damage? **Permissions** — what access should you have, and what requires human approval? **Error handling** — when something breaks, how do we recover gracefully?
 
-- **Authentication**: Can I verify you are who you claim to be?
-- **Trust**: If you ask me to do something, can I be confident it won't blow up my system?
-- **Permissions**: What access should you have? What requires human approval?
-- **Error handling**: When something breaks, how do we recover gracefully?
+In the old API world, your CRM answers questions. In the agent world, your CRM might execute a transaction. That's a fundamentally different category of integration risk.
 
-In the old API world, your CRM just answers questions. In the agent world, your CRM might actually execute a transaction. That's a different category of integration risk.
+The companies building protocols that solve these problems will own the plumbing. And in platform wars, the plumbing company often wins more than the application company.
 
-The companies that build protocols that solve these problems own the plumbing. And in platform wars, the plumbing company often wins more than the application company.
-
-## What this means for your product strategy
+## What this means for product strategy
 
 If you're building anything that other teams or systems will use:
 
-**Make yourself easy to connect to.** This is not a nice-to-have. This is competitive advantage.
+**Make yourself easy to connect to.** This isn't a nice-to-have. It's competitive advantage.
 
-Specifically:
-
-- **Document everything for machines, not just humans.** If your API is described only in a PDF, agents can't reason about it. Give them structured specifications—OpenAPI, GraphQL schemas, whatever the standard is.
-
-- **Build for non-human clients.** Your system authenticates users. Soon it needs to authenticate services. Plan for that.
-
-- **Invest in stable, predictable behavior.** The system integrating with you can't handle magic. It needs things to fail in obvious ways, not surprising ones.
-
-- **Design for delegation.** A human can override a decision. An agent calling your system needs to know in advance: what do I need approval for? What can I do autonomously?
+Document everything for machines, not just humans. If your API is described only in a PDF, agents can't reason about it — give them structured specifications. Build for non-human clients: your system authenticates users today, but soon it needs to authenticate services. Invest in stable, predictable behavior — systems integrating with you can't handle magic; they need obvious failure modes, not surprising ones. Design for delegation — an agent calling your system needs to know in advance what requires approval and what it can do autonomously.
 
 The companies that get this right become infrastructure. The ones that don't become islands.
 
-## Look at the real winners from mobile
+## The mobile parallel
 
-When the App Store launched, there were thousands of amazing apps. The ones that won weren't always the best-engineered. They were the ones with:
+When the App Store launched, thousands of apps competed. The winners weren't always the best-engineered. They were the ones with deep links, share extensions, and solid integrations with contacts, location, and photos.
 
-- Deep links (so other apps could launch them)
-- Share extensions (so they showed up in other workflows)
-- Solid integrations with contacts, location, photos
+Slack didn't win because its UX was best. It won because it integrated everything — email, GitHub, Jira, Google Drive, Stripe. You could live in Slack without leaving.
 
-Slack didn't win because its UX was best. It won because it integrated everything: email, GitHub, Jira, Google Drive, Stripe. You could live in Slack without leaving Slack.
-
-The same dynamic is now starting for AI. The tools that integrate everything become the surface you live in. The tools that don't integrate become specialized utilities—useful but limited.
+The same dynamic is starting for AI. The tools that integrate everything become the surface you live in. The tools that don't become specialized utilities — useful but limited.
 
 ## The practical move
 
-If you're a VP of Product:
+If you're a product leader: audit your integration story. How many systems can plug into yours? Invest in the boring plumbing — your marketing and engineering teams want new features, but the CEO wants a tool that doesn't require custom engineering. Think about your APIs like a product, not an afterthought. Plan for agent-first design — your next CRM customer might be an AI system, not a person.
 
-- **Audit your integration story.** How many systems can plug into yours right now? How many would want to?
+If you're evaluating vendors: ask about integration roadmap, not feature roadmap. Look for protocol thinking — does the vendor invest in standards, or force you into their ecosystem?
 
-- **Invest in the boring plumbing.** Your marketing team wants new features. Your engineering team wants new features. But the CEO wants the tool that doesn't require custom engineering to use.
-
-- **Think about your APIs like a product.** Most companies treat APIs as an afterthought. Build them like your main product.
-
-- **Plan for agent-first design.** The next CRM customer might be an AI system, not a person.
-
-If you're an executive evaluating vendors:
-
-- **Ask about integration roadmap, not feature roadmap.** How easy is it to plug this into my existing tools?
-
-- **Look for protocol thinking.** Does the vendor invest in standards, or do they force you into their ecosystem?
-
-The model is table stakes now. The protocol is competitive advantage.
+The model is table stakes. The protocol is competitive advantage.
 
 ---
 

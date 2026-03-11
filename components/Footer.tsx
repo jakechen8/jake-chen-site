@@ -14,7 +14,7 @@ export default function Footer() {
             Jake Chen
           </p>
           <p className="text-xs" style={{ color: 'var(--fg-subtle)' }}>
-            Autonomy · Trust · Systems
+            Strategy · AI · Builder
           </p>
           <p className="text-xs" style={{ color: 'var(--fg-subtle)' }}>
             &copy; {year}
@@ -24,9 +24,8 @@ export default function Footer() {
         <nav className="flex flex-wrap gap-5">
           {[
             { href: '/writing', label: 'Writing' },
-            { href: '/thinking', label: 'Thinking' },
+            { href: '/projects', label: 'Projects' },
             { href: '/about', label: 'About' },
-            { href: '/contact', label: 'Contact' },
             { href: 'https://linkedin.com/in/jiakechen', label: 'LinkedIn', external: true },
             { href: '/feed.xml', label: 'RSS', external: true },
           ].map(({ href, label, external }) => (

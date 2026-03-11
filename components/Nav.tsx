@@ -6,12 +6,9 @@ import ThemeToggle from './ThemeToggle'
 import clsx from 'clsx'
 
 const navLinks = [
-  { href: '/', label: 'Home' },
   { href: '/writing', label: 'Writing' },
-  { href: '/thinking', label: 'Thinking' },
-  { href: '/play', label: 'Play' },
+  { href: '/projects', label: 'Projects' },
   { href: '/about', label: 'About' },
-  { href: '/contact', label: 'Contact' },
 ]
 
 export default function Nav() {
@@ -38,10 +35,9 @@ export default function Nav() {
         </Link>
 
         {/* Desktop nav */}
-        <nav className="hidden items-center gap-6 sm:flex">
+        <nav className="hidden items-center gap-7 sm:flex">
           {navLinks.map(({ href, label }) => {
-            const isActive =
-              href === '/' ? pathname === '/' : pathname.startsWith(href)
+            const isActive = pathname.startsWith(href)
             return (
               <Link
                 key={href}
@@ -56,10 +52,11 @@ export default function Nav() {
               </Link>
             )
           })}
+          <ThemeToggle />
         </nav>
 
-        {/* Right: theme toggle + mobile menu */}
-        <div className="flex items-center gap-3">
+        {/* Mobile: theme toggle + menu */}
+        <div className="flex items-center gap-3 sm:hidden">
           <ThemeToggle />
           <MobileMenu pathname={pathname} />
         </div>
@@ -70,7 +67,7 @@ export default function Nav() {
 
 function MobileMenu({ pathname }: { pathname: string }) {
   return (
-    <div className="relative sm:hidden">
+    <div className="relative">
       <details className="group">
         <summary className="flex cursor-pointer list-none items-center rounded-md p-1.5 transition-colors hover:bg-[color:var(--border)]">
           <svg
@@ -95,8 +92,7 @@ function MobileMenu({ pathname }: { pathname: string }) {
           }}
         >
           {navLinks.map(({ href, label }) => {
-            const isActive =
-              href === '/' ? pathname === '/' : pathname.startsWith(href)
+            const isActive = pathname.startsWith(href)
             return (
               <Link
                 key={href}

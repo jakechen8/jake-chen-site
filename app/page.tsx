@@ -22,50 +22,15 @@ export default async function HomePage() {
     <div>
       {/* ── Hero ── */}
       <section className="relative overflow-hidden" style={{ background: 'var(--bg)' }}>
-        <div
-          className="hero-shape absolute -right-40 -top-40 h-[500px] w-[500px] rounded-full"
-          style={{ background: 'radial-gradient(circle, var(--accent-light) 0%, transparent 60%)' }}
-        />
+        {/* Signature gradient accent */}
+        <div className="accent-gradient-bar" />
 
-        <div className="mx-auto max-w-5xl px-5 sm:px-8">
-          <div className="relative z-10 grid items-center gap-10 py-24 sm:py-32 lg:grid-cols-[1fr_auto] lg:gap-16">
-            <div className="max-w-2xl">
-              <h1
-                className="font-display text-5xl font-normal leading-[1.1] tracking-tight sm:text-6xl"
-                style={{ color: 'var(--fg)' }}
-              >
-                Jake Chen
-              </h1>
-              <p
-                className="mt-4 text-lg leading-relaxed sm:text-xl"
-                style={{ color: 'var(--fg-muted)' }}
-              >
-                Strategy Lead at Waymo. I write about what happens when AI leaves the lab
-                &mdash; how it changes decisions, organizations, and the systems that run&nbsp;them.
-              </p>
-              <p
-                className="mt-3 text-sm"
-                style={{ color: 'var(--fg-subtle)' }}
-              >
-                Previously McKinsey, HubSpot, Microsoft. MBA from MIT&nbsp;Sloan.
-              </p>
-
-              <div className="mt-8 flex flex-wrap gap-3">
-                <Link href="/writing" className="btn-primary">
-                  Read my essays
-                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                    <line x1="2" y1="7" x2="12" y2="7" />
-                    <polyline points="8 3 12 7 8 11" />
-                  </svg>
-                </Link>
-                <Link href="/about" className="btn-ghost">About me</Link>
-              </div>
-            </div>
-
-            {/* Photo */}
-            <div className="hidden lg:block">
+        <div className="mx-auto max-w-4xl px-5 sm:px-8">
+          <div className="relative z-10 py-20 sm:py-28">
+            {/* Eyebrow */}
+            <div className="mb-6 flex items-center gap-3">
               <div
-                className="relative h-64 w-64 overflow-hidden rounded-2xl border-2 shadow-xl"
+                className="relative h-12 w-12 overflow-hidden rounded-full border-2"
                 style={{ borderColor: 'var(--border-strong)' }}
               >
                 <Image
@@ -76,57 +41,86 @@ export default async function HomePage() {
                   priority
                 />
               </div>
+              <div>
+                <p className="text-sm font-medium" style={{ color: 'var(--fg)' }}>
+                  Jake Chen
+                </p>
+                <p className="text-xs" style={{ color: 'var(--fg-subtle)' }}>
+                  Strategy Lead at Waymo
+                </p>
+              </div>
+            </div>
+
+            {/* Main headline */}
+            <h1
+              className="max-w-2xl font-display text-4xl font-normal leading-[1.1] tracking-tight sm:text-5xl lg:text-6xl"
+              style={{ color: 'var(--fg)' }}
+            >
+              I study what happens when AI
+              <span className="accent-text"> meets the real world.</span>
+            </h1>
+
+            <p
+              className="mt-5 max-w-xl text-lg leading-relaxed"
+              style={{ color: 'var(--fg-muted)' }}
+            >
+              How it reshapes decisions, organizations, and the systems that run them &mdash;
+              and what the best teams do differently. Previously McKinsey, HubSpot, Microsoft.
+              MIT&nbsp;Sloan&nbsp;MBA.
+            </p>
+
+            <div className="mt-8 flex flex-wrap gap-3">
+              <Link href="/writing" className="btn-primary">
+                Read my essays
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="2" y1="7" x2="12" y2="7" />
+                  <polyline points="8 3 12 7 8 11" />
+                </svg>
+              </Link>
+              <Link href="/projects" className="btn-ghost">Things I&apos;ve built</Link>
             </div>
           </div>
         </div>
         <div className="h-px" style={{ background: 'var(--border)' }} />
       </section>
 
-      <div className="mx-auto max-w-5xl px-5 sm:px-8">
-        {/* ── What I Write About ── */}
-        <section className="py-20 sm:py-24">
-          <div className="mb-10 max-w-lg">
-            <h2
-              className="font-display text-3xl font-normal tracking-tight sm:text-4xl"
-              style={{ color: 'var(--fg)' }}
+      <div className="mx-auto max-w-4xl px-5 sm:px-8">
+        {/* ── Now ── */}
+        <section className="py-16 sm:py-20">
+          <div className="mb-8 flex items-center gap-3">
+            <div className="now-indicator" />
+            <p
+              className="text-xs font-semibold uppercase tracking-widest"
+              style={{ color: 'var(--accent)' }}
             >
-              What I think about
-            </h2>
-            <p className="mt-3 text-base leading-relaxed" style={{ color: 'var(--fg-muted)' }}>
-              Not which model is best &mdash; but what changes when intelligence becomes cheap.
+              Now
             </p>
           </div>
-
-          <div className="grid gap-5 sm:grid-cols-3">
-            {[
-              {
-                title: 'Decisions & Coordination',
-                desc: 'When everyone can generate analysis on demand, the bottleneck moves from information to alignment. I write about how that shift plays out inside real organizations.',
-              },
-              {
-                title: 'Platforms & Distribution',
-                desc: 'The next platform war will be fought in protocols, not models. I think about how interoperability is quietly becoming the most important competitive advantage.',
-              },
-              {
-                title: 'Trust & Governance',
-                desc: 'Governance is not overhead &mdash; it\'s how you earn the right to automate. The companies that get this right will move fastest.',
-              },
-            ].map((pillar) => (
-              <div
-                key={pillar.title}
-                className="pillar-card group"
-              >
-                <h3
-                  className="mb-3 font-display text-lg font-normal tracking-tight"
-                  style={{ color: 'var(--fg)' }}
-                >
-                  {pillar.title}
-                </h3>
-                <p className="text-sm leading-relaxed" style={{ color: 'var(--fg-muted)' }}>
-                  {pillar.desc}
-                </p>
-              </div>
-            ))}
+          <div className="grid gap-6 sm:grid-cols-3">
+            <div className="now-card">
+              <p className="mb-1 text-xs font-medium uppercase tracking-wider" style={{ color: 'var(--fg-subtle)' }}>
+                Day job
+              </p>
+              <p className="text-sm leading-relaxed" style={{ color: 'var(--fg)' }}>
+                Leading strategy at <strong>Waymo</strong> — helping autonomous mobility scale from prototype to product.
+              </p>
+            </div>
+            <div className="now-card">
+              <p className="mb-1 text-xs font-medium uppercase tracking-wider" style={{ color: 'var(--fg-subtle)' }}>
+                Writing about
+              </p>
+              <p className="text-sm leading-relaxed" style={{ color: 'var(--fg)' }}>
+                AI governance as a growth function. Why protocols, not models, win platform wars. Trust in systems that can&apos;t explain themselves.
+              </p>
+            </div>
+            <div className="now-card">
+              <p className="mb-1 text-xs font-medium uppercase tracking-wider" style={{ color: 'var(--fg-subtle)' }}>
+                After hours
+              </p>
+              <p className="text-sm leading-relaxed" style={{ color: 'var(--fg)' }}>
+                Tinkering with code. Built an <Link href="/play" className="underline underline-offset-2 transition-colors hover:text-[color:var(--accent)]" style={{ color: 'var(--accent)' }}>AI-themed game</Link> and this site from scratch.
+              </p>
+            </div>
           </div>
         </section>
 
@@ -134,10 +128,10 @@ export default async function HomePage() {
 
         {/* ── Recent Writing ── */}
         {recentPosts.length > 0 && (
-          <section className="py-20 sm:py-24">
-            <div className="mb-10 flex items-end justify-between">
+          <section className="py-16 sm:py-20">
+            <div className="mb-8 flex items-end justify-between">
               <h2
-                className="font-display text-3xl font-normal tracking-tight"
+                className="font-display text-2xl font-normal tracking-tight sm:text-3xl"
                 style={{ color: 'var(--fg)' }}
               >
                 Recent essays
@@ -147,7 +141,7 @@ export default async function HomePage() {
                 className="flex items-center gap-1.5 text-sm font-medium transition-colors hover:text-[color:var(--accent)]"
                 style={{ color: 'var(--fg-muted)' }}
               >
-                View all
+                All writing
                 <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                   <line x1="2" y1="7" x2="12" y2="7" />
                   <polyline points="8 3 12 7 8 11" />
@@ -165,83 +159,20 @@ export default async function HomePage() {
 
         <div className="h-px" style={{ background: 'var(--border)' }} />
 
-        {/* ── Play ── */}
-        <section className="py-20 sm:py-24">
-          <div className="grid items-center gap-8 sm:grid-cols-[1fr_auto]">
-            <div>
-              <h2
-                className="mb-3 font-display text-3xl font-normal tracking-tight"
-                style={{ color: 'var(--fg)' }}
-              >
-                Play a game
-              </h2>
-              <p className="text-base leading-relaxed" style={{ color: 'var(--fg-muted)' }}>
-                I built an endless runner where you deploy an AI agent through bugs, firewalls,
-                and hallucinations. It gets faster. You will crash. Pick your difficulty.
-              </p>
-            </div>
-            <Link href="/play" className="btn-primary whitespace-nowrap">
-              Play AI Runner
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <polygon points="5 3 19 12 5 21 5 3" />
-              </svg>
-            </Link>
-          </div>
-        </section>
-
-        <div className="h-px" style={{ background: 'var(--border)' }} />
-
         {/* ── Subscribe ── */}
-        <section className="py-20 sm:py-24">
+        <section className="py-16 sm:py-20">
           <div className="mx-auto max-w-lg text-center">
             <h2
-              className="mb-3 font-display text-3xl font-normal tracking-tight"
+              className="mb-3 font-display text-2xl font-normal tracking-tight sm:text-3xl"
               style={{ color: 'var(--fg)' }}
             >
-              Stay in the loop
+              Join the conversation
             </h2>
-            <p className="mb-8 text-base leading-relaxed" style={{ color: 'var(--fg-subtle)' }}>
-              I send essays when they&apos;re ready. No spam, no schedule, just clear thinking on AI strategy.
+            <p className="mb-8 text-sm leading-relaxed" style={{ color: 'var(--fg-subtle)' }}>
+              I send essays when they&apos;re ready &mdash; clear thinking on AI strategy, governance,
+              and what actually changes when intelligent systems hit the real world. No spam, no schedule.
             </p>
             <EmailCapture compact />
-          </div>
-        </section>
-
-        <div className="h-px" style={{ background: 'var(--border)' }} />
-
-        {/* ── CTA ── */}
-        <section className="py-20 sm:py-24">
-          <div className="mx-auto max-w-xl text-center">
-            <h2
-              className="mb-4 font-display text-3xl font-normal tracking-tight"
-              style={{ color: 'var(--fg)' }}
-            >
-              Get in touch
-            </h2>
-            <p
-              className="mb-8 text-base leading-relaxed"
-              style={{ color: 'var(--fg-muted)' }}
-            >
-              If you&apos;re thinking about AI strategy, organizational coordination, or trust
-              infrastructure &mdash; I&apos;d like to hear from you.
-            </p>
-            <div className="flex flex-wrap justify-center gap-3">
-              <Link href="/contact" className="btn-primary">
-                Say hello
-                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                  <line x1="2" y1="7" x2="12" y2="7" />
-                  <polyline points="8 3 12 7 8 11" />
-                </svg>
-              </Link>
-              <a
-                href="https://linkedin.com/in/jiakechen"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="btn-ghost"
-              >
-                LinkedIn
-              </a>
-            </div>
           </div>
         </section>
       </div>

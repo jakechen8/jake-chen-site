@@ -27,6 +27,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://jake-chen.com'
 
+  const tagsParam = post.tags?.length
+    ? `&tags=${encodeURIComponent(post.tags.join(','))}`
+    : ''
+  const ogUrl = `/api/og?title=${encodeURIComponent(post.title)}&subtitle=${encodeURIComponent(post.excerpt || '')}${tagsParam}`
+
   return {
     title: post.title,
     description: post.excerpt,
@@ -39,7 +44,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       url: `${siteUrl}/writing/${post.slug}`,
       images: [
         {
-          url: `/api/og?title=${encodeURIComponent(post.title)}`,
+          url: ogUrl,
           width: 1200,
           height: 630,
         },
@@ -49,7 +54,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       card: 'summary_large_image',
       title: post.title,
       description: post.excerpt,
-      images: [`/api/og?title=${encodeURIComponent(post.title)}`],
+      images: [ogUrl],
     },
   }
 }

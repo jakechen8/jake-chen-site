@@ -284,5 +284,61 @@ h1, h2, h3, h4 {
   50% { opacity: 1; transform: scaleY(1); }
 }
 
+/* ---------- Signature Accent Bar ---------- */
+.accent-gradient-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent) 0%, #D97706 30%, #B45309 60%, transparent 100%);
+  opacity: 0.8;
+}
+.dark .accent-gradient-bar {
+  background: linear-gradient(90deg, #F59E0B 0%, #D97706 30%, #B45309 60%, transparent 100%);
+  opacity: 0.6;
+}
+
+/* ---------- Accent Text ---------- */
+.accent-text {
+  color: var(--accent);
+}
+
+/* ---------- Now Section ---------- */
+.now-indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+  animation: nowPulse 2s ease-in-out infinite;
+}
+@keyframes nowPulse {
+  0%, 100% { opacity: 0.5; transform: scale(0.9); }
+  50% { opacity: 1; transform: scale(1.1); }
+}
+.now-card {
+  padding: 1.25rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-strong);
+  background: var(--bg-warm);
+  transition: all var(--duration-fast) var(--ease-out);
+}
+.now-card:hover {
+  border-color: var(--accent);
+  box-shadow: var(--shadow-sm);
+}
+
+/* ---------- Project Cards ---------- */
+.project-card {
+  transition: all var(--duration-fast) var(--ease-out);
+  background: var(--white);
+}
+.dark .project-card { background: var(--bg-warm); }
+.project-card:hover {
+  border-color: var(--accent) !important;
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
 @media (max-width: 767px) { .hero-shape { display: none; } }
 @media print { body { font-size: 12pt; color: #000; } .btn-primary, .btn-ghost { display: none !important; } }

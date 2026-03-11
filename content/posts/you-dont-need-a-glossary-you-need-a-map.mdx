@@ -1,321 +1,117 @@
 ---
 title: "You Don't Need a Glossary. You Need a Map."
 date: "2025-06-10"
-excerpt: "You can deploy working code before you understand the codebase. The skill isn't memorizing terms—it's knowing which mental model to apply."
+excerpt: "I'm a strategy person who learned to code. Here's the mental model that made modern codebases legible — and why I think every founder needs it."
 tags: ["Software", "Vibe Coding", "Developer Experience"]
 published: true
 ---
 
-Your marketing manager just shipped a landing page redesign without ever opening a terminal.
+I spent the first decade of my career in strategy — McKinsey, then Waymo. I was the person who built the business case, not the product. Code was someone else's job.
 
-Three months ago, that was impossible. Today, it's normal.
+Then I started building side projects. I wanted to understand not just what could be built, but how. Not because I was trying to become a full-time engineer, but because I realized that a founder who can't read code is like a CEO who can't read a P&L. You can delegate the work, but you can't delegate the judgment.
 
-They don't fully understand the codebase. They can't explain how the build system works. They probably don't know what a `tsconfig.json` does.
+That decision changed how I think about products, architecture, and what's actually hard versus what just sounds hard.
 
-But they can make changes. Changes work. Changes ship.
+But getting there required something most tutorials skip: a mental model for why modern codebases look the way they do.
 
-**That's the asymmetry of modern software: execution got faster than literacy.**
+## The asymmetry of modern software
 
-But here's the problem: they hit a wall the moment they need to understand what's happening.
+Your marketing manager just shipped a landing page redesign without opening a terminal. Three months ago, that was impossible. Today it's normal.
 
-Open a modern web project and you see: `app/`, `layout.tsx`, `route.ts`, `components/`, `lib/`, `.env.local`, `package-lock.json`, Tailwind classes, `localhost:3000`, GitHub Actions. It's a wall of nouns. It feels like you need a glossary.
+They don't fully understand the codebase. They can't explain the build system. They probably don't know what a `tsconfig.json` does. But they can make changes, and those changes ship.
 
-You don't.
+That's the asymmetry: **execution got faster than literacy.** Tools like Cursor, Vercel, and AI copilots let you deploy code before you understand it. Powerful — until you hit a wall and need to know what's actually happening.
 
-**You need a mental model. A map. A way to think about why the nouns exist at all.**
+Open a modern web project and you see: `app/`, `layout.tsx`, `route.ts`, `components/`, `lib/`, `.env.local`, `package-lock.json`, Tailwind classes, `localhost:3000`, GitHub Actions. It feels like you need a glossary of 200 terms.
 
-Most explanations make this worse. They either dump 50 definitions on you (which doesn't help) or tell you "don't worry, you'll get it eventually" (which is false).
-
-The thing is: modern repos aren't random. They follow a few stable patterns. Once you see those patterns, the vocabulary stops feeling like trivia and starts feeling like structure.
-
-> You don't need to memorize every noun. You need a framework that explains why the nouns exist.
+You don't. You need a map — a way to think about why these things exist at all.
 
 ## Three questions that make any repo legible
 
-When I open an unfamiliar codebase, I ask three simple questions:
+When I open an unfamiliar codebase, I ask three questions:
 
-**1. Where does this run?** Browser? Server? During the build?
+**Where does this run?** Browser? Server? During the build?
 
-**2. Why is this file special?** Does another file import it, or does the framework discover it by name?
+**Why is this file special?** Does another file import it, or does the framework discover it automatically by name?
 
-**3. What type of file is it?** Route? Component? Style? Helper? Config? Secret? Generated output?
+**What type of file is it?** Route? Component? Style? Helper? Config? Secret? Generated output?
 
 Answer those three and the repo stops being a mystery. It becomes a system you can navigate.
 
-Most explanations skip this framework and go straight to vocabulary. That's backward.
+This is the framework I wish someone had given me when I first started reading code. Every tutorial I found dumped vocabulary. What I needed was structure.
 
-## Core insight #1: A website repo is three systems, not one
+## A website repo is three systems, not one
 
-This is the foundational thing most explanations get wrong.
+This is the foundational insight most explanations get wrong. A modern web project isn't one program. It's three:
 
-A modern web project isn't one program. It's three:
+**Browser code** — what runs in the user's browser. Clicks, forms, state, animations, DOM manipulation. Client-side interactivity.
 
-**Browser code** = what runs in the user's browser. Clicks. Forms. State. DOM. Animations. Client-side interactivity.
+**Server code** — what runs on your machine or hosting provider. Database access, secret keys, authentication, API logic. Sometimes the initial page render.
 
-**Server code** = what runs on your machine. Database access. Secret keys. Authentication. API logic. Sometimes the initial page render.
+**Build/tooling code** — what runs during deployment. Compiles TypeScript, bundles modules, optimizes assets, runs tests. Produces the shippable version.
 
-**Build/tooling code** = what runs during deployment. Compiles TypeScript. Bundles modules. Optimizes assets. Runs tests. Produces the shippable version.
+That's why these projects feel complex: you're coordinating three separate runtime environments in a single folder.
 
-That's why these projects feel complex. You're coordinating three separate systems.
+Once you know that, confusing terms clarify immediately. `localhost:3000` is the development server (server layer). `.env.local` is secret configuration (server layer). `npm run build` compiles everything for production (tooling layer).
 
-Once you know that, confusing terms become clear:
+The vocabulary only makes sense once you know which layer it belongs to.
 
-- `localhost:3000` = the development server running on your machine (server code layer)
-- `.env.local` = configuration that stays secret, not in git (server layer)
-- `npm run build` = "compile everything into production-ready code" (tooling layer)
-- `localhost:3000/api/users` = "the local development server responding to API requests" (server layer)
-
-The vocabulary only makes sense once you know what layer it belongs to.
-
-**The move:** Whenever you see a new term, ask first: "which layer does this belong to?" Usually the answer clarifies everything else.
-
-## Core insight #2: Some files are imported. Others are discovered by the framework.
+## Imported files vs. discovered files
 
 This distinction matters more than most explanations acknowledge.
 
-**Imported files**: Normal modules. Someone's code imports them. Remove the import, the file does nothing.
+**Imported files** are normal modules — someone's code explicitly imports them. Remove the import, the file does nothing. Example: `components/Button.tsx`.
 
-Example: `components/Button.tsx`
+**Convention files** are discovered by the framework automatically based on name or location. You never import them. The framework just knows. Example: `app/page.tsx` in Next.js — the framework sees a `page.tsx` in the `app/` directory and makes it a route.
 
-```tsx
-import Button from "@/components/Button"
-```
+This distinction is the source of most "magic" in modern frameworks. If renaming a file breaks the app even though nothing imports it, you've hit framework discovery. Understanding this turned codebases from mystical to mechanical for me.
 
-This is straightforward. The file is special because code uses it.
+## All files fit into a few standard buckets
 
-**Convention files**: The framework looks for them by name or location. You don't import them. The framework discovers them automatically.
+Stop categorizing files one by one. Recognize patterns:
 
-Example: `app/page.tsx` in Next.js
+**Routes and pages** — what becomes a URL. `app/page.tsx`, `app/blog/[slug]/page.tsx`, `route.ts`, `layout.tsx`.
 
-You never write `import page from "app/page"`. The framework just knows: "If there's a `page.tsx` in the `app/` directory, that becomes a route."
+**Components** — reusable UI elements. `Button.tsx`, `Navbar.tsx`, `Card.tsx`.
 
-This is the distinction that makes modern repos feel magical. If you rename a convention file and the app breaks—even though nothing imports it—you've hit framework discovery.
+**Styles** — CSS and design. `globals.css`, Tailwind utility classes inline.
 
-**Quick rule:** If a file's importance depends on its name or location rather than whether something imports it, it's probably a convention file. And convention files are usually where the framework orchestration happens.
+**Helpers and hooks** — business logic and connective tissue. `lib/utils.ts`, `lib/api.ts`, `hooks/useUser.ts`.
 
-This is why the file tree isn't random. It's convention all the way down. Frameworks are opinionated about where things go, and that opinion is usually the source of "magic" that feels confusing.
+**Assets** — static files served as-is. `public/logo.svg`, `favicon.ico`.
 
-## Core insight #3: All files fit into a few standard buckets
+**Config and dependencies** — project instructions. `package.json`, `next.config.ts`, `tsconfig.json`.
 
-Stop categorizing files one by one. Start recognizing patterns.
+**Secrets and generated files** — `.env.local` (never commit), `node_modules/` and `.next/` (never hand-edit).
 
-Almost every modern web project contains files from these categories:
+Start with `package.json` — it tells you the framework, scripts, and overall shape immediately.
 
-### Routes and pages
+## Why this matters for founders
 
-What becomes a URL. What the server sends when that URL is hit.
+I'm building toward starting a company. And the single biggest upgrade to my judgment as a future founder has been learning to read code — not write it from scratch, but read it well enough to evaluate architecture decisions, understand tradeoffs, and have real conversations with engineers.
 
-Examples: `app/page.tsx` (homepage), `app/blog/[slug]/page.tsx` (dynamic blog post routes), `route.ts` (API endpoint), `layout.tsx` (wrapper for multiple pages)
+A strategy person who can read a codebase can spot when a technical decision is driven by convenience rather than the right architecture. They can evaluate whether a vendor's "proprietary platform" is actually just a wrapper around open-source tools. They can tell when an engineering estimate is conservative versus when the problem is genuinely hard.
 
-**Why they matter:** These files are how requests get routed and what gets returned.
+You don't need to be a full-time engineer. You need enough literacy to be a credible technical decision-maker. The three-question framework above is how I built that literacy.
 
-### Components
+## The five-minute repo walkthrough
 
-Reusable UI elements.
+When I'm evaluating a codebase — my own or someone else's — I use this sequence:
 
-Examples: `Button.tsx`, `Navbar.tsx`, `Card.tsx`, `Form.tsx`
+1. Open `package.json`. What framework? What scripts? What's the basic shape?
+2. Find the entry point. Look for `app/`, `pages/`, `src/`, or `index.html`.
+3. Find the components. Open `components/` and see what reusable pieces exist.
+4. Find the styles. `globals.css`? Or Tailwind inline?
+5. Run the app and change something small. Change a headline. Get one successful feedback loop before attempting anything structural.
 
-**Why they matter:** These are the building blocks. Routes and pages compose them.
-
-### Styles
-
-The CSS and design decisions.
-
-Examples: `globals.css`, `button.module.css`, or Tailwind class strings in JSX
-
-**Why they matter:** Appearance, layout, responsiveness, states like hover/focus.
-
-### Helpers, utilities, and hooks
-
-The business logic and connective tissue.
-
-Examples: `lib/utils.ts`, `lib/api.ts`, `hooks/useUser.ts`, `lib/db.ts`
-
-**Why they matter:** Database queries, API calls, data fetching, reusable logic that components need but shouldn't contain directly.
-
-### Assets
-
-Static files served as-is.
-
-Examples: `public/logo.svg`, `favicon.ico`, `hero.jpg`, `robots.txt`
-
-**Why they matter:** Images, icons, documents—things the browser requests directly.
-
-### Config and dependencies
-
-Project instructions and dependencies.
-
-Examples: `package.json` (what to install, what scripts to run), `next.config.ts` (framework settings), `tsconfig.json` (TypeScript rules), `eslint.config.js` (code style rules)
-
-**Why they matter:** These tell the build system and framework how to run the project.
-
-### Secrets and generated files
-
-Two categories that confuse beginners:
-
-**Secrets** = `.env.local`, `.env`, `.secrets`. API keys, database URLs, tokens. **Never commit these.**
-
-**Generated files** = `node_modules/`, `.next/`, `dist/`. Created by the build tool or package manager. **Don't hand-edit these.**
-
-**Why they matter:** Secrets are your security perimeter. Generated files are the compiled output. Don't confuse them.
-
-> Start with `package.json`. It tells you the framework, scripts, and project shape immediately.
-
-## The Tailwind thing (because it always confuses people)
-
-Tailwind shows up in every modern codebase and everyone's confused by it.
-
-**What it is:** Utility CSS. Instead of writing separate CSS files, you write CSS class names directly in the HTML.
-
-Old way:
-
-```html
-<button class="primary-button">Buy now</button>
-```
-```css
-.primary-button { padding: 8px 16px; background: black; color: white; }
-```
-
-Tailwind way:
-
-```html
-<button class="rounded-full bg-black px-4 py-2 text-sm text-white hover:opacity-90 md:px-5">
-  Buy now
-</button>
-```
-
-Looks messy. But it's just a list of style decisions:
-
-- `rounded-full` = fully rounded
-- `bg-black` = black background
-- `px-4 py-2` = padding
-- `text-sm text-white` = small white text
-- `hover:opacity-90` = on hover, reduce opacity
-- `md:px-5` = on medium screens and up, adjust padding
-
-The prefixes (`hover:`, `md:`) are just conditions. Once you see that, Tailwind stops being magic. It's just CSS written inline instead of in a separate file.
-
-**The move:** Learn to read Tailwind class strings as a sentence, not as random gibberish. Each class is one style decision.
-
-## What's safe to edit (and what isn't)
-
-Most repositories become way less scary once someone tells you what you can safely change.
-
-Think in three zones:
-
-### Green zone (almost always safe)
-
-- Copy and headings
-- Component markup
-- Tailwind class strings
-- CSS values
-- Images and icons
-- Markdown content
-
-This is 80% of "improve the site" work.
-
-### Yellow zone (deliberate editing)
-
-- `layout.tsx`, `page.tsx` (routing structure)
-- `route.ts` (API endpoints)
-- `.env.local` (secrets—be careful!)
-- `next.config.ts`, `tsconfig.json` (project configuration)
-- Auth or database helpers
-
-Not forbidden. Just affects routing, build, or secrets. Edit intentionally.
-
-### Red zone (leave it alone)
-
-- `node_modules/` (dependency code)
-- `.next/`, `dist/` (generated output)
-- Lockfiles (dependency versions)
-- Anything generated by the build tool
-
-If you're editing generated files to "fix" something, you're patching the wrong layer. Fix the source.
-
-## The five-step repo walkthrough
-
-If I'm onboarding someone into a new codebase, I use this sequence:
-
-1. **Open `package.json`.** What framework? What scripts? What's the basic shape?
-
-2. **Find the entry point.** Look for `app/`, `pages/`, `src/`, or `index.html`. This is where requests land.
-
-3. **Find the components.** Open `components/` folder. See what reusable UI pieces exist.
-
-4. **Find the styles.** Is there `globals.css`? Or are they using Tailwind in the components themselves?
-
-5. **Run the app and change something small.** Change a headline. Update an image. Add spacing. Get one successful feedback loop before you try anything architectural.
-
-This takes 15 minutes. By the end, the repo stops feeling abstract and becomes navigable.
-
-## Terminal and Git (demystified)
-
-### Terminal basics
-
-The terminal is just a text interface for your computer.
-
-- `pwd` = "where am I?"
-- `ls` = "what's in this folder?"
-- `cd` = "change folder"
-- `npm install` = "install dependencies"
-- `npm run dev` = "start the local server"
-- `localhost:3000` = "the server is running on my machine, port 3000"
-
-### Git basics
-
-Git tracks your code history.
-
-- **Repo** = your project with history
-- **Commit** = a save point (with a message describing what changed)
-- **Branch** = a parallel line of work (so you don't break main)
-- **Pull request** = "merge my branch into main" (with review)
-- **GitHub Actions** = automated checks (build, test, deploy)
-
-That's the entire mental model. Everything else is just details.
-
-## AI prompts that actually work
-
-Most bad AI help on codebases comes from vague questions. Better prompts = better results.
-
-### "Explain this file"
-
-> Explain this file in plain English. Tell me: (1) which layer does it run in—browser, server, or build step? (2) What does it do? (3) What would break if I changed it carelessly? (4) Is it safe for a beginner to edit?
-
-### "Make the smallest change"
-
-> I want to [describe what you want to change]. Don't code yet. First tell me: the exact files to change, why each file matters, what could accidentally break, how to undo it if wrong. Optimize for safest, not fanciest.
-
-### "Find the real error"
-
-> This [terminal output / CI log] failed. Tell me: what's the first real error (not the cascade)? What likely caused it? What file or command to check next? How confident are you?
-
-These work because they ask for structure and risk awareness, not just code.
-
-## The real shift
-
-Here's the thing: modern software tooling lets non-engineers edit code and ship it.
-
-That's powerful. It's also created a literacy gap—not in talent, but in mental models.
-
-You don't need everyone to be a frontend engineer. You need better compression of how these systems work.
-
-A modern web repo has only a few stable patterns:
-
-- **Where does it run?** (Browser / server / build)
-- **How is it special?** (Imported vs. discovered)
-- **What type is it?** (Route, component, style, helper, config, secret, generated)
-
-Answer those three questions and the repo stops being a mystery. It becomes navigable.
-
-That's the map. And a map is all you need to make changes with confidence.
+Fifteen minutes. After that, the repo stops being abstract and becomes navigable.
 
 ## Test your map
 
-Think you've got it? Try the Repo Decoder—eight quick questions to see if this framework has clicked.
+Think you've got it? Try the Repo Decoder — eight quick questions to see if this framework has clicked.
 
 <RepoDecoder />
 
 ---
 
-*Let me know if this framework changed how you see codebases—especially what still doesn't click.*
+*If you're a non-engineer who learned to read code and it changed your work, I'd like to hear how. This is a skill I think more strategy and business people should invest in.*

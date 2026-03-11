@@ -8,7 +8,10 @@ export async function GET(req: NextRequest) {
   const title = searchParams.get('title') || 'Jake Chen'
   const subtitle =
     searchParams.get('subtitle') ||
-    'Building autonomous systems at Waymo. Writing about trust, autonomy, and AI.'
+    'Strategy lead at Waymo. Writing about AI systems, trust, and the infrastructure that makes autonomy work.'
+  const tags = searchParams.get('tags')?.split(',').filter(Boolean) || []
+
+  const isHomepage = title === 'Jake Chen'
 
   return new ImageResponse(
     (
@@ -17,113 +20,309 @@ export async function GET(req: NextRequest) {
           width: '1200px',
           height: '630px',
           display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'space-between',
-          padding: '72px 80px',
-          backgroundColor: '#09090B',
-          fontFamily: 'Georgia, serif',
+          position: 'relative',
+          overflow: 'hidden',
+          backgroundColor: '#0A0A0F',
         }}
       >
-        {/* Top accent bar */}
+        {/* Background gradient mesh */}
+        <div
+          style={{
+            position: 'absolute',
+            top: '-120px',
+            right: '-80px',
+            width: '700px',
+            height: '700px',
+            borderRadius: '50%',
+            background:
+              'radial-gradient(circle, rgba(37,99,235,0.15) 0%, rgba(37,99,235,0.05) 40%, transparent 70%)',
+            display: 'flex',
+          }}
+        />
+        <div
+          style={{
+            position: 'absolute',
+            bottom: '-200px',
+            left: '-100px',
+            width: '600px',
+            height: '600px',
+            borderRadius: '50%',
+            background:
+              'radial-gradient(circle, rgba(99,102,241,0.1) 0%, rgba(99,102,241,0.03) 40%, transparent 70%)',
+            display: 'flex',
+          }}
+        />
+
+        {/* Subtle grid pattern overlay */}
+        <div
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundImage:
+              'linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px)',
+            backgroundSize: '60px 60px',
+            display: 'flex',
+          }}
+        />
+
+        {/* Top accent line */}
+        <div
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: '80px',
+            right: '80px',
+            height: '3px',
+            background:
+              'linear-gradient(90deg, #2563EB 0%, #6366F1 50%, transparent 100%)',
+            display: 'flex',
+          }}
+        />
+
+        {/* Content container */}
         <div
           style={{
             display: 'flex',
-            alignItems: 'center',
-            gap: '12px',
+            flexDirection: 'column',
+            justifyContent: 'space-between',
+            padding: '64px 80px 56px',
+            width: '100%',
+            position: 'relative',
           }}
         >
-          <div
-            style={{
-              width: '32px',
-              height: '2px',
-              backgroundColor: '#2563EB',
-            }}
-          />
-          <span
-            style={{
-              fontSize: '13px',
-              fontFamily: 'system-ui, sans-serif',
-              color: '#60A5FA',
-              letterSpacing: '0.12em',
-              textTransform: 'uppercase',
-            }}
-          >
-            Jake Chen
-          </span>
-        </div>
-
-        {/* Main content */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-          <div
-            style={{
-              fontSize: title.length > 60 ? '44px' : '56px',
-              lineHeight: '1.15',
-              color: '#FAFAFA',
-              fontWeight: 400,
-              letterSpacing: '-0.02em',
-              maxWidth: '900px',
-            }}
-          >
-            {title}
-          </div>
-
-          {subtitle && (
+          {/* Top section - name badge */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+            {/* Monogram circle */}
             <div
               style={{
-                fontSize: '22px',
-                color: '#A1A1AA',
-                lineHeight: '1.5',
+                width: '44px',
+                height: '44px',
+                borderRadius: '22px',
+                background: 'linear-gradient(135deg, #2563EB, #6366F1)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '18px',
+                fontWeight: 600,
+                color: '#FFFFFF',
                 fontFamily: 'system-ui, sans-serif',
-                fontWeight: 300,
-                maxWidth: '800px',
               }}
             >
-              {subtitle}
+              JC
             </div>
-          )}
-        </div>
-
-        {/* Bottom */}
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            borderTop: '1px solid #27272A',
-            paddingTop: '24px',
-          }}
-        >
-          <span
-            style={{
-              fontSize: '15px',
-              color: '#71717A',
-              fontFamily: 'system-ui, sans-serif',
-            }}
-          >
-            jake-chen.com
-          </span>
-          <div
-            style={{
-              display: 'flex',
-              gap: '8px',
-            }}
-          >
-            {['Trust', 'Autonomy', 'AI Systems'].map((tag) => (
-              <div
-                key={tag}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+              <span
                 style={{
-                  padding: '4px 12px',
-                  borderRadius: '100px',
-                  border: '1px solid #27272A',
+                  fontSize: '15px',
+                  fontWeight: 600,
+                  color: '#E4E4E7',
+                  fontFamily: 'system-ui, sans-serif',
+                  letterSpacing: '0.01em',
+                }}
+              >
+                Jake Chen
+              </span>
+              <span
+                style={{
                   fontSize: '12px',
                   color: '#71717A',
                   fontFamily: 'system-ui, sans-serif',
-                  letterSpacing: '0.06em',
+                  letterSpacing: '0.02em',
                 }}
               >
-                {tag}
+                jake-chen.com
+              </span>
+            </div>
+          </div>
+
+          {/* Main title area */}
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '20px',
+              maxWidth: '960px',
+            }}
+          >
+            <div
+              style={{
+                fontSize: isHomepage
+                  ? '72px'
+                  : title.length > 60
+                  ? '42px'
+                  : title.length > 40
+                  ? '48px'
+                  : '54px',
+                lineHeight: isHomepage ? '1.05' : '1.18',
+                color: '#FAFAFA',
+                fontWeight: isHomepage ? 700 : 600,
+                letterSpacing: '-0.03em',
+                fontFamily: 'Georgia, serif',
+              }}
+            >
+              {title}
+            </div>
+
+            {subtitle && (
+              <div
+                style={{
+                  fontSize: '20px',
+                  color: '#A1A1AA',
+                  lineHeight: '1.55',
+                  fontFamily: 'system-ui, sans-serif',
+                  fontWeight: 400,
+                  maxWidth: '780px',
+                  letterSpacing: '0.005em',
+                }}
+              >
+                {subtitle}
               </div>
-            ))}
+            )}
+          </div>
+
+          {/* Bottom bar */}
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              borderTop: '1px solid rgba(255,255,255,0.08)',
+              paddingTop: '24px',
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+              {/* Credential pills */}
+              {isHomepage ? (
+                <>
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '6px',
+                      padding: '6px 14px',
+                      borderRadius: '8px',
+                      background: 'rgba(37,99,235,0.12)',
+                      border: '1px solid rgba(37,99,235,0.2)',
+                    }}
+                  >
+                    <span
+                      style={{
+                        fontSize: '13px',
+                        color: '#93C5FD',
+                        fontFamily: 'system-ui, sans-serif',
+                        fontWeight: 500,
+                      }}
+                    >
+                      Waymo
+                    </span>
+                  </div>
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '6px',
+                      padding: '6px 14px',
+                      borderRadius: '8px',
+                      background: 'rgba(255,255,255,0.05)',
+                      border: '1px solid rgba(255,255,255,0.08)',
+                    }}
+                  >
+                    <span
+                      style={{
+                        fontSize: '13px',
+                        color: '#A1A1AA',
+                        fontFamily: 'system-ui, sans-serif',
+                        fontWeight: 500,
+                      }}
+                    >
+                      AI Strategy
+                    </span>
+                  </div>
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '6px',
+                      padding: '6px 14px',
+                      borderRadius: '8px',
+                      background: 'rgba(255,255,255,0.05)',
+                      border: '1px solid rgba(255,255,255,0.08)',
+                    }}
+                  >
+                    <span
+                      style={{
+                        fontSize: '13px',
+                        color: '#A1A1AA',
+                        fontFamily: 'system-ui, sans-serif',
+                        fontWeight: 500,
+                      }}
+                    >
+                      Builder
+                    </span>
+                  </div>
+                </>
+              ) : (
+                // Article tags
+                tags.slice(0, 3).map((tag) => (
+                  <div
+                    key={tag}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      padding: '6px 14px',
+                      borderRadius: '8px',
+                      background: 'rgba(255,255,255,0.05)',
+                      border: '1px solid rgba(255,255,255,0.08)',
+                    }}
+                  >
+                    <span
+                      style={{
+                        fontSize: '13px',
+                        color: '#A1A1AA',
+                        fontFamily: 'system-ui, sans-serif',
+                        fontWeight: 500,
+                      }}
+                    >
+                      {tag.trim()}
+                    </span>
+                  </div>
+                ))
+              )}
+            </div>
+
+            {/* Right side - decorative accent */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <div
+                style={{
+                  width: '6px',
+                  height: '6px',
+                  borderRadius: '3px',
+                  backgroundColor: '#2563EB',
+                  display: 'flex',
+                }}
+              />
+              <div
+                style={{
+                  width: '6px',
+                  height: '6px',
+                  borderRadius: '3px',
+                  backgroundColor: '#6366F1',
+                  display: 'flex',
+                }}
+              />
+              <div
+                style={{
+                  width: '6px',
+                  height: '6px',
+                  borderRadius: '3px',
+                  backgroundColor: '#818CF8',
+                  display: 'flex',
+                }}
+              />
+            </div>
           </div>
         </div>
       </div>

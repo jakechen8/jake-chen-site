@@ -15,8 +15,8 @@ export const metadata: Metadata = {
     template: '%s | Jake Chen',
   },
   description:
-    'Exploring how autonomous systems move from code into the physical world — and the trust infrastructure required to make them scale.',
-  keywords: ['Jake Chen', 'AI strategy', 'autonomous systems', 'AI trust', 'autonomy', 'governance', 'infrastructure', 'AI coordination', 'vibe coding', 'agent protocols', 'AI governance', 'Waymo strategy'],
+    'Strategy lead at Waymo. Writing about AI systems, trust, governance, and the infrastructure that makes autonomy work.',
+  keywords: ['Jake Chen', 'AI strategy', 'autonomous systems', 'Waymo', 'AI trust', 'autonomy', 'governance', 'infrastructure', 'AI coordination', 'agent protocols', 'AI governance', 'founder'],
   authors: [{ name: 'Jake Chen', url: siteUrl }],
   creator: 'Jake Chen',
   openGraph: {
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
     url: siteUrl,
     title: 'Jake Chen',
     description:
-      'Exploring how autonomous systems move from code into the physical world — and the trust infrastructure required to make them scale.',
+      'Strategy lead at Waymo. Writing about AI systems, trust, governance, and the infrastructure that makes autonomy work.',
     siteName: 'Jake Chen',
     images: [
       {
@@ -39,7 +39,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'Jake Chen',
-    description: 'Exploring how autonomous systems move from code into the physical world — and the trust infrastructure required to make them scale.',
+    description: 'Strategy lead at Waymo. Writing about AI systems, trust, governance, and the infrastructure that makes autonomy work.',
     images: ['/api/og'],
   },
   robots: {

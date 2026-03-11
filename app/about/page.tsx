@@ -3,7 +3,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 
 export const metadata: Metadata = {
-  title: 'About — Jake Chen',
+  title: 'About',
   description: 'Jake Chen — Strategy Lead at Waymo. 15+ years across McKinsey, HubSpot, Microsoft, and Deloitte. MIT Sloan MBA.',
 }
 
@@ -34,8 +34,8 @@ export default function AboutPage() {
               Jake Chen
             </h1>
             <p className="text-lg leading-relaxed" style={{ color: 'var(--fg-muted)' }}>
-              Strategy Lead at Waymo. I think about what happens when AI leaves the lab &mdash;
-              how it changes decisions, organizations, and the systems that run&nbsp;them.
+              Strategy Lead at Waymo. I spend my days figuring out what happens when AI meets
+              the real world &mdash; and my evenings writing about it and building&nbsp;things.
             </p>
           </div>
         </div>
@@ -63,6 +63,19 @@ export default function AboutPage() {
           <p>
             The thread across 15+ years: understanding how complex systems create
             and capture value &mdash; and what breaks when they scale.
+          </p>
+          <p>
+            Outside of work, I{' '}
+            <Link
+              href="/projects"
+              className="underline underline-offset-2 transition-colors hover:text-[color:var(--accent)]"
+              style={{ color: 'var(--accent)' }}
+            >
+              write code and build things
+            </Link>{' '}
+            for fun. I find that staying close to the craft &mdash; building a game,
+            designing a site, tinkering with new frameworks &mdash; makes me a sharper
+            strategist and a better collaborator with technical teams.
           </p>
           <p>
             I hold an MBA from{' '}
@@ -113,21 +126,27 @@ export default function AboutPage() {
 
         <div className="h-px" style={{ background: 'var(--border)' }} />
 
-        {/* Connect */}
-        <div className="py-16 text-center">
+        {/* Contact section — merged from /contact */}
+        <div className="py-16" id="contact">
           <h2
             className="mb-4 font-display text-2xl font-normal tracking-tight"
             style={{ color: 'var(--fg)' }}
           >
-            Get in touch
+            Say hello
           </h2>
-          <p className="mb-6 text-base" style={{ color: 'var(--fg-muted)' }}>
-            Always happy to connect with people thinking about AI, strategy, and what comes next.
+          <p className="mb-6 max-w-lg text-base leading-relaxed" style={{ color: 'var(--fg-muted)' }}>
+            I&apos;m always happy to connect with people thinking about AI, strategy, and how
+            technology actually changes the way organizations work. Drop me a note anytime.
           </p>
-          <div className="flex flex-wrap justify-center gap-3">
-            <Link href="/contact" className="btn-primary">
-              Say hello
-            </Link>
+
+          <div className="flex flex-wrap gap-3">
+            <a href="mailto:hello@jake-chen.com" className="btn-primary">
+              hello@jake-chen.com
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="2" y1="7" x2="12" y2="7" />
+                <polyline points="8 3 12 7 8 11" />
+              </svg>
+            </a>
             <a
               href="https://linkedin.com/in/jiakechen"
               target="_blank"
