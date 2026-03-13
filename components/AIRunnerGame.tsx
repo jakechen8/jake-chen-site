@@ -62,12 +62,72 @@ interface Obstacle {
   flying: boolean
 }
 
+// Fun obstacle labels — rotates through these for variety
+const GROUND_OBSTACLE_POOL: { type: Obstacle['type']; labels: string[] }[] = [
+  { type: 'bug', labels: ['OFF-BY-ONE', 'RACE COND.', 'NULL PTR', 'SEG FAULT', 'MEM LEAK', 'TYPE ERR'] },
+  { type: 'firewall', labels: ['CORP PROXY', 'RATE LIMIT', 'AUTH WALL', '403', 'BLOCKED'] },
+  { type: 'latency', labels: ['999ms', 'TIMEOUT', 'COLD START', 'BUFFERING', 'RETRY #47'] },
+  { type: 'hallucination', labels: ['MADE UP', 'SO WRONG', 'FAKE REF', '"ACTUALLY"', 'TRUST ME'] },
+]
+
+const FLYING_OBSTACLE_POOL: { type: Obstacle['type']; labels: string[] }[] = [
+  { type: 'cloud', labels: ['VAPORWARE', 'BUZZWORD', '"AI-NATIVE"', 'GPT WRAPPER', 'HYPE CLOUD'] },
+  { type: 'overfit', labels: ['OVERFIT', 'MEMO LEAK', 'TRAIN BLEED', 'CHERRY PICK'] },
+  { type: 'leak', labels: ['PII LEAK', 'DATA SPILL', 'INJECT', 'EXFIL'] },
+]
+
+// Witty death messages per obstacle type
+const DEATH_MESSAGES: Record<Obstacle['type'], string[]> = {
+  bug: [
+    'Classic. The bug was in production the whole time.',
+    'Should\'ve written tests. Just kidding, nobody does.',
+    'The bug found you before you found it.',
+    '"It works on my machine" — famous last words.',
+  ],
+  firewall: [
+    'Blocked by corporate IT. As is tradition.',
+    'Your request has been forwarded to /dev/null.',
+    'Access denied. Have you tried being an admin?',
+    'The firewall won. They always do.',
+  ],
+  latency: [
+    'Connection timed out. The server is "thinking."',
+    'Still waiting for that API response from 2024.',
+    'Latency: the silent killer of user trust.',
+    'Your p99 just became your p100.',
+  ],
+  hallucination: [
+    'The model was very confident about that wrong answer.',
+    'Cited three papers. None of them exist.',
+    '"According to my training data..." — narrator: it wasn\'t.',
+    'Hallucinated with conviction. Respect.',
+  ],
+  cloud: [
+    'Disrupted by a cloud that disrupts disruption.',
+    'It was AI-powered. What it powered remains unclear.',
+    'Another GPT wrapper ascends to the clouds.',
+    'The buzzword density was simply too high.',
+  ],
+  overfit: [
+    'Memorized the training set. Surprised by reality.',
+    'Works perfectly on the benchmark. Nowhere else.',
+    '99.9% accuracy*  (*on the test set it was trained on)',
+    'Your model peaked in training. Like a child actor.',
+  ],
+  leak: [
+    'Your training data is showing.',
+    'Congrats, you just leaked PII to the whole internet.',
+    'The prompt injection worked. You played yourself.',
+    'Data governance? Never heard of her.',
+  ],
+}
+
 // BondKnows brand orange
 const BK_ORANGE = '#F58220'
 const BK_ORANGE_LIGHT = '#FFB366'
 const BK_ORANGE_DARK = '#D96A0B'
 
-// Draw the agent — sleek, geometric, modern
+// Draw the agent — WIREFRAME HOLOGRAM style
 function drawAgent(
   ctx: CanvasRenderingContext2D,
   x: number,
@@ -86,192 +146,324 @@ function drawAgent(
   }
 ) {
   const cx = x + AGENT_W / 2
-  const { isDucking, isJumping, legFrame, frameCount, isBoosted, doubleJumpTrail, bgColor, isDark } = opts
+  const { isDucking, isJumping, legFrame, frameCount, isBoosted, doubleJumpTrail, isDark } = opts
 
-  // Pick color based on state
-  const baseColor = doubleJumpTrail > 0 ? '#FFB366' : (isBoosted ? '#22D3EE' : BK_ORANGE)
-  const glowColor = doubleJumpTrail > 0 ? 'rgba(255, 179, 102, 0.4)' : (isBoosted ? 'rgba(34, 211, 238, 0.35)' : 'rgba(245, 130, 32, 0.35)')
+  // Colors — wireframe edges only
+  const wireColor = doubleJumpTrail > 0 ? BK_ORANGE_LIGHT : (isBoosted ? '#22D3EE' : BK_ORANGE)
+  const glowColor = doubleJumpTrail > 0 ? 'rgba(255,179,102,0.5)' : (isBoosted ? 'rgba(34,211,238,0.5)' : 'rgba(245,130,32,0.5)')
+  const fillAlpha = doubleJumpTrail > 0 ? 0.12 : (isBoosted ? 0.08 : 0.06)
+  const lineW = 1.8
 
-  // Glow effect
+  // Scanline phase — horizontal lines sweep through the figure
+  const scanY = ((frameCount * 2) % (h + 20)) - 10
+
   ctx.save()
-  ctx.shadowColor = glowColor
-  ctx.shadowBlur = isBoosted ? 18 : 12
 
   if (isDucking) {
-    // ── DUCKING FORM ── low, wide, aerodynamic
-    const dw = AGENT_W + 8
-    const dh = h * 0.55
-    const dx = x - 4
+    // ── DUCKING — flat capsule wireframe ──
+    const dw = AGENT_W + 10
+    const dh = h * 0.5
+    const dx = x - 5
     const dy = y + h - dh
 
-    // Body — rounded capsule
-    ctx.fillStyle = baseColor
+    // Glow layer
+    ctx.shadowColor = glowColor
+    ctx.shadowBlur = 14
+    ctx.strokeStyle = wireColor
+    ctx.lineWidth = lineW
+
+    // Outer capsule
+    ctx.beginPath()
+    ctx.roundRect(dx, dy, dw, dh, dh / 2)
+    ctx.stroke()
+
+    // Ghost fill
+    ctx.fillStyle = wireColor
+    ctx.globalAlpha = fillAlpha
     ctx.beginPath()
     ctx.roundRect(dx, dy, dw, dh, dh / 2)
     ctx.fill()
+    ctx.globalAlpha = 1
 
-    // Visor — horizontal slit
-    ctx.fillStyle = isDark ? '#1A1A2E' : '#0F172A'
+    // Internal wireframe lines
+    ctx.shadowBlur = 0
+    ctx.lineWidth = 0.8
+    ctx.globalAlpha = 0.3
+    // Horizontal center line
     ctx.beginPath()
-    ctx.roundRect(dx + dw * 0.45, dy + dh * 0.25, dw * 0.45, dh * 0.3, 3)
-    ctx.fill()
+    ctx.moveTo(dx + 6, dy + dh / 2)
+    ctx.lineTo(dx + dw - 6, dy + dh / 2)
+    ctx.stroke()
+    ctx.globalAlpha = 1
 
+    // Visor — bright horizontal slit
+    ctx.strokeStyle = '#FFFFFF'
+    ctx.lineWidth = 1.5
+    ctx.globalAlpha = 0.7 + Math.sin(frameCount * 0.15) * 0.2
+    ctx.beginPath()
+    ctx.moveTo(dx + dw * 0.5, dy + dh * 0.35)
+    ctx.lineTo(dx + dw * 0.88, dy + dh * 0.35)
+    ctx.stroke()
     // Visor glow dot
     ctx.fillStyle = '#FFFFFF'
-    ctx.globalAlpha = 0.7 + Math.sin(frameCount * 0.15) * 0.3
     ctx.beginPath()
-    ctx.arc(dx + dw * 0.82, dy + dh * 0.4, 2, 0, Math.PI * 2)
+    ctx.arc(dx + dw * 0.85, dy + dh * 0.35, 1.5, 0, Math.PI * 2)
     ctx.fill()
     ctx.globalAlpha = 1
 
-    // Speed streaks behind when ducking
-    ctx.strokeStyle = baseColor
-    ctx.globalAlpha = 0.3
-    ctx.lineWidth = 1.5
+    // Speed streaks
+    ctx.strokeStyle = wireColor
+    ctx.globalAlpha = 0.25
+    ctx.lineWidth = 1
     for (let i = 0; i < 3; i++) {
       const sy = dy + dh * 0.2 + i * (dh * 0.3)
+      const sLen = 10 + i * 5 + Math.sin(frameCount * 0.2 + i) * 4
       ctx.beginPath()
-      ctx.moveTo(dx - 5 - i * 4, sy)
-      ctx.lineTo(dx - 15 - i * 6 - Math.sin(frameCount * 0.2 + i) * 4, sy)
+      ctx.moveTo(dx - 3, sy)
+      ctx.lineTo(dx - 3 - sLen, sy)
       ctx.stroke()
     }
     ctx.globalAlpha = 1
   } else {
-    // ── STANDING / JUMPING FORM ── sleek humanoid
-
-    // Tilt when jumping
-    const tilt = isJumping ? (opts.jumpCount >= 2 ? -0.12 : -0.06) : 0
+    // ── STANDING / JUMPING — wireframe humanoid ──
+    const tilt = isJumping ? (opts.jumpCount >= 2 ? -0.15 : -0.08) : 0
     ctx.save()
     ctx.translate(cx, y + h)
     ctx.rotate(tilt)
     ctx.translate(-cx, -(y + h))
 
-    // === LEGS ===
+    // Glow
+    ctx.shadowColor = glowColor
+    ctx.shadowBlur = 14
+    ctx.strokeStyle = wireColor
+    ctx.lineWidth = lineW
+
+    // === HEAD — circle wireframe ===
+    const headR = 8
+    const headY = y + headR + 2
+
+    ctx.beginPath()
+    ctx.arc(cx, headY, headR, 0, Math.PI * 2)
+    ctx.stroke()
+    // Ghost fill head
+    ctx.fillStyle = wireColor
+    ctx.globalAlpha = fillAlpha
+    ctx.fill()
+    ctx.globalAlpha = 1
+
+    // Visor — glowing slit
+    ctx.shadowBlur = 0
+    ctx.strokeStyle = '#FFFFFF'
+    ctx.lineWidth = 2
+    ctx.globalAlpha = 0.6 + Math.sin(frameCount * 0.12) * 0.3
+    const visorW = headR * 1.1
+    ctx.beginPath()
+    ctx.moveTo(cx, headY - 1)
+    ctx.lineTo(cx + visorW, headY - 1)
+    ctx.stroke()
+    // Visor eye dot
+    ctx.fillStyle = '#FFFFFF'
+    ctx.beginPath()
+    ctx.arc(cx + visorW - 1, headY - 1, 1.5, 0, Math.PI * 2)
+    ctx.fill()
+    ctx.globalAlpha = 1
+
+    // === ANTENNA ===
+    ctx.shadowColor = glowColor
+    ctx.shadowBlur = 8
+    ctx.strokeStyle = wireColor
+    ctx.lineWidth = 1.5
+    ctx.beginPath()
+    ctx.moveTo(cx, headY - headR)
+    ctx.lineTo(cx, headY - headR - 8)
+    ctx.stroke()
+    // Tip — pulsing bright dot
+    const tipPulse = 2 + Math.sin(frameCount * 0.18) * 1
+    ctx.fillStyle = '#FFFFFF'
+    ctx.globalAlpha = 0.8
+    ctx.beginPath()
+    ctx.arc(cx, headY - headR - 9, tipPulse, 0, Math.PI * 2)
+    ctx.fill()
+    ctx.globalAlpha = 1
+
+    // === NECK LINE ===
+    ctx.shadowBlur = 10
+    ctx.strokeStyle = wireColor
+    ctx.lineWidth = lineW
+    ctx.beginPath()
+    ctx.moveTo(cx, headY + headR)
+    ctx.lineTo(cx, y + 18)
+    ctx.stroke()
+
+    // === TORSO — wireframe trapezoid ===
+    const shoulderW = 13
+    const waistW = 9
+    const shoulderY = y + 18
+    const waistY = y + h - 14
+
+    // Torso outline
+    ctx.beginPath()
+    ctx.moveTo(cx - shoulderW, shoulderY)
+    ctx.lineTo(cx + shoulderW, shoulderY)
+    ctx.lineTo(cx + waistW, waistY)
+    ctx.lineTo(cx - waistW, waistY)
+    ctx.closePath()
+    ctx.stroke()
+    // Ghost fill
+    ctx.fillStyle = wireColor
+    ctx.globalAlpha = fillAlpha
+    ctx.fill()
+    ctx.globalAlpha = 1
+
+    // Internal wireframe: cross lines inside torso
+    ctx.shadowBlur = 0
+    ctx.lineWidth = 0.6
+    ctx.globalAlpha = 0.2
+    // Shoulder to opposite hip
+    ctx.beginPath()
+    ctx.moveTo(cx - shoulderW + 2, shoulderY + 1)
+    ctx.lineTo(cx + waistW - 2, waistY - 1)
+    ctx.stroke()
+    ctx.beginPath()
+    ctx.moveTo(cx + shoulderW - 2, shoulderY + 1)
+    ctx.lineTo(cx - waistW + 2, waistY - 1)
+    ctx.stroke()
+    // Horizontal mid-line
+    const midY = (shoulderY + waistY) / 2
+    const midW = (shoulderW + waistW) / 2
+    ctx.beginPath()
+    ctx.moveTo(cx - midW, midY)
+    ctx.lineTo(cx + midW, midY)
+    ctx.stroke()
+    ctx.globalAlpha = 1
+
+    // === CORE — energy center (pulsing, bright) ===
+    ctx.shadowColor = glowColor
+    ctx.shadowBlur = 10
+    const coreY = (shoulderY + waistY) * 0.48 + shoulderY * 0.04
+    const coreR = 2.5 + Math.sin(frameCount * 0.1) * 0.8
+    ctx.fillStyle = '#FFFFFF'
+    ctx.globalAlpha = 0.7 + Math.sin(frameCount * 0.1) * 0.2
+    ctx.beginPath()
+    ctx.arc(cx, coreY, coreR, 0, Math.PI * 2)
+    ctx.fill()
+    // Core halo
+    ctx.fillStyle = wireColor
+    ctx.globalAlpha = 0.15
+    ctx.beginPath()
+    ctx.arc(cx, coreY, coreR + 4, 0, Math.PI * 2)
+    ctx.fill()
+    ctx.globalAlpha = 1
+
+    // === LEGS — wireframe lines ===
+    ctx.shadowBlur = 10
+    ctx.strokeStyle = wireColor
+    ctx.lineWidth = lineW
     const legPhase = Math.sin(legFrame * 0.3)
-    ctx.fillStyle = baseColor
 
     if (!isJumping) {
-      // Running legs — angled, dynamic
-      const leftLen = 14 + legPhase * 4
-      const rightLen = 14 - legPhase * 4
+      // Running — legs swing as lines with knee joints
+      const hipL = { x: cx - 5, y: waistY }
+      const hipR = { x: cx + 5, y: waistY }
+      const kneeOffsetL = legPhase * 6
+      const kneeOffsetR = -legPhase * 6
+      const legLen = 14
+
       // Left leg
+      const kneeL = { x: hipL.x + kneeOffsetL * 0.3, y: hipL.y + legLen * 0.55 }
+      const footL = { x: hipL.x + kneeOffsetL, y: y + h }
       ctx.beginPath()
-      ctx.roundRect(cx - 8, y + h - leftLen, 5, leftLen, 2)
+      ctx.moveTo(hipL.x, hipL.y)
+      ctx.lineTo(kneeL.x, kneeL.y)
+      ctx.lineTo(footL.x, footL.y)
+      ctx.stroke()
+      // Foot dot
+      ctx.fillStyle = wireColor
+      ctx.beginPath()
+      ctx.arc(footL.x, footL.y, 2, 0, Math.PI * 2)
       ctx.fill()
+
       // Right leg
+      const kneeR = { x: hipR.x + kneeOffsetR * 0.3, y: hipR.y + legLen * 0.55 }
+      const footR = { x: hipR.x + kneeOffsetR, y: y + h }
       ctx.beginPath()
-      ctx.roundRect(cx + 3, y + h - rightLen, 5, rightLen, 2)
-      ctx.fill()
-      // Feet — small rounded
+      ctx.moveTo(hipR.x, hipR.y)
+      ctx.lineTo(kneeR.x, kneeR.y)
+      ctx.lineTo(footR.x, footR.y)
+      ctx.stroke()
+      ctx.fillStyle = wireColor
       ctx.beginPath()
-      ctx.arc(cx - 5.5, y + h, 2.5, 0, Math.PI * 2)
+      ctx.arc(footR.x, footR.y, 2, 0, Math.PI * 2)
+      ctx.fill()
+
+      // Joint dots at knees
+      ctx.globalAlpha = 0.5
+      ctx.beginPath()
+      ctx.arc(kneeL.x, kneeL.y, 1.5, 0, Math.PI * 2)
       ctx.fill()
       ctx.beginPath()
-      ctx.arc(cx + 5.5, y + h, 2.5, 0, Math.PI * 2)
+      ctx.arc(kneeR.x, kneeR.y, 1.5, 0, Math.PI * 2)
       ctx.fill()
+      ctx.globalAlpha = 1
     } else {
-      // Jumping — tucked up, knees bent
+      // Jumping — tucked legs
       ctx.beginPath()
-      ctx.roundRect(cx - 9, y + h - 10, 5, 8, 2)
+      ctx.moveTo(cx - 5, waistY)
+      ctx.lineTo(cx - 9, waistY + 5)
+      ctx.lineTo(cx - 5, y + h - 4)
+      ctx.stroke()
+      ctx.beginPath()
+      ctx.moveTo(cx + 5, waistY)
+      ctx.lineTo(cx + 9, waistY + 5)
+      ctx.lineTo(cx + 5, y + h - 4)
+      ctx.stroke()
+      // Foot dots
+      ctx.fillStyle = wireColor
+      ctx.beginPath()
+      ctx.arc(cx - 5, y + h - 4, 2, 0, Math.PI * 2)
       ctx.fill()
       ctx.beginPath()
-      ctx.roundRect(cx + 4, y + h - 10, 5, 8, 2)
+      ctx.arc(cx + 5, y + h - 4, 2, 0, Math.PI * 2)
       ctx.fill()
     }
 
-    // === BODY === — rounded trapezoid, narrower at waist
-    const bodyTop = y + 12
-    const bodyBot = y + h - 12
-    const bodyH = bodyBot - bodyTop
-    ctx.fillStyle = baseColor
-    ctx.beginPath()
-    ctx.moveTo(cx - 10, bodyBot)
-    ctx.lineTo(cx - 12, bodyTop + bodyH * 0.3)
-    ctx.quadraticCurveTo(cx - 12, bodyTop, cx - 6, bodyTop)
-    ctx.lineTo(cx + 6, bodyTop)
-    ctx.quadraticCurveTo(cx + 12, bodyTop, cx + 12, bodyTop + bodyH * 0.3)
-    ctx.lineTo(cx + 10, bodyBot)
-    ctx.closePath()
-    ctx.fill()
-
-    // Core energy — pulsing circle in chest
-    const pulseR = 3 + Math.sin(frameCount * 0.08) * 0.8
-    const coreY = bodyTop + bodyH * 0.45
-    ctx.fillStyle = '#FFFFFF'
-    ctx.globalAlpha = 0.6 + Math.sin(frameCount * 0.08) * 0.2
-    ctx.beginPath()
-    ctx.arc(cx, coreY, pulseR, 0, Math.PI * 2)
-    ctx.fill()
-    ctx.globalAlpha = 0.2
-    ctx.beginPath()
-    ctx.arc(cx, coreY, pulseR + 3, 0, Math.PI * 2)
-    ctx.fill()
-    ctx.globalAlpha = 1
-
-    // === HEAD === — helmet with visor
-    const headR = 9
-    const headY = y + headR + 1
-
-    // Helmet
-    ctx.fillStyle = baseColor
-    ctx.beginPath()
-    ctx.arc(cx, headY, headR, 0, Math.PI * 2)
-    ctx.fill()
-
-    // Visor — angled slit across the face
-    ctx.fillStyle = isDark ? '#1A1A2E' : '#0F172A'
-    ctx.beginPath()
-    ctx.roundRect(cx - 2, headY - 4, headR + 4, 5, 2)
-    ctx.fill()
-
-    // Visor shine
-    ctx.fillStyle = '#FFFFFF'
-    ctx.globalAlpha = 0.5 + Math.sin(frameCount * 0.12) * 0.3
-    ctx.beginPath()
-    ctx.arc(cx + headR - 2, headY - 2, 2, 0, Math.PI * 2)
-    ctx.fill()
-    ctx.globalAlpha = 1
-
-    // === ANTENNA === — energy spike
-    ctx.strokeStyle = baseColor
-    ctx.lineWidth = 2
-    ctx.beginPath()
-    ctx.moveTo(cx, headY - headR)
-    ctx.lineTo(cx, headY - headR - 7)
-    ctx.stroke()
-
-    // Antenna tip — pulsing
-    const tipR = 2.5 + Math.sin(frameCount * 0.15) * 0.8
-    ctx.fillStyle = '#FFFFFF'
-    ctx.globalAlpha = 0.7
-    ctx.beginPath()
-    ctx.arc(cx, headY - headR - 8, tipR, 0, Math.PI * 2)
-    ctx.fill()
-    ctx.fillStyle = baseColor
-    ctx.globalAlpha = 0.3
-    ctx.beginPath()
-    ctx.arc(cx, headY - headR - 8, tipR + 3, 0, Math.PI * 2)
-    ctx.fill()
-    ctx.globalAlpha = 1
+    // === SCANLINE — horizontal line sweeping through the figure ===
+    const scanLocalY = y + scanY
+    if (scanLocalY > y - 5 && scanLocalY < y + h + 5) {
+      ctx.shadowBlur = 0
+      ctx.strokeStyle = wireColor
+      ctx.globalAlpha = 0.25
+      ctx.lineWidth = 1
+      ctx.beginPath()
+      ctx.moveTo(cx - 18, scanLocalY)
+      ctx.lineTo(cx + 18, scanLocalY)
+      ctx.stroke()
+      ctx.globalAlpha = 1
+    }
 
     ctx.restore() // undo tilt
   }
 
-  ctx.restore() // undo shadow/glow
+  ctx.restore() // undo save
 
-  // === DOUBLE JUMP READY INDICATOR ===
+  // === DOUBLE JUMP READY — spinning dashed ring ===
   if (opts.jumpCount === 1 && isJumping) {
-    const ringR = AGENT_W * 0.6
+    const ringR = AGENT_W * 0.7
     const ringAlpha = 0.3 + Math.sin(frameCount * 0.25) * 0.15
+    ctx.save()
     ctx.globalAlpha = ringAlpha
-    ctx.strokeStyle = BK_ORANGE_LIGHT
-    ctx.lineWidth = 1.5
-    ctx.setLineDash([3, 3])
+    ctx.strokeStyle = wireColor
+    ctx.lineWidth = 1.2
+    ctx.setLineDash([4, 4])
+    // Rotate the dash pattern
+    ctx.translate(cx, y + h / 2)
+    ctx.rotate(frameCount * 0.04)
+    ctx.translate(-cx, -(y + h / 2))
     ctx.beginPath()
     ctx.arc(cx, y + h / 2, ringR, 0, Math.PI * 2)
     ctx.stroke()
     ctx.setLineDash([])
-    ctx.globalAlpha = 1
+    ctx.restore()
   }
 }
 
@@ -310,6 +502,7 @@ export default function AIRunnerGame() {
   const [highScore, setHighScore] = useState(0)
   const [difficulty, setDifficulty] = useState<Difficulty>('normal')
   const [boostActive, setBoostActive] = useState(false)
+  const [killedBy, setKilledBy] = useState<{ type: Obstacle['type']; label: string; message: string } | null>(null)
   const boostRef = useRef(false)
 
   const gameRef = useRef({
@@ -323,17 +516,21 @@ export default function AIRunnerGame() {
     distance: 0,
     frameCount: 0,
     legFrame: 0,
-    particles: [] as { x: number; y: number; vx: number; vy: number; life: number; color: string; size?: number }[],
+    particles: [] as { x: number; y: number; vx: number; vy: number; life: number; color: string; size?: number; shape?: 'circle' | 'square' | 'diamond' }[],
     boostTimer: 0,
     shakeTimer: 0,
     shakeIntensity: 0,
     combo: 0,
     comboTimer: 0,
+    comboScale: 0,
     lastMilestone: 0,
     milestoneFlash: 0,
+    milestoneScale: 0,
     speedLines: [] as { x: number; y: number; len: number; alpha: number }[],
     nearMissFlash: 0,
-    doubleJumpTrail: 0, // visual indicator for double jump
+    doubleJumpTrail: 0,
+    ambientDots: [] as { x: number; y: number; speed: number; alpha: number; r: number }[],
+    groundTicks: 0,
   })
 
   const settingsRef = useRef(DIFFICULTY_SETTINGS.normal)
@@ -348,34 +545,23 @@ export default function AIRunnerGame() {
     const isFlying = Math.random() < flyChance
 
     if (isFlying) {
-      const flyTypes: { type: Obstacle['type']; label: string }[] = [
-        { type: 'cloud', label: 'HALLUCINATION' },
-        { type: 'overfit', label: 'OVERFIT' },
-        { type: 'leak', label: 'DATA LEAK' },
-      ]
-      const chosen = flyTypes[Math.floor(Math.random() * flyTypes.length)]
+      const pool = FLYING_OBSTACLE_POOL[Math.floor(Math.random() * FLYING_OBSTACLE_POOL.length)]
+      const label = pool.labels[Math.floor(Math.random() * pool.labels.length)]
       const w = 50 + Math.random() * 30
       const h = 20 + Math.random() * 15
-      // Position at jump height — the sweet spot where single jumps peak
       const flyY = GROUND_Y - AGENT_H - 45 - Math.random() * 35
       g.obstacles.push({
         x: CANVAS_W + 50,
         w,
         h,
         y: flyY,
-        type: chosen.type,
-        label: chosen.label,
+        type: pool.type,
+        label,
         flying: true,
       })
     } else {
-      const types: Obstacle['type'][] = ['bug', 'firewall', 'latency', 'hallucination']
-      const labels: Record<string, string> = {
-        bug: 'BUG',
-        firewall: 'FIREWALL',
-        latency: 'LATENCY',
-        hallucination: 'HALLUCINATION',
-      }
-      const type = types[Math.floor(Math.random() * types.length)]
+      const pool = GROUND_OBSTACLE_POOL[Math.floor(Math.random() * GROUND_OBSTACLE_POOL.length)]
+      const label = pool.labels[Math.floor(Math.random() * pool.labels.length)]
       const h = 25 + Math.random() * 35
       const w = 22 + Math.random() * 18
       g.obstacles.push({
@@ -383,8 +569,8 @@ export default function AIRunnerGame() {
         w,
         h,
         y: GROUND_Y - h,
-        type,
-        label: labels[type],
+        type: pool.type,
+        label,
         flying: false,
       })
     }
@@ -407,17 +593,18 @@ export default function AIRunnerGame() {
       g.jumpCount = 2
       g.doubleJumpTrail = 12 // frames of trail effect
 
-      // Double jump burst particles
-      for (let i = 0; i < 8; i++) {
-        const angle = (Math.PI * 2 * i) / 8
+      // Double jump burst particles — ring explosion
+      for (let i = 0; i < 12; i++) {
+        const angle = (Math.PI * 2 * i) / 12
         g.particles.push({
           x: 50 + AGENT_W / 2,
           y: g.agentY + AGENT_H / 2,
-          vx: Math.cos(angle) * 2.5,
-          vy: Math.sin(angle) * 2.5,
-          life: 0.5,
-          color: '#F59E0B',
-          size: 3,
+          vx: Math.cos(angle) * 3,
+          vy: Math.sin(angle) * 3,
+          life: 0.6,
+          color: i % 2 === 0 ? BK_ORANGE : BK_ORANGE_LIGHT,
+          size: 2 + Math.random() * 2,
+          shape: 'diamond',
         })
       }
     }
@@ -466,8 +653,23 @@ export default function AIRunnerGame() {
     g.speedLines = []
     g.nearMissFlash = 0
     g.doubleJumpTrail = 0
+    g.comboScale = 0
+    g.milestoneScale = 0
+    g.groundTicks = 0
+    // Seed ambient floating dots
+    g.ambientDots = []
+    for (let i = 0; i < 15; i++) {
+      g.ambientDots.push({
+        x: Math.random() * CANVAS_W,
+        y: 20 + Math.random() * (GROUND_Y - 40),
+        speed: 0.2 + Math.random() * 0.5,
+        alpha: 0.03 + Math.random() * 0.06,
+        r: 1 + Math.random() * 2,
+      })
+    }
     boostRef.current = false
     setBoostActive(false)
+    setKilledBy(null)
     setScore(0)
     setGameState('running')
   }, [difficulty])
@@ -573,21 +775,34 @@ export default function AIRunnerGame() {
       const milestone = Math.floor(currentScore / 500)
       if (milestone > g.lastMilestone && currentScore > 0) {
         g.lastMilestone = milestone
-        g.milestoneFlash = 40 // frames
-        // Celebration particles
-        for (let i = 0; i < 20; i++) {
+        g.milestoneFlash = 50
+        g.milestoneScale = 1.8 // starts big, shrinks to 1
+        // Celebration particles — mixed shapes
+        const shapes: Array<'circle' | 'square' | 'diamond'> = ['circle', 'square', 'diamond']
+        for (let i = 0; i < 30; i++) {
           g.particles.push({
-            x: CANVAS_W / 2 + (Math.random() - 0.5) * 200,
-            y: 50 + Math.random() * 50,
-            vx: (Math.random() - 0.5) * 4,
-            vy: Math.random() * 2 + 1,
+            x: CANVAS_W / 2 + (Math.random() - 0.5) * 300,
+            y: 30 + Math.random() * 60,
+            vx: (Math.random() - 0.5) * 5,
+            vy: Math.random() * 3 + 0.5,
             life: 1,
-            color: ['#F59E0B', '#22D3EE', '#10B981', '#8B5CF6', '#EC4899'][Math.floor(Math.random() * 5)],
-            size: 3 + Math.random() * 3,
+            color: [BK_ORANGE, BK_ORANGE_LIGHT, '#22D3EE', '#10B981', '#8B5CF6', '#EC4899'][Math.floor(Math.random() * 6)],
+            size: 2 + Math.random() * 4,
+            shape: shapes[Math.floor(Math.random() * shapes.length)],
           })
         }
       }
       if (g.milestoneFlash > 0) g.milestoneFlash--
+      if (g.milestoneScale > 1) g.milestoneScale += (1 - g.milestoneScale) * 0.12
+      if (g.comboScale > 1) g.comboScale += (1 - g.comboScale) * 0.15
+
+      // Ambient floating dots
+      g.ambientDots.forEach(d => {
+        d.x -= d.speed * effectiveSpeed * 0.3
+        d.y += Math.sin(g.frameCount * 0.01 + d.x * 0.01) * 0.15
+        if (d.x < -10) { d.x = CANVAS_W + 10; d.y = 20 + Math.random() * (GROUND_Y - 40) }
+      })
+      g.groundTicks += effectiveSpeed
 
       // Speed lines at higher stages
       const stage = getStage(g.distance)
@@ -623,16 +838,18 @@ export default function AIRunnerGame() {
       }
       if (g.nearMissFlash > 0) g.nearMissFlash--
 
-      // Trail
-      if (g.frameCount % 3 === 0) {
-        const trailColor = g.doubleJumpTrail > 0 ? '#F59E0B' : (isBoosted ? '#22D3EE' : '')
+      // Trail — richer particles
+      if (g.frameCount % 2 === 0) {
+        const trailColor = g.doubleJumpTrail > 0 ? BK_ORANGE_LIGHT : (isBoosted ? '#22D3EE' : BK_ORANGE)
         g.particles.push({
-          x: 50,
-          y: g.agentY + AGENT_H / 2 + (Math.random() - 0.5) * 10,
-          vx: -1 - Math.random(),
-          vy: (Math.random() - 0.5) * 0.5,
-          life: 0.6 + Math.random() * 0.4,
+          x: 50 + Math.random() * 5,
+          y: g.agentY + AGENT_H / 2 + (Math.random() - 0.5) * 12,
+          vx: -1.5 - Math.random() * 1.5,
+          vy: (Math.random() - 0.5) * 0.8,
+          life: 0.5 + Math.random() * 0.4,
           color: trailColor,
+          size: 1.5 + Math.random() * 2,
+          shape: 'circle',
         })
       }
 
@@ -651,17 +868,37 @@ export default function AIRunnerGame() {
           agentBox.y < obsBox.y + obsBox.h &&
           agentBox.y + agentBox.h > obsBox.y
         ) {
-          // Death
-          for (let i = 0; i < 20; i++) {
+          // Death — wireframe fragment explosion
+          // Orange wireframe shards + red sparks
+          for (let i = 0; i < 25; i++) {
+            const angle = (Math.PI * 2 * i) / 25
+            const speed = 3 + Math.random() * 5
             g.particles.push({
               x: 50 + AGENT_W / 2, y: g.agentY + AGENT_H / 2,
-              vx: (Math.random() - 0.5) * 8, vy: (Math.random() - 0.5) * 8,
-              life: 1, color: '#EF4444', size: 2 + Math.random() * 3,
+              vx: Math.cos(angle) * speed + (Math.random() - 0.5) * 2,
+              vy: Math.sin(angle) * speed + (Math.random() - 0.5) * 2,
+              life: 0.8 + Math.random() * 0.4,
+              color: i % 3 === 0 ? '#EF4444' : (i % 3 === 1 ? BK_ORANGE : BK_ORANGE_LIGHT),
+              size: 1.5 + Math.random() * 2.5,
+              shape: i % 2 === 0 ? 'diamond' : 'square', // angular = wireframe fragments
             })
           }
-          g.shakeTimer = 15
-          g.shakeIntensity = 8
+          // Extra bright white sparks from the core
+          for (let i = 0; i < 8; i++) {
+            const angle = (Math.PI * 2 * i) / 8
+            g.particles.push({
+              x: 50 + AGENT_W / 2, y: g.agentY + AGENT_H * 0.4,
+              vx: Math.cos(angle) * 4, vy: Math.sin(angle) * 4 - 1,
+              life: 0.5, color: '#FFFFFF', size: 2, shape: 'circle',
+            })
+          }
+          g.shakeTimer = 18
+          g.shakeIntensity = 10
           const finalScore = Math.floor(g.distance / 10)
+          // Pick a witty death message for this obstacle type
+          const messages = DEATH_MESSAGES[o.type] || DEATH_MESSAGES.bug
+          const deathMsg = messages[Math.floor(Math.random() * messages.length)]
+          setKilledBy({ type: o.type, label: o.label, message: deathMsg })
           setScore(finalScore)
           setHighScore((prev) => Math.max(prev, finalScore))
           setGameState('dead')
@@ -683,19 +920,21 @@ export default function AIRunnerGame() {
           if (!(o as Obstacle & { counted?: boolean }).counted) {
             (o as Obstacle & { counted?: boolean }).counted = true
             g.combo++
-            g.comboTimer = 120 // 2 seconds to maintain combo
+            g.comboTimer = 120
+            g.comboScale = 1.5 // bounce effect
             g.nearMissFlash = 15
 
-            // Near-miss sparkle
-            for (let i = 0; i < 5; i++) {
+            // Near-miss sparkle — circles + diamonds
+            for (let i = 0; i < 8; i++) {
               g.particles.push({
-                x: 50 + AGENT_W / 2 + (Math.random() - 0.5) * 20,
+                x: 50 + AGENT_W / 2 + (Math.random() - 0.5) * 24,
                 y: g.agentY + (Math.random()) * AGENT_H,
-                vx: (Math.random() - 0.5) * 3,
-                vy: (Math.random() - 0.5) * 3,
-                life: 0.6,
-                color: '#10B981',
-                size: 2,
+                vx: (Math.random() - 0.5) * 4,
+                vy: (Math.random() - 0.5) * 4,
+                life: 0.7,
+                color: i % 2 === 0 ? '#10B981' : '#34D399',
+                size: 2 + Math.random() * 2,
+                shape: i % 3 === 0 ? 'diamond' : 'circle',
               })
             }
           }
@@ -732,52 +971,57 @@ export default function AIRunnerGame() {
       ctx.fillStyle = sc.bg
       ctx.fillRect(0, 0, CANVAS_W, CANVAS_H)
 
-      // Milestone flash
+      // Milestone flash — orange pulse
       if (g.milestoneFlash > 0) {
-        const flashAlpha = (g.milestoneFlash / 40) * 0.08
-        ctx.fillStyle = isDark ? `rgba(245, 158, 11, ${flashAlpha})` : `rgba(180, 83, 9, ${flashAlpha})`
+        const flashAlpha = (g.milestoneFlash / 50) * 0.1
+        ctx.fillStyle = `rgba(245, 130, 32, ${flashAlpha})`
         ctx.fillRect(0, 0, CANVAS_W, CANVAS_H)
       }
 
       // Near-miss green flash
       if (g.nearMissFlash > 0) {
-        const nmAlpha = (g.nearMissFlash / 15) * 0.06
+        const nmAlpha = (g.nearMissFlash / 15) * 0.07
         ctx.fillStyle = `rgba(16, 185, 129, ${nmAlpha})`
         ctx.fillRect(0, 0, CANVAS_W, CANVAS_H)
       }
 
       // Boost tint
       if (isBoosted) {
-        ctx.fillStyle = isDark ? 'rgba(34, 211, 238, 0.03)' : 'rgba(6, 182, 212, 0.04)'
+        ctx.fillStyle = isDark ? 'rgba(34, 211, 238, 0.04)' : 'rgba(6, 182, 212, 0.05)'
         ctx.fillRect(0, 0, CANVAS_W, CANVAS_H)
       }
 
-      // Ground
-      ctx.strokeStyle = borderColor
-      ctx.lineWidth = 1
-      ctx.beginPath(); ctx.moveTo(0, GROUND_Y); ctx.lineTo(CANVAS_W, GROUND_Y); ctx.stroke()
-
-      // Progressive grid — gets denser with stage
+      // Progressive grid — horizontal
       const gridAlpha = sc.gridAlpha
       ctx.strokeStyle = isDark ? `rgba(255,255,255,${gridAlpha})` : `rgba(0,0,0,${gridAlpha})`
+      ctx.lineWidth = 0.5
       const spacing = sc.gridSpacing
-      // Horizontal grid
-      for (let y = spacing; y < GROUND_Y; y += spacing) {
-        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(CANVAS_W, y); ctx.stroke()
+      for (let gy = spacing; gy < GROUND_Y; gy += spacing) {
+        ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(CANVAS_W, gy); ctx.stroke()
       }
-      // Vertical grid lines appear at stage 2+
+      // Vertical grid (stage 2+) — scrolling parallax
       if (stage >= 2) {
-        const vOffset = (g.frameCount * effectiveSpeed * 0.5) % spacing
-        ctx.strokeStyle = isDark ? `rgba(255,255,255,${gridAlpha * 0.6})` : `rgba(0,0,0,${gridAlpha * 0.6})`
-        for (let x = -vOffset; x < CANVAS_W; x += spacing) {
-          ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, GROUND_Y); ctx.stroke()
+        const vOffset = g.groundTicks % spacing
+        ctx.strokeStyle = isDark ? `rgba(255,255,255,${gridAlpha * 0.5})` : `rgba(0,0,0,${gridAlpha * 0.5})`
+        for (let gx = -vOffset; gx < CANVAS_W; gx += spacing) {
+          ctx.beginPath(); ctx.moveTo(gx, 0); ctx.lineTo(gx, GROUND_Y); ctx.stroke()
         }
       }
 
-      // Speed lines
+      // Ambient floating dots
+      g.ambientDots.forEach(d => {
+        ctx.globalAlpha = d.alpha
+        ctx.fillStyle = isDark ? '#FFFFFF' : accentColor
+        ctx.beginPath()
+        ctx.arc(d.x, d.y, d.r, 0, Math.PI * 2)
+        ctx.fill()
+      })
+      ctx.globalAlpha = 1
+
+      // Speed lines — with glow
       g.speedLines.forEach(sl => {
-        ctx.strokeStyle = isDark ? `rgba(255,255,255,${sl.alpha})` : `rgba(0,0,0,${sl.alpha * 0.7})`
-        ctx.lineWidth = 1
+        ctx.strokeStyle = isDark ? `rgba(255,255,255,${sl.alpha})` : `rgba(0,0,0,${sl.alpha * 0.6})`
+        ctx.lineWidth = 1.5
         ctx.beginPath()
         ctx.moveTo(sl.x, sl.y)
         ctx.lineTo(sl.x + sl.len, sl.y)
@@ -785,16 +1029,60 @@ export default function AIRunnerGame() {
       })
       ctx.lineWidth = 1
 
-      // Particles
+      // ═══ GROUND LINE — glowing ═══
+      // Glow layer
+      ctx.save()
+      ctx.shadowColor = isDark ? 'rgba(245, 130, 32, 0.3)' : 'rgba(217, 106, 11, 0.2)'
+      ctx.shadowBlur = 6
+      ctx.strokeStyle = isDark ? 'rgba(245, 130, 32, 0.25)' : 'rgba(217, 106, 11, 0.15)'
+      ctx.lineWidth = 2
+      ctx.beginPath(); ctx.moveTo(0, GROUND_Y); ctx.lineTo(CANVAS_W, GROUND_Y); ctx.stroke()
+      ctx.restore()
+      // Crisp line on top
+      ctx.strokeStyle = borderColor
+      ctx.lineWidth = 1
+      ctx.beginPath(); ctx.moveTo(0, GROUND_Y); ctx.lineTo(CANVAS_W, GROUND_Y); ctx.stroke()
+
+      // Scrolling ground tick marks
+      const tickSpacing = 40
+      const tickOffset = g.groundTicks % tickSpacing
+      ctx.strokeStyle = isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.04)'
+      ctx.lineWidth = 1
+      for (let tx = -tickOffset; tx < CANVAS_W; tx += tickSpacing) {
+        ctx.beginPath(); ctx.moveTo(tx, GROUND_Y); ctx.lineTo(tx, GROUND_Y + 8); ctx.stroke()
+      }
+
+      // Sub-ground fade
+      const subGrad = ctx.createLinearGradient(0, GROUND_Y, 0, CANVAS_H)
+      subGrad.addColorStop(0, isDark ? 'rgba(245, 130, 32, 0.04)' : 'rgba(217, 106, 11, 0.03)')
+      subGrad.addColorStop(1, 'transparent')
+      ctx.fillStyle = subGrad
+      ctx.fillRect(0, GROUND_Y, CANVAS_W, CANVAS_H - GROUND_Y)
+
+      // ═══ PARTICLES — circles, diamonds, squares ═══
       g.particles.forEach((p) => {
-        ctx.globalAlpha = p.life * 0.5
+        ctx.globalAlpha = p.life * 0.6
         ctx.fillStyle = p.color || accentColor
         const size = p.size ?? (p.life * 4)
-        ctx.fillRect(p.x - size / 2, p.y - size / 2, size, size)
+        const shape = p.shape || 'circle'
+
+        if (shape === 'circle') {
+          ctx.beginPath()
+          ctx.arc(p.x, p.y, size / 2, 0, Math.PI * 2)
+          ctx.fill()
+        } else if (shape === 'diamond') {
+          ctx.save()
+          ctx.translate(p.x, p.y)
+          ctx.rotate(Math.PI / 4)
+          ctx.fillRect(-size / 2, -size / 2, size, size)
+          ctx.restore()
+        } else {
+          ctx.fillRect(p.x - size / 2, p.y - size / 2, size, size)
+        }
       })
       ctx.globalAlpha = 1
 
-      // Agent — modern design
+      // ═══ AGENT ═══
       const drawAgentY = g.isDucking ? GROUND_Y - AGENT_H * 0.6 : g.agentY
       const drawAgentH = g.isDucking ? AGENT_H * 0.6 : AGENT_H
 
@@ -810,137 +1098,227 @@ export default function AIRunnerGame() {
         isDark,
       })
 
-      // Obstacles
+      // ═══ OBSTACLES — upgraded ═══
       g.obstacles.forEach((o) => {
         if (o.flying) {
-          // Flying obstacles — cloud-like shape
-          ctx.globalAlpha = 0.85
+          // Flying obstacles — bobbing cloud with glow
+          const bob = Math.sin(g.frameCount * 0.06 + o.x * 0.01) * 4
+          const oy = o.y + bob
+
+          ctx.save()
+          ctx.shadowColor = isDark ? 'rgba(139, 92, 246, 0.4)' : 'rgba(124, 58, 237, 0.3)'
+          ctx.shadowBlur = 10
+
           const cloudColor = isDark ? '#6B21A8' : '#7C3AED'
           const cloudBorder = isDark ? '#9333EA' : '#8B5CF6'
 
           // Cloud body
           ctx.fillStyle = cloudColor
+          ctx.globalAlpha = 0.9
           ctx.beginPath()
-          ctx.roundRect(o.x, o.y, o.w, o.h, 8)
+          ctx.roundRect(o.x, oy, o.w, o.h, o.h / 2)
           ctx.fill()
 
-          // Cloud shimmer
-          ctx.strokeStyle = cloudBorder
-          ctx.lineWidth = 1.5
+          // Inner shimmer gradient
+          const shimmerGrad = ctx.createLinearGradient(o.x, oy, o.x, oy + o.h)
+          shimmerGrad.addColorStop(0, 'rgba(255,255,255,0.12)')
+          shimmerGrad.addColorStop(0.5, 'transparent')
+          shimmerGrad.addColorStop(1, 'rgba(0,0,0,0.1)')
+          ctx.fillStyle = shimmerGrad
           ctx.beginPath()
-          ctx.roundRect(o.x, o.y, o.w, o.h, 8)
+          ctx.roundRect(o.x, oy, o.w, o.h, o.h / 2)
+          ctx.fill()
+
+          ctx.restore()
+
+          // Border
+          ctx.strokeStyle = cloudBorder
+          ctx.lineWidth = 1
+          ctx.globalAlpha = 0.7
+          ctx.beginPath()
+          ctx.roundRect(o.x, oy, o.w, o.h, o.h / 2)
           ctx.stroke()
 
-          // Glitch lines inside cloud
-          ctx.strokeStyle = isDark ? 'rgba(168, 85, 247, 0.5)' : 'rgba(124, 58, 237, 0.4)'
+          // Glitch lines
+          ctx.strokeStyle = isDark ? 'rgba(196, 181, 253, 0.3)' : 'rgba(124, 58, 237, 0.3)'
           ctx.lineWidth = 1
-          for (let i = 0; i < 3; i++) {
-            const ly = o.y + 5 + i * (o.h / 4)
-            const lx = o.x + 5 + Math.sin(g.frameCount * 0.1 + i) * 3
+          for (let i = 0; i < 2; i++) {
+            const ly = oy + o.h * 0.3 + i * (o.h * 0.25)
+            const lx = o.x + 8 + Math.sin(g.frameCount * 0.12 + i) * 4
             ctx.beginPath()
             ctx.moveTo(lx, ly)
-            ctx.lineTo(lx + o.w * 0.6, ly)
+            ctx.lineTo(lx + o.w * 0.5, ly)
             ctx.stroke()
           }
-
           ctx.globalAlpha = 1
 
-          // Label
-          ctx.font = 'bold 9px monospace'
+          // Label pill
+          ctx.font = 'bold 8px monospace'
           ctx.textAlign = 'center'
-          const labelW = ctx.measureText(o.label).width + 8
-          const labelX = o.x + o.w / 2
-          const labelY = o.y - 8
-          ctx.fillStyle = isDark ? 'rgba(139, 92, 246, 0.2)' : 'rgba(124, 58, 237, 0.12)'
+          const fLabelW = ctx.measureText(o.label).width + 10
+          const fLabelX = o.x + o.w / 2
+          const fLabelY = oy - 10
+          ctx.fillStyle = isDark ? 'rgba(139, 92, 246, 0.25)' : 'rgba(124, 58, 237, 0.15)'
           ctx.beginPath()
-          ctx.roundRect(labelX - labelW / 2, labelY - 9, labelW, 13, 3)
+          ctx.roundRect(fLabelX - fLabelW / 2, fLabelY - 8, fLabelW, 13, 6)
           ctx.fill()
           ctx.fillStyle = isDark ? '#C4B5FD' : '#6D28D9'
-          ctx.fillText(o.label, labelX, labelY)
+          ctx.fillText(o.label, fLabelX, fLabelY)
         } else {
-          // Ground obstacles — same as before but bigger labels
-          ctx.fillStyle = fgColor
-          ctx.fillRect(o.x, o.y, o.w, o.h)
-          ctx.fillStyle = '#dc2626'
-          ctx.fillRect(o.x, o.y, o.w, 3)
+          // ── Ground obstacles — rounded with glow + danger gradient ──
+          ctx.save()
+          ctx.shadowColor = isDark ? 'rgba(220, 38, 38, 0.3)' : 'rgba(220, 38, 38, 0.2)'
+          ctx.shadowBlur = 6
 
-          // Label
-          ctx.font = 'bold 11px monospace'
-          ctx.textAlign = 'center'
-          const labelW = ctx.measureText(o.label).width + 8
-          const labelX = o.x + o.w / 2
-          const labelY = o.y - 12
-          ctx.fillStyle = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)'
+          // Body — rounded rectangle
+          ctx.fillStyle = fgColor
           ctx.beginPath()
-          ctx.roundRect(labelX - labelW / 2, labelY - 10, labelW, 14, 3)
+          ctx.roundRect(o.x, o.y, o.w, o.h, 4)
+          ctx.fill()
+
+          // Danger stripe gradient across top
+          const dangerGrad = ctx.createLinearGradient(o.x, o.y, o.x + o.w, o.y)
+          dangerGrad.addColorStop(0, '#dc2626')
+          dangerGrad.addColorStop(0.5, '#ef4444')
+          dangerGrad.addColorStop(1, '#dc2626')
+          ctx.fillStyle = dangerGrad
+          ctx.beginPath()
+          ctx.roundRect(o.x, o.y, o.w, 4, [4, 4, 0, 0])
+          ctx.fill()
+
+          // Subtle inner highlight
+          ctx.fillStyle = isDark ? 'rgba(255,255,255,0.04)' : 'rgba(255,255,255,0.08)'
+          ctx.beginPath()
+          ctx.roundRect(o.x + 2, o.y + 5, o.w - 4, o.h * 0.3, 2)
+          ctx.fill()
+
+          ctx.restore()
+
+          // Label pill
+          ctx.font = 'bold 10px monospace'
+          ctx.textAlign = 'center'
+          const gLabelW = ctx.measureText(o.label).width + 10
+          const gLabelX = o.x + o.w / 2
+          const gLabelY = o.y - 14
+          ctx.fillStyle = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.07)'
+          ctx.beginPath()
+          ctx.roundRect(gLabelX - gLabelW / 2, gLabelY - 9, gLabelW, 14, 7)
           ctx.fill()
           ctx.fillStyle = isDark ? '#E4E4E7' : '#3F3F46'
-          ctx.fillText(o.label, labelX, labelY)
+          ctx.fillText(o.label, gLabelX, gLabelY)
         }
       })
 
-      // HUD
+      // ═══ HUD — with pill backgrounds ═══
+      // Top-left: game title + mode
+      ctx.save()
+      ctx.shadowColor = 'rgba(245, 130, 32, 0.2)'
+      ctx.shadowBlur = 4
       ctx.font = 'bold 11px monospace'
       ctx.textAlign = 'left'
       ctx.fillStyle = accentColor
       ctx.fillText('AI RUNNER', 16, 22)
+      ctx.restore()
       ctx.font = '10px monospace'
       ctx.fillStyle = mutedColor
       ctx.fillText(settingsRef.current.label.toUpperCase(), 16, 36)
 
-      // Stage indicator
+      // Stage badge
       if (stage > 0) {
-        ctx.font = '9px monospace'
+        const stageTxt = `STAGE ${stage + 1}`
+        ctx.font = 'bold 9px monospace'
+        const stageW = ctx.measureText(stageTxt).width + 10
+        ctx.fillStyle = isDark ? 'rgba(245, 130, 32, 0.12)' : 'rgba(217, 106, 11, 0.08)'
+        ctx.beginPath()
+        ctx.roundRect(14, 42, stageW, 15, 7)
+        ctx.fill()
         ctx.fillStyle = accentColor
-        ctx.globalAlpha = 0.6
-        ctx.fillText(`STAGE ${stage + 1}`, 16, 50)
-        ctx.globalAlpha = 1
+        ctx.fillText(stageTxt, 19, 53)
       }
 
+      // Top-right: score + speed + best — pill background
       ctx.textAlign = 'right'
-      ctx.font = '13px monospace'
+      const scoreStr = `${Math.floor(g.distance / 10)}`
+      ctx.font = 'bold 14px monospace'
+      const scoreW = ctx.measureText(scoreStr).width + 16
+      ctx.fillStyle = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.04)'
+      ctx.beginPath()
+      ctx.roundRect(CANVAS_W - 14 - scoreW, 8, scoreW + 2, 22, 6)
+      ctx.fill()
       ctx.fillStyle = fgColor
-      ctx.fillText(`${Math.floor(g.distance / 10)}`, CANVAS_W - 16, 24)
+      ctx.fillText(scoreStr, CANVAS_W - 16, 25)
+
       ctx.font = '10px monospace'
       ctx.fillStyle = mutedColor
-      ctx.fillText(`SPEED ${g.speed.toFixed(1)}x`, CANVAS_W - 16, 40)
+      ctx.fillText(`${g.speed.toFixed(1)}x`, CANVAS_W - 16, 42)
       if (highScore > 0) {
-        ctx.fillText(`BEST ${highScore}`, CANVAS_W - 16, 54)
+        ctx.fillStyle = isDark ? 'rgba(245, 130, 32, 0.6)' : 'rgba(217, 106, 11, 0.5)'
+        ctx.fillText(`BEST ${highScore}`, CANVAS_W - 16, 56)
       }
 
-      // Combo display
+      // ═══ COMBO DISPLAY — with scale bounce ═══
       if (g.combo >= 2) {
+        ctx.save()
         ctx.textAlign = 'center'
-        ctx.font = 'bold 12px monospace'
         const comboAlpha = Math.min(1, g.comboTimer / 60)
-        ctx.fillStyle = isDark ? `rgba(16, 185, 129, ${comboAlpha})` : `rgba(5, 150, 105, ${comboAlpha})`
-        ctx.fillText(`NEAR MISS x${g.combo}`, CANVAS_W / 2, GROUND_Y + 20)
+        const cScale = Math.max(1, g.comboScale)
+        ctx.translate(CANVAS_W / 2, GROUND_Y + 22)
+        ctx.scale(cScale, cScale)
+        ctx.translate(-CANVAS_W / 2, -(GROUND_Y + 22))
+
+        const comboTxt = `NEAR MISS x${g.combo}`
+        ctx.font = 'bold 12px monospace'
+        const comboW = ctx.measureText(comboTxt).width + 14
+        ctx.fillStyle = isDark ? `rgba(16, 185, 129, ${comboAlpha * 0.15})` : `rgba(5, 150, 105, ${comboAlpha * 0.1})`
+        ctx.beginPath()
+        ctx.roundRect(CANVAS_W / 2 - comboW / 2, GROUND_Y + 12, comboW, 18, 9)
+        ctx.fill()
+        ctx.fillStyle = isDark ? `rgba(52, 211, 153, ${comboAlpha})` : `rgba(5, 150, 105, ${comboAlpha})`
+        ctx.fillText(comboTxt, CANVAS_W / 2, GROUND_Y + 25)
+        ctx.restore()
       } else if (g.nearMissFlash > 0) {
         ctx.textAlign = 'center'
         ctx.font = 'bold 10px monospace'
-        ctx.fillStyle = isDark ? 'rgba(16, 185, 129, 0.7)' : 'rgba(5, 150, 105, 0.7)'
-        ctx.fillText('CLOSE!', CANVAS_W / 2, GROUND_Y + 20)
+        ctx.fillStyle = isDark ? 'rgba(52, 211, 153, 0.8)' : 'rgba(5, 150, 105, 0.8)'
+        ctx.fillText('CLOSE!', CANVAS_W / 2, GROUND_Y + 25)
       }
 
-      // Milestone text
-      if (g.milestoneFlash > 20) {
+      // ═══ MILESTONE — scale-bounce text ═══
+      if (g.milestoneFlash > 15) {
+        ctx.save()
         ctx.textAlign = 'center'
-        ctx.font = 'bold 16px monospace'
-        const mAlpha = Math.min(1, (g.milestoneFlash - 20) / 20)
-        ctx.fillStyle = `rgba(245, 158, 11, ${mAlpha})`
-        ctx.fillText(`${g.lastMilestone * 500}!`, CANVAS_W / 2, 80)
+        const mAlpha = Math.min(1, (g.milestoneFlash - 15) / 25)
+        const mScale = Math.max(1, g.milestoneScale)
+        ctx.translate(CANVAS_W / 2, 75)
+        ctx.scale(mScale, mScale)
+        ctx.translate(-CANVAS_W / 2, -75)
+
+        const mTxt = `${g.lastMilestone * 500}`
+        ctx.font = 'bold 22px monospace'
+        // Glow
+        ctx.shadowColor = `rgba(245, 130, 32, ${mAlpha * 0.6})`
+        ctx.shadowBlur = 12
+        ctx.fillStyle = `rgba(245, 130, 32, ${mAlpha})`
+        ctx.fillText(mTxt, CANVAS_W / 2, 80)
+        ctx.restore()
       }
 
-      // Boost HUD
+      // ═══ BOOST HUD ═══
       if (isBoosted) {
         ctx.textAlign = 'center'
+        const boostTxt = `BOOST ${Math.ceil(g.boostTimer / 60)}s`
         ctx.font = 'bold 11px monospace'
+        const boostW = ctx.measureText(boostTxt).width + 14
+        ctx.fillStyle = 'rgba(34, 211, 238, 0.12)'
+        ctx.beginPath()
+        ctx.roundRect(CANVAS_W / 2 - boostW / 2, 8, boostW, 18, 9)
+        ctx.fill()
         ctx.fillStyle = '#22D3EE'
-        ctx.fillText(`BOOST ${Math.ceil(g.boostTimer / 60)}s`, CANVAS_W / 2, 22)
+        ctx.fillText(boostTxt, CANVAS_W / 2, 21)
       } else if (g.boostTimer <= 0 && g.distance > 0) {
         ctx.textAlign = 'center'
         ctx.font = '9px monospace'
-        ctx.fillStyle = isDark ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.12)'
+        ctx.fillStyle = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'
         ctx.fillText('B = boost \u00B7 \u2193 = duck', CANVAS_W / 2, 22)
       }
 
@@ -1009,14 +1387,31 @@ export default function AIRunnerGame() {
       ctx.fillStyle = bgColor
       ctx.fillRect(0, 0, CANVAS_W, CANVAS_H)
 
+      // Grid
+      ctx.strokeStyle = isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.03)'
+      ctx.lineWidth = 0.5
+      for (let y = 60; y < GROUND_Y; y += 60) {
+        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(CANVAS_W, y); ctx.stroke()
+      }
+
+      // Glowing ground line
+      ctx.save()
+      ctx.shadowColor = isDark ? 'rgba(245, 130, 32, 0.25)' : 'rgba(217, 106, 11, 0.15)'
+      ctx.shadowBlur = 6
+      ctx.strokeStyle = isDark ? 'rgba(245, 130, 32, 0.2)' : 'rgba(217, 106, 11, 0.12)'
+      ctx.lineWidth = 2
+      ctx.beginPath(); ctx.moveTo(0, GROUND_Y); ctx.lineTo(CANVAS_W, GROUND_Y); ctx.stroke()
+      ctx.restore()
       ctx.strokeStyle = borderColor
       ctx.lineWidth = 1
       ctx.beginPath(); ctx.moveTo(0, GROUND_Y); ctx.lineTo(CANVAS_W, GROUND_Y); ctx.stroke()
 
-      ctx.strokeStyle = isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.03)'
-      for (let y = 60; y < GROUND_Y; y += 60) {
-        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(CANVAS_W, y); ctx.stroke()
-      }
+      // Sub-ground fade
+      const sg = ctx.createLinearGradient(0, GROUND_Y, 0, CANVAS_H)
+      sg.addColorStop(0, isDark ? 'rgba(245, 130, 32, 0.03)' : 'rgba(217, 106, 11, 0.02)')
+      sg.addColorStop(1, 'transparent')
+      ctx.fillStyle = sg
+      ctx.fillRect(0, GROUND_Y, CANVAS_W, CANVAS_H - GROUND_Y)
 
       // Agent — idle pose
       drawAgent(ctx, 50, GROUND_Y - AGENT_H, AGENT_H, {
@@ -1024,44 +1419,126 @@ export default function AIRunnerGame() {
         isJumping: false,
         jumpCount: 0,
         legFrame: 0,
-        frameCount: Math.floor(Date.now() / 16), // gentle pulse even when idle
+        frameCount: Math.floor(Date.now() / 16),
         isBoosted: false,
         doubleJumpTrail: 0,
         bgColor,
         isDark,
       })
 
-      ctx.textAlign = 'center'
-      if (gameState === 'idle') {
-        ctx.font = '600 20px Georgia, serif'
-        ctx.fillStyle = fgColor
-        ctx.fillText('Press Space to Deploy', CANVAS_W / 2, GROUND_Y / 2 - 10)
-        ctx.font = '11px monospace'
-        ctx.fillStyle = mutedColor
-        ctx.fillText('Dodge bugs, firewalls, latency & hallucinations', CANVAS_W / 2, GROUND_Y / 2 + 15)
-        ctx.fillText('Space = jump (x2!) \u00B7 \u2193 = duck \u00B7 B = boost', CANVAS_W / 2, GROUND_Y / 2 + 35)
-      } else {
-        ctx.font = '600 20px Georgia, serif'
-        ctx.fillStyle = '#dc2626'
-        ctx.fillText('Model Crashed', CANVAS_W / 2, GROUND_Y / 2 - 20)
-        ctx.font = '14px monospace'
-        ctx.fillStyle = fgColor
-        ctx.fillText(`Distance: ${score}`, CANVAS_W / 2, GROUND_Y / 2 + 10)
-        if (highScore > 0) {
-          ctx.fillStyle = accentColor
-          ctx.fillText(`Best: ${highScore}`, CANVAS_W / 2, GROUND_Y / 2 + 32)
-        }
-        ctx.font = '11px monospace'
-        ctx.fillStyle = mutedColor
-        ctx.fillText('Press Space to Redeploy', CANVAS_W / 2, GROUND_Y / 2 + 58)
-      }
-
+      // Title badge top-left
+      ctx.save()
+      ctx.shadowColor = 'rgba(245, 130, 32, 0.2)'
+      ctx.shadowBlur = 4
       ctx.textAlign = 'left'
       ctx.font = 'bold 10px monospace'
       ctx.fillStyle = accentColor
       ctx.fillText('AI RUNNER', 16, 24)
+      ctx.restore()
+
+      ctx.textAlign = 'center'
+      if (gameState === 'idle') {
+        // Title with subtle glow
+        ctx.save()
+        ctx.shadowColor = isDark ? 'rgba(250, 250, 250, 0.1)' : 'rgba(0, 0, 0, 0.05)'
+        ctx.shadowBlur = 8
+        ctx.font = '600 22px Georgia, serif'
+        ctx.fillStyle = fgColor
+        ctx.fillText('Press Space to Deploy', CANVAS_W / 2, GROUND_Y / 2 - 10)
+        ctx.restore()
+
+        ctx.font = '11px monospace'
+        ctx.fillStyle = mutedColor
+        ctx.fillText('Dodge bugs, firewalls, latency & hallucinations', CANVAS_W / 2, GROUND_Y / 2 + 18)
+
+        // Controls in a pill
+        const ctrlTxt = 'Space = jump (x2!)  \u00B7  \u2193 = duck  \u00B7  B = boost'
+        ctx.font = '10px monospace'
+        const ctrlW = ctx.measureText(ctrlTxt).width + 20
+        ctx.fillStyle = isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.03)'
+        ctx.beginPath()
+        ctx.roundRect(CANVAS_W / 2 - ctrlW / 2, GROUND_Y / 2 + 28, ctrlW, 20, 10)
+        ctx.fill()
+        ctx.fillStyle = mutedColor
+        ctx.fillText(ctrlTxt, CANVAS_W / 2, GROUND_Y / 2 + 42)
+      } else {
+        // Death screen — with glitch scanlines
+        // Subtle red scanline overlay
+        ctx.globalAlpha = 0.03
+        for (let sy = 0; sy < CANVAS_H; sy += 4) {
+          ctx.fillStyle = '#dc2626'
+          ctx.fillRect(0, sy, CANVAS_W, 1)
+        }
+        ctx.globalAlpha = 1
+
+        // "Killed by" label pill at top
+        if (killedBy) {
+          const killerTxt = `Killed by: ${killedBy.label.replace('\n', ' ')}`
+          ctx.font = 'bold 10px monospace'
+          const kW = ctx.measureText(killerTxt).width + 16
+          ctx.fillStyle = isDark ? 'rgba(220, 38, 38, 0.12)' : 'rgba(220, 38, 38, 0.08)'
+          ctx.beginPath()
+          ctx.roundRect(CANVAS_W / 2 - kW / 2, GROUND_Y / 2 - 52, kW, 18, 9)
+          ctx.fill()
+          ctx.fillStyle = '#EF4444'
+          ctx.fillText(killerTxt, CANVAS_W / 2, GROUND_Y / 2 - 39)
+        }
+
+        // Title
+        ctx.save()
+        ctx.shadowColor = 'rgba(220, 38, 38, 0.4)'
+        ctx.shadowBlur = 10
+        ctx.font = '600 20px Georgia, serif'
+        ctx.fillStyle = '#dc2626'
+        ctx.fillText('Model Crashed', CANVAS_W / 2, GROUND_Y / 2 - 18)
+        ctx.restore()
+
+        // Score + best on one line in pill
+        const scoreAndBest = highScore > 0
+          ? `Distance: ${score}  \u00B7  Best: ${highScore}`
+          : `Distance: ${score}`
+        ctx.font = 'bold 13px monospace'
+        const sbW = ctx.measureText(scoreAndBest).width + 20
+        ctx.fillStyle = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.04)'
+        ctx.beginPath()
+        ctx.roundRect(CANVAS_W / 2 - sbW / 2, GROUND_Y / 2 - 2, sbW, 22, 8)
+        ctx.fill()
+        ctx.fillStyle = fgColor
+        ctx.fillText(scoreAndBest, CANVAS_W / 2, GROUND_Y / 2 + 14)
+
+        // Witty death message
+        if (killedBy) {
+          ctx.font = 'italic 11px Georgia, serif'
+          ctx.fillStyle = mutedColor
+          // Word wrap the message if needed
+          const msg = killedBy.message
+          if (ctx.measureText(msg).width > CANVAS_W - 120) {
+            // Split at roughly halfway on a space
+            const mid = Math.floor(msg.length / 2)
+            let splitAt = msg.lastIndexOf(' ', mid)
+            if (splitAt < 10) splitAt = msg.indexOf(' ', mid)
+            const line1 = msg.substring(0, splitAt)
+            const line2 = msg.substring(splitAt + 1)
+            ctx.fillText(line1, CANVAS_W / 2, GROUND_Y / 2 + 34)
+            ctx.fillText(line2, CANVAS_W / 2, GROUND_Y / 2 + 48)
+          } else {
+            ctx.fillText(msg, CANVAS_W / 2, GROUND_Y / 2 + 38)
+          }
+        }
+
+        // Redeploy in a pill
+        const redeployTxt = 'Press Space to Redeploy'
+        ctx.font = '10px monospace'
+        const rdW = ctx.measureText(redeployTxt).width + 20
+        ctx.fillStyle = isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.03)'
+        ctx.beginPath()
+        ctx.roundRect(CANVAS_W / 2 - rdW / 2, GROUND_Y / 2 + 56, rdW, 18, 10)
+        ctx.fill()
+        ctx.fillStyle = mutedColor
+        ctx.fillText(redeployTxt, CANVAS_W / 2, GROUND_Y / 2 + 69)
+      }
     }
-  }, [gameState, score, highScore])
+  }, [gameState, score, highScore, killedBy])
 
   return (
     <div ref={containerRef}>
