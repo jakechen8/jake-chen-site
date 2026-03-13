@@ -4,6 +4,7 @@ import AIRunnerGame from '@/components/AIRunnerGame'
 export const metadata: Metadata = {
   title: 'Play — AI Runner',
   description: 'A fast-paced endless runner where you deploy an AI agent through obstacles. How far can your model go before it crashes?',
+  alternates: { canonical: 'https://jake-chen.com/play' },
 }
 
 export default function PlayPage() {

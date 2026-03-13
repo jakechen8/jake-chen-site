@@ -5,6 +5,7 @@ export const metadata: Metadata = {
   title: 'Projects',
   description:
     'Things Jake Chen builds after hours — games, tools, and experiments at the intersection of strategy and code.',
+  alternates: { canonical: 'https://jake-chen.com/projects' },
 }
 
 const projects = [

@@ -18,8 +18,8 @@ export async function GET() {
     language: 'en',
     ttl: 60,
     copyright: `© ${new Date().getFullYear()} Jake Chen`,
-    managingEditor: 'hello@jakechenai.com (Jake Chen)',
-    webMaster: 'hello@jakechenai.com (Jake Chen)',
+    managingEditor: 'hello@jake-chen.com (Jake Chen)',
+    webMaster: 'hello@jake-chen.com (Jake Chen)',
   })
 
   posts.forEach((post) => {

@@ -5,6 +5,7 @@ import Link from 'next/link'
 export const metadata: Metadata = {
   title: 'About',
   description: 'Jake Chen — Strategy Lead at Waymo. 15+ years across McKinsey, HubSpot, Microsoft, and Deloitte. MIT Sloan MBA.',
+  alternates: { canonical: 'https://jake-chen.com/about' },
 }
 
 export default function AboutPage() {
@@ -154,6 +155,14 @@ export default function AboutPage() {
               className="btn-ghost"
             >
               LinkedIn
+            </a>
+            <a
+              href="https://x.com/mitjake"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn-ghost"
+            >
+              X / Twitter
             </a>
           </div>
         </div>

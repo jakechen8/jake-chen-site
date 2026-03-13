@@ -33,6 +33,7 @@ export default function JsonLd() {
     ],
     sameAs: [
       'https://linkedin.com/in/jiakechen',
+      'https://x.com/mitjake',
     ],
   }
 

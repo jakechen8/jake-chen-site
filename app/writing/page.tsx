@@ -6,6 +6,7 @@ import EmailCapture from '@/components/EmailCapture'
 export const metadata: Metadata = {
   title: 'Writing',
   description: 'Essays on how AI reshapes decisions, organizations, and the systems we build around them. By Jake Chen.',
+  alternates: { canonical: 'https://jake-chen.com/writing' },
 }
 
 export default async function WritingPage() {

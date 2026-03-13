@@ -35,7 +35,7 @@ export async function GET(req: NextRequest) {
             height: '700px',
             borderRadius: '50%',
             background:
-              'radial-gradient(circle, rgba(37,99,235,0.15) 0%, rgba(37,99,235,0.05) 40%, transparent 70%)',
+              'radial-gradient(circle, rgba(180,83,9,0.15) 0%, rgba(217,119,6,0.05) 40%, transparent 70%)',
             display: 'flex',
           }}
         />
@@ -48,7 +48,7 @@ export async function GET(req: NextRequest) {
             height: '600px',
             borderRadius: '50%',
             background:
-              'radial-gradient(circle, rgba(99,102,241,0.1) 0%, rgba(99,102,241,0.03) 40%, transparent 70%)',
+              'radial-gradient(circle, rgba(217,119,6,0.1) 0%, rgba(217,119,6,0.03) 40%, transparent 70%)',
             display: 'flex',
           }}
         />
@@ -77,7 +77,7 @@ export async function GET(req: NextRequest) {
             right: '80px',
             height: '3px',
             background:
-              'linear-gradient(90deg, #2563EB 0%, #6366F1 50%, transparent 100%)',
+              'linear-gradient(90deg, #B45309 0%, #D97706 50%, transparent 100%)',
             display: 'flex',
           }}
         />
@@ -101,7 +101,7 @@ export async function GET(req: NextRequest) {
                 width: '44px',
                 height: '44px',
                 borderRadius: '22px',
-                background: 'linear-gradient(135deg, #2563EB, #6366F1)',
+                background: 'linear-gradient(135deg, #B45309, #D97706)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -204,14 +204,14 @@ export async function GET(req: NextRequest) {
                       gap: '6px',
                       padding: '6px 14px',
                       borderRadius: '8px',
-                      background: 'rgba(37,99,235,0.12)',
-                      border: '1px solid rgba(37,99,235,0.2)',
+                      background: 'rgba(180,83,9,0.12)',
+                      border: '1px solid rgba(180,83,9,0.2)',
                     }}
                   >
                     <span
                       style={{
                         fontSize: '13px',
-                        color: '#93C5FD',
+                        color: '#FCD34D',
                         fontFamily: 'system-ui, sans-serif',
                         fontWeight: 500,
                       }}
@@ -300,7 +300,7 @@ export async function GET(req: NextRequest) {
                   width: '6px',
                   height: '6px',
                   borderRadius: '3px',
-                  backgroundColor: '#2563EB',
+                  backgroundColor: '#B45309',
                   display: 'flex',
                 }}
               />
@@ -309,7 +309,7 @@ export async function GET(req: NextRequest) {
                   width: '6px',
                   height: '6px',
                   borderRadius: '3px',
-                  backgroundColor: '#6366F1',
+                  backgroundColor: '#D97706',
                   display: 'flex',
                 }}
               />
@@ -318,7 +318,7 @@ export async function GET(req: NextRequest) {
                   width: '6px',
                   height: '6px',
                   borderRadius: '3px',
-                  backgroundColor: '#818CF8',
+                  backgroundColor: '#F59E0B',
                   display: 'flex',
                 }}
               />

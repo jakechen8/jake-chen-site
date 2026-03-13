@@ -27,6 +27,7 @@ export default function Footer() {
             { href: '/projects', label: 'Projects' },
             { href: '/about', label: 'About' },
             { href: 'https://linkedin.com/in/jiakechen', label: 'LinkedIn', external: true },
+            { href: 'https://x.com/mitjake', label: 'X', external: true },
             { href: '/feed.xml', label: 'RSS', external: true },
           ].map(({ href, label, external }) => (
             <Link

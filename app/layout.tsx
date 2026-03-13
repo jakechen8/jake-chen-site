@@ -38,6 +38,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
+    creator: '@mitjake',
+    site: '@mitjake',
     title: 'Jake Chen',
     description: 'Strategy lead at Waymo. Writing about how AI reshapes decisions, organizations, and the systems that run them.',
     images: ['/api/og'],
