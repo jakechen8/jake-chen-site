@@ -1,0 +1,81 @@
+---
+title: "After the Demo: The Next Platform War Will Be Fought in Protocols, Not Models"
+date: "2025-07-08"
+excerpt: "Being best isn't enough. Being easiest to plug into is what compounds. The winners will own the integration layer, not the intelligence layer."
+tags: ["AI Strategy", "Platforms", "Infrastructure"]
+published: true
+series: "After the Demo"
+seriesOrder: 2
+---
+
+You've built the best AI model. State-of-the-art. Actually tops the benchmark.
+
+Then Sales asks: "Can it talk to Salesforce?"
+
+"Well, your engineering team would need to build an integration..."
+
+Meanwhile your competitor with a mediocre model just plugged into twelve systems. Salesforce, HubSpot, Marketo, Slack, Stripe, Zapier. Their tool just works. It plugs in.
+
+And guess what? Your company loses the deal.
+
+I've watched this dynamic play out. The intelligence of the system matters a lot. But so does the integration layer. The system that plugs in cleanly scales. The one that needs custom engineering for every single connection doesn't.
+
+## Why the best model loses
+
+For two years all the AI conversation was "which model is best." That made sense when the model was the only variable.
+
+We're past that now. Claude works. GPT-4 works. Gemini works. The models are good enough. Intelligence got commoditized faster than anyone predicted.
+
+Differentiation moved somewhere else. Integration.
+
+And this pattern repeats in every platform wave. TCP/IP wasn't the fastest protocol. It became the standard because everyone could build on it. HTTP wasn't elegant. It powered the web because everything spoke it. REST wasn't perfect. It unified how systems communicate. OAuth was boring. But it solved authentication at scale.
+
+The company that owned the protocol didn't necessarily own the market. But it owned the gateway. The protocol set the rules. Everything else negotiated with it.
+
+<IntegrationRace />
+
+## Why AI agents make this actually matter
+
+In older platform waves, the things integrating were passive. A database waits for a query. An API waits for a request. They don't do anything on their own.
+
+AI agents are different. They're semi-autonomous. They initiate things. They make decisions. They execute transactions. That creates a whole new category of integration problems:
+
+**Trust.** If an agent asks your system to do something, can you be confident it won't blow things up? **Permissions.** What should this agent be allowed to do, and what needs approval? **Authentication.** Can I actually verify you are who you claim to be? **Error handling.** When something breaks, how do we recover without the agent's owner even knowing?
+
+In the old world, your CRM answers questions. It's a safe read operation. In the agent world, your CRM might execute a transaction. That's a different risk category entirely.
+
+The companies that build protocols solving these problems become infrastructure. And in platform wars, infrastructure usually wins more than the application layer.
+
+## What product strategy should actually be
+
+If you're building anything that other teams or systems will need to use:
+
+**Make yourself easy to connect to.** This isn't nice-to-have. This is competitive advantage.
+
+Document everything in a way machines can actually read. If your API is described in a PDF, agents can't reason about it. Give them structured specs. Stop documenting only for humans. Your system authenticates users today. Soon it needs to authenticate services.
+
+Build for stable, predictable behavior. Systems integrating with you can't handle magic. They need failure modes that are obvious, not surprising. Design for delegation. An agent calling your system needs to know upfront what requires approval and what it can do on its own.
+
+The companies that get this right become infrastructure. The ones that don't become islands.
+
+<MythReality myth="The company with the best AI model wins the enterprise deal." reality="The company that plugs into twelve systems on day one wins — because integration compounds faster than intelligence." />
+
+## The App Store parallel
+
+When the App Store launched, thousands of apps competed. The ones that won weren't always the best engineered. They were the ones with deep links, share extensions, solid integration with contacts and location and photos.
+
+Slack didn't win because the UX was best. It won because everything plugged into it. Email, GitHub, Jira, Google Drive, Stripe. You could live in Slack and never leave.
+
+Same dynamic is starting for AI. The tools that integrate everything become the environment you live in. The tools that don't become specialist utilities. Useful. Limited.
+
+## The move
+
+If you're a product leader: audit your integration story. How many systems can actually plug into yours? The boring plumbing matters more than the feature roadmap. Your engineering team wants new features. Your CEO wants a tool that doesn't need custom engineering for every connection. Treat your API like a product. Plan for agents as first-class clients. Your next customer might not be a person.
+
+If you're evaluating vendors: ask about the integration roadmap, not the feature roadmap. Look for protocol thinking. Does the vendor invest in standards, or lock you into their ecosystem?
+
+The model is table stakes. The protocol is advantage.
+
+---
+
+*Part two of the "After the Demo" series. Next: why the most important reader of your website may soon be a machine.*

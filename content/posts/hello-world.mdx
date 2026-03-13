@@ -1,0 +1,103 @@
+---
+title: "On Trust in Systems That Can't Explain Themselves"
+date: "2025-01-15"
+excerpt: "Every day I watch autonomous systems make life-or-death decisions they can't fully explain. Here's the framework I use to think about trust when stakes are high."
+tags: ["Trust", "AI Systems", "Autonomy"]
+published: true
+---
+
+I work on autonomous systems. Every day they're making decisions — merging, judging gaps, adjusting speed — that nobody in the company can actually explain in English.
+
+Passengers sit in the car and trust it. Regulators read reports and scrutinize it. And I keep coming back to the same question: what are we actually asking this thing to be trustworthy at?
+
+That question extends way beyond self-driving cars. A credit card company trusts a model to catch fraud. A bank uses one to approve loans. Some HR department is screening resumes with an AI right now. These systems make consequential decisions constantly. None of them can articulate their reasoning the way a person would.
+
+The question isn't whether this is new. The question is whether we're being honest about what we're doing.
+
+## You can't ask it why
+
+Here's the core problem: you ask an AI why it did something and you don't get an answer. You get a reconstruction.
+
+Ask a human loan officer why they denied your application, they can tell you. Their reasoning might be flawed or unfair, but it's rooted in something — criteria, experience, judgment they can defend.
+
+An AI's explanation is often reverse-engineered from the output. The system that made the decision and the system that explains the decision are sometimes completely different things.
+
+This gap — between what actually happened and what you can verify about how it happened — that's the real problem. With a human, the gap is small. With an AI system, it's enormous.
+
+And the wider that gap, the more trust becomes a bet instead of a judgment.
+
+## 98% sounds great until you ask about the 2%
+
+Antilock brakes pulse hydraulics faster than you could ever react. You don't understand the mechanism, but you trust them. Why? Because they fail predictably. You know what happens when they fail. You've tested it. It's consistent.
+
+AI doesn't fail predictably. It works 98% of the time, then does something completely inexplicable.
+
+A fraud detection system that catches 99% of actual fraud sounds incredible. But what if it also occasionally freezes all transactions from a specific region for no reason? Same aggregate performance. Totally different reality.
+
+I've watched this in autonomous systems. The success rate is almost meaningless. What matters is the shape of the failures. A system that fails in bounded, predictable ways is fundamentally different from a system that fails rarely but catastrophically.
+
+The rare catastrophe can kill you. The frequent, predictable failure you can work around.
+
+<AnimatedStat value="98%" startFrom="0%" label="Success rate" context="Sounds impressive — until you ask what the other 2% looks like. A system that fails rarely but catastrophically is more dangerous than one that fails often but predictably." />
+
+## What you can actually evaluate
+
+If you can't see inside the black box, here's what matters:
+
+**How does it behave under weird conditions?** Throw contradictions at it. Ambiguity. Edge cases. A system that knows when it's uncertain is more trustworthy than one that confidently guesses.
+
+**Can you predict how it fails?** "The model struggles with messy data" — you can work around that. "Sometimes it just breaks for reasons we don't understand" — that's dangerous. Understanding the boundaries of what something can do is half the battle.
+
+**Does it know what it doesn't know?** A model that outputs 95% confidence when it should be at 40% is actively lying to you. That calibration thing — that's more important than people realize. A system that's honest about its uncertainty is worth ten systems that are wrong but confident.
+
+**Who's actually responsible when it breaks?** Is there a person on the hook? Insurance? An audit process? Or does responsibility just dissolve into "the algorithm decided." This isn't a technical question, but it matters as much as the technical ones.
+
+## Stop asking if it's trustworthy
+
+<TrustMatrix />
+
+Here's where I've landed: don't ask "is this trustworthy?" Ask "what specifically am I trusting this to do?"
+
+Trust isn't binary. It's contextual.
+
+You trust Google Maps because it fails gracefully — worst case you drive an extra ten minutes. You can verify easily — you'll know if you're lost. The consequences are low. It's been tested by millions.
+
+You should not trust an untested hiring AI the same way. It fails invisibly to you. You can't easily verify the output. The consequences are high — someone's career. You've only tested it on your own data.
+
+Same confidence scores. Completely different situations.
+
+The map you need answers: in what contexts, for what decisions, with what consequences, is this system worth using?
+
+## Practical stuff if you're deploying this
+
+Start with low stakes. Use it for recommendations, not final decisions. Make it easy for humans to override.
+
+Build observability. Log what the system decided and how confident it was. You'll need that record later.
+
+Test with weird inputs deliberately. Not just training data — contradictions, ambiguity, stuff designed to break it. Ask: does it know when to quit?
+
+Plan for failure before it happens. Not if, when. Who overrides? How does a human know they need to step in? What's the escalation path?
+
+## Practical stuff if you're affected by one
+
+Ask who stands behind it. Not the company — a specific person.
+
+Ask what kinds of decisions it gets wrong. If they don't know, that's the answer right there.
+
+Ask for a human override path. If you can't appeal to a human, you shouldn't be subject to it.
+
+Pay attention to whether the system is confident about genuinely uncertain things. That's a red flag.
+
+## The vertigo is the feature
+
+I won't pretend we've solved this. We haven't.
+
+The most capable systems are often the least interpretable. The safer ones are often less capable. There's a fundamental tradeoff and we're still learning to navigate it.
+
+But the discomfort becomes manageable when you stop trying to give a yes-or-no verdict and start building a map. Specific situations. Specific safeguards. Specific decisions where trust is reasonable.
+
+That map is harder to build than a binary judgment. But it's the only approach that actually scales.
+
+---
+
+*This is something I think about constantly — both in the work I do and in the broader ecosystem. If you've deployed systems like this and learned hard lessons, I'd like to hear about it.*
