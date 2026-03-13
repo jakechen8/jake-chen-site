@@ -146,297 +146,164 @@ function drawAgent(
   }
 ) {
   const cx = x + AGENT_W / 2
-  const { isDucking, isJumping, legFrame, frameCount, isBoosted, doubleJumpTrail, isDark } = opts
+  const { isDucking, isJumping, legFrame, frameCount, isBoosted, doubleJumpTrail } = opts
 
-  // Colors — wireframe edges only
-  const wireColor = doubleJumpTrail > 0 ? BK_ORANGE_LIGHT : (isBoosted ? '#22D3EE' : BK_ORANGE)
-  const glowColor = doubleJumpTrail > 0 ? 'rgba(255,179,102,0.5)' : (isBoosted ? 'rgba(34,211,238,0.5)' : 'rgba(245,130,32,0.5)')
-  const fillAlpha = doubleJumpTrail > 0 ? 0.12 : (isBoosted ? 0.08 : 0.06)
-  const lineW = 1.8
-
-  // Scanline phase — horizontal lines sweep through the figure
-  const scanY = ((frameCount * 2) % (h + 20)) - 10
+  // Colors
+  const mainColor = doubleJumpTrail > 0 ? BK_ORANGE_LIGHT : (isBoosted ? '#22D3EE' : BK_ORANGE)
+  const glowColor = doubleJumpTrail > 0 ? 'rgba(255,179,102,0.6)' : (isBoosted ? 'rgba(34,211,238,0.6)' : 'rgba(245,130,32,0.6)')
+  const darkFill = doubleJumpTrail > 0 ? '#3D2200' : (isBoosted ? '#0B3D47' : '#2A1000')
 
   ctx.save()
 
   if (isDucking) {
-    // ── DUCKING — flat capsule wireframe ──
-    const dw = AGENT_W + 10
-    const dh = h * 0.5
-    const dx = x - 5
+    // ── DUCKING — flat pill with JC ──
+    const dw = AGENT_W + 12
+    const dh = h * 0.45
+    const dx = x - 6
     const dy = y + h - dh
 
-    // Glow layer
+    // Glow
     ctx.shadowColor = glowColor
-    ctx.shadowBlur = 14
-    ctx.strokeStyle = wireColor
-    ctx.lineWidth = lineW
+    ctx.shadowBlur = 16
 
-    // Outer capsule
+    // Pill body
+    ctx.fillStyle = darkFill
+    ctx.beginPath()
+    ctx.roundRect(dx, dy, dw, dh, dh / 2)
+    ctx.fill()
+
+    // Pill border
+    ctx.strokeStyle = mainColor
+    ctx.lineWidth = 2
     ctx.beginPath()
     ctx.roundRect(dx, dy, dw, dh, dh / 2)
     ctx.stroke()
 
-    // Ghost fill
-    ctx.fillStyle = wireColor
-    ctx.globalAlpha = fillAlpha
-    ctx.beginPath()
-    ctx.roundRect(dx, dy, dw, dh, dh / 2)
-    ctx.fill()
-    ctx.globalAlpha = 1
+    // "JC" text
+    ctx.shadowBlur = 8
+    ctx.fillStyle = mainColor
+    ctx.font = 'bold 11px monospace'
+    ctx.textAlign = 'center'
+    ctx.textBaseline = 'middle'
+    ctx.fillText('JC', dx + dw / 2, dy + dh / 2 + 1)
 
-    // Internal wireframe lines
+    // Speed streaks behind
     ctx.shadowBlur = 0
-    ctx.lineWidth = 0.8
+    ctx.strokeStyle = mainColor
     ctx.globalAlpha = 0.3
-    // Horizontal center line
-    ctx.beginPath()
-    ctx.moveTo(dx + 6, dy + dh / 2)
-    ctx.lineTo(dx + dw - 6, dy + dh / 2)
-    ctx.stroke()
-    ctx.globalAlpha = 1
-
-    // Visor — bright horizontal slit
-    ctx.strokeStyle = '#FFFFFF'
     ctx.lineWidth = 1.5
-    ctx.globalAlpha = 0.7 + Math.sin(frameCount * 0.15) * 0.2
-    ctx.beginPath()
-    ctx.moveTo(dx + dw * 0.5, dy + dh * 0.35)
-    ctx.lineTo(dx + dw * 0.88, dy + dh * 0.35)
-    ctx.stroke()
-    // Visor glow dot
-    ctx.fillStyle = '#FFFFFF'
-    ctx.beginPath()
-    ctx.arc(dx + dw * 0.85, dy + dh * 0.35, 1.5, 0, Math.PI * 2)
-    ctx.fill()
-    ctx.globalAlpha = 1
-
-    // Speed streaks
-    ctx.strokeStyle = wireColor
-    ctx.globalAlpha = 0.25
-    ctx.lineWidth = 1
     for (let i = 0; i < 3; i++) {
       const sy = dy + dh * 0.2 + i * (dh * 0.3)
-      const sLen = 10 + i * 5 + Math.sin(frameCount * 0.2 + i) * 4
+      const sLen = 8 + i * 4 + Math.sin(frameCount * 0.2 + i) * 3
       ctx.beginPath()
-      ctx.moveTo(dx - 3, sy)
-      ctx.lineTo(dx - 3 - sLen, sy)
+      ctx.moveTo(dx - 2, sy)
+      ctx.lineTo(dx - 2 - sLen, sy)
       ctx.stroke()
     }
     ctx.globalAlpha = 1
   } else {
-    // ── STANDING / JUMPING — wireframe humanoid ──
-    const tilt = isJumping ? (opts.jumpCount >= 2 ? -0.15 : -0.08) : 0
+    // ── STANDING / JUMPING — JC monogram badge ──
+    const tilt = isJumping ? (opts.jumpCount >= 2 ? -0.12 : -0.06) : 0
+    const bounce = !isJumping ? Math.sin(legFrame * 0.3) * 1.5 : 0
+
     ctx.save()
     ctx.translate(cx, y + h)
     ctx.rotate(tilt)
     ctx.translate(-cx, -(y + h))
 
-    // Glow
+    const badgeX = x - 2
+    const badgeY = y + bounce
+    const badgeW = AGENT_W + 4
+    const badgeH = h - 4
+    const borderR = 8
+
+    // Outer glow
     ctx.shadowColor = glowColor
-    ctx.shadowBlur = 14
-    ctx.strokeStyle = wireColor
-    ctx.lineWidth = lineW
+    ctx.shadowBlur = 20
 
-    // === HEAD — circle wireframe ===
-    const headR = 8
-    const headY = y + headR + 2
-
+    // Badge body — dark fill
+    ctx.fillStyle = darkFill
     ctx.beginPath()
-    ctx.arc(cx, headY, headR, 0, Math.PI * 2)
-    ctx.stroke()
-    // Ghost fill head
-    ctx.fillStyle = wireColor
-    ctx.globalAlpha = fillAlpha
+    ctx.roundRect(badgeX, badgeY, badgeW, badgeH, borderR)
     ctx.fill()
-    ctx.globalAlpha = 1
 
-    // Visor — glowing slit
+    // Badge border — bright orange
+    ctx.strokeStyle = mainColor
+    ctx.lineWidth = 2.5
+    ctx.beginPath()
+    ctx.roundRect(badgeX, badgeY, badgeW, badgeH, borderR)
+    ctx.stroke()
+
+    // Inner glow line (subtle second border)
     ctx.shadowBlur = 0
-    ctx.strokeStyle = '#FFFFFF'
-    ctx.lineWidth = 2
-    ctx.globalAlpha = 0.6 + Math.sin(frameCount * 0.12) * 0.3
-    const visorW = headR * 1.1
-    ctx.beginPath()
-    ctx.moveTo(cx, headY - 1)
-    ctx.lineTo(cx + visorW, headY - 1)
-    ctx.stroke()
-    // Visor eye dot
-    ctx.fillStyle = '#FFFFFF'
-    ctx.beginPath()
-    ctx.arc(cx + visorW - 1, headY - 1, 1.5, 0, Math.PI * 2)
-    ctx.fill()
-    ctx.globalAlpha = 1
-
-    // === ANTENNA ===
-    ctx.shadowColor = glowColor
-    ctx.shadowBlur = 8
-    ctx.strokeStyle = wireColor
-    ctx.lineWidth = 1.5
-    ctx.beginPath()
-    ctx.moveTo(cx, headY - headR)
-    ctx.lineTo(cx, headY - headR - 8)
-    ctx.stroke()
-    // Tip — pulsing bright dot
-    const tipPulse = 2 + Math.sin(frameCount * 0.18) * 1
-    ctx.fillStyle = '#FFFFFF'
-    ctx.globalAlpha = 0.8
-    ctx.beginPath()
-    ctx.arc(cx, headY - headR - 9, tipPulse, 0, Math.PI * 2)
-    ctx.fill()
-    ctx.globalAlpha = 1
-
-    // === NECK LINE ===
-    ctx.shadowBlur = 10
-    ctx.strokeStyle = wireColor
-    ctx.lineWidth = lineW
-    ctx.beginPath()
-    ctx.moveTo(cx, headY + headR)
-    ctx.lineTo(cx, y + 18)
-    ctx.stroke()
-
-    // === TORSO — wireframe trapezoid ===
-    const shoulderW = 13
-    const waistW = 9
-    const shoulderY = y + 18
-    const waistY = y + h - 14
-
-    // Torso outline
-    ctx.beginPath()
-    ctx.moveTo(cx - shoulderW, shoulderY)
-    ctx.lineTo(cx + shoulderW, shoulderY)
-    ctx.lineTo(cx + waistW, waistY)
-    ctx.lineTo(cx - waistW, waistY)
-    ctx.closePath()
-    ctx.stroke()
-    // Ghost fill
-    ctx.fillStyle = wireColor
-    ctx.globalAlpha = fillAlpha
-    ctx.fill()
-    ctx.globalAlpha = 1
-
-    // Internal wireframe: cross lines inside torso
-    ctx.shadowBlur = 0
-    ctx.lineWidth = 0.6
-    ctx.globalAlpha = 0.2
-    // Shoulder to opposite hip
-    ctx.beginPath()
-    ctx.moveTo(cx - shoulderW + 2, shoulderY + 1)
-    ctx.lineTo(cx + waistW - 2, waistY - 1)
-    ctx.stroke()
-    ctx.beginPath()
-    ctx.moveTo(cx + shoulderW - 2, shoulderY + 1)
-    ctx.lineTo(cx - waistW + 2, waistY - 1)
-    ctx.stroke()
-    // Horizontal mid-line
-    const midY = (shoulderY + waistY) / 2
-    const midW = (shoulderW + waistW) / 2
-    ctx.beginPath()
-    ctx.moveTo(cx - midW, midY)
-    ctx.lineTo(cx + midW, midY)
-    ctx.stroke()
-    ctx.globalAlpha = 1
-
-    // === CORE — energy center (pulsing, bright) ===
-    ctx.shadowColor = glowColor
-    ctx.shadowBlur = 10
-    const coreY = (shoulderY + waistY) * 0.48 + shoulderY * 0.04
-    const coreR = 2.5 + Math.sin(frameCount * 0.1) * 0.8
-    ctx.fillStyle = '#FFFFFF'
-    ctx.globalAlpha = 0.7 + Math.sin(frameCount * 0.1) * 0.2
-    ctx.beginPath()
-    ctx.arc(cx, coreY, coreR, 0, Math.PI * 2)
-    ctx.fill()
-    // Core halo
-    ctx.fillStyle = wireColor
+    ctx.strokeStyle = mainColor
     ctx.globalAlpha = 0.15
+    ctx.lineWidth = 1
     ctx.beginPath()
-    ctx.arc(cx, coreY, coreR + 4, 0, Math.PI * 2)
+    ctx.roundRect(badgeX + 3, badgeY + 3, badgeW - 6, badgeH - 6, borderR - 2)
+    ctx.stroke()
+    ctx.globalAlpha = 1
+
+    // "JC" monogram — big, bold, centered
+    ctx.shadowColor = glowColor
+    ctx.shadowBlur = 12
+    ctx.fillStyle = mainColor
+    ctx.font = 'bold 18px monospace'
+    ctx.textAlign = 'center'
+    ctx.textBaseline = 'middle'
+    ctx.fillText('JC', badgeX + badgeW / 2, badgeY + badgeH * 0.45)
+
+    // Subtitle — tiny "run" text
+    ctx.shadowBlur = 4
+    ctx.fillStyle = mainColor
+    ctx.globalAlpha = 0.5
+    ctx.font = '7px monospace'
+    ctx.fillText('run', badgeX + badgeW / 2, badgeY + badgeH * 0.75)
+    ctx.globalAlpha = 1
+
+    // Pulsing energy dot at top center
+    const dotPulse = 2 + Math.sin(frameCount * 0.15) * 0.8
+    ctx.shadowColor = glowColor
+    ctx.shadowBlur = 10
+    ctx.fillStyle = '#FFFFFF'
+    ctx.globalAlpha = 0.7 + Math.sin(frameCount * 0.15) * 0.2
+    ctx.beginPath()
+    ctx.arc(badgeX + badgeW / 2, badgeY + 2, dotPulse, 0, Math.PI * 2)
     ctx.fill()
     ctx.globalAlpha = 1
 
-    // === LEGS — wireframe lines ===
-    ctx.shadowBlur = 10
-    ctx.strokeStyle = wireColor
-    ctx.lineWidth = lineW
-    const legPhase = Math.sin(legFrame * 0.3)
-
+    // Running legs — two small animated lines below the badge
     if (!isJumping) {
-      // Running — legs swing as lines with knee joints
-      const hipL = { x: cx - 5, y: waistY }
-      const hipR = { x: cx + 5, y: waistY }
-      const kneeOffsetL = legPhase * 6
-      const kneeOffsetR = -legPhase * 6
-      const legLen = 14
+      const legBase = badgeY + badgeH
+      const legPhase = Math.sin(legFrame * 0.3)
+      ctx.shadowBlur = 6
+      ctx.strokeStyle = mainColor
+      ctx.lineWidth = 2
+      ctx.lineCap = 'round'
 
       // Left leg
-      const kneeL = { x: hipL.x + kneeOffsetL * 0.3, y: hipL.y + legLen * 0.55 }
-      const footL = { x: hipL.x + kneeOffsetL, y: y + h }
       ctx.beginPath()
-      ctx.moveTo(hipL.x, hipL.y)
-      ctx.lineTo(kneeL.x, kneeL.y)
-      ctx.lineTo(footL.x, footL.y)
+      ctx.moveTo(cx - 5, legBase)
+      ctx.lineTo(cx - 5 + legPhase * 4, legBase + 4)
       ctx.stroke()
-      // Foot dot
-      ctx.fillStyle = wireColor
-      ctx.beginPath()
-      ctx.arc(footL.x, footL.y, 2, 0, Math.PI * 2)
-      ctx.fill()
-
       // Right leg
-      const kneeR = { x: hipR.x + kneeOffsetR * 0.3, y: hipR.y + legLen * 0.55 }
-      const footR = { x: hipR.x + kneeOffsetR, y: y + h }
       ctx.beginPath()
-      ctx.moveTo(hipR.x, hipR.y)
-      ctx.lineTo(kneeR.x, kneeR.y)
-      ctx.lineTo(footR.x, footR.y)
+      ctx.moveTo(cx + 5, legBase)
+      ctx.lineTo(cx + 5 - legPhase * 4, legBase + 4)
       ctx.stroke()
-      ctx.fillStyle = wireColor
-      ctx.beginPath()
-      ctx.arc(footR.x, footR.y, 2, 0, Math.PI * 2)
-      ctx.fill()
-
-      // Joint dots at knees
-      ctx.globalAlpha = 0.5
-      ctx.beginPath()
-      ctx.arc(kneeL.x, kneeL.y, 1.5, 0, Math.PI * 2)
-      ctx.fill()
-      ctx.beginPath()
-      ctx.arc(kneeR.x, kneeR.y, 1.5, 0, Math.PI * 2)
-      ctx.fill()
-      ctx.globalAlpha = 1
-    } else {
-      // Jumping — tucked legs
-      ctx.beginPath()
-      ctx.moveTo(cx - 5, waistY)
-      ctx.lineTo(cx - 9, waistY + 5)
-      ctx.lineTo(cx - 5, y + h - 4)
-      ctx.stroke()
-      ctx.beginPath()
-      ctx.moveTo(cx + 5, waistY)
-      ctx.lineTo(cx + 9, waistY + 5)
-      ctx.lineTo(cx + 5, y + h - 4)
-      ctx.stroke()
-      // Foot dots
-      ctx.fillStyle = wireColor
-      ctx.beginPath()
-      ctx.arc(cx - 5, y + h - 4, 2, 0, Math.PI * 2)
-      ctx.fill()
-      ctx.beginPath()
-      ctx.arc(cx + 5, y + h - 4, 2, 0, Math.PI * 2)
-      ctx.fill()
     }
 
-    // === SCANLINE — horizontal line sweeping through the figure ===
-    const scanLocalY = y + scanY
-    if (scanLocalY > y - 5 && scanLocalY < y + h + 5) {
+    // Scanline sweep across badge
+    const scanPhase = ((frameCount * 1.5) % (badgeH + 10)) - 5
+    const scanLineY = badgeY + scanPhase
+    if (scanLineY > badgeY && scanLineY < badgeY + badgeH) {
       ctx.shadowBlur = 0
-      ctx.strokeStyle = wireColor
-      ctx.globalAlpha = 0.25
-      ctx.lineWidth = 1
+      ctx.strokeStyle = '#FFFFFF'
+      ctx.globalAlpha = 0.08
+      ctx.lineWidth = badgeW - 8
       ctx.beginPath()
-      ctx.moveTo(cx - 18, scanLocalY)
-      ctx.lineTo(cx + 18, scanLocalY)
+      ctx.moveTo(badgeX + badgeW / 2, scanLineY)
+      ctx.lineTo(badgeX + badgeW / 2, scanLineY)
       ctx.stroke()
       ctx.globalAlpha = 1
     }
@@ -444,7 +311,7 @@ function drawAgent(
     ctx.restore() // undo tilt
   }
 
-  ctx.restore() // undo save
+  ctx.restore()
 
   // === DOUBLE JUMP READY — spinning dashed ring ===
   if (opts.jumpCount === 1 && isJumping) {
@@ -452,10 +319,9 @@ function drawAgent(
     const ringAlpha = 0.3 + Math.sin(frameCount * 0.25) * 0.15
     ctx.save()
     ctx.globalAlpha = ringAlpha
-    ctx.strokeStyle = wireColor
+    ctx.strokeStyle = mainColor
     ctx.lineWidth = 1.2
     ctx.setLineDash([4, 4])
-    // Rotate the dash pattern
     ctx.translate(cx, y + h / 2)
     ctx.rotate(frameCount * 0.04)
     ctx.translate(-cx, -(y + h / 2))
