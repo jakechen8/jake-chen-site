@@ -11,9 +11,9 @@ const config: Config = {
   theme: {
     extend: {
       fontFamily: {
-        display: ['var(--font-playfair)', 'Georgia', ...fontFamily.serif],
-        sans: ['var(--font-inter)', 'system-ui', ...fontFamily.sans],
-        mono: ['var(--font-jetbrains)', 'ui-monospace', ...fontFamily.mono],
+        display: ['"Playfair Display"', 'Georgia', ...fontFamily.serif],
+        sans: ['"Inter"', 'system-ui', ...fontFamily.sans],
+        mono: ['"JetBrains Mono"', 'ui-monospace', ...fontFamily.mono],
       },
       colors: {
         accent: {
