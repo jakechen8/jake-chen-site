@@ -22,8 +22,6 @@
   --accent-light: rgba(180, 83, 9, 0.08);
   --accent-glow: rgba(180, 83, 9, 0.12);
   --accent-muted: rgba(180, 83, 9, 0.08);
-  --navy: #1A1A2E;
-  --navy-light: #2D2D44;
   --border: rgba(26, 26, 46, 0.10);
   --border-strong: rgba(26, 26, 46, 0.18);
   --shadow-sm: 0 1px 3px rgba(26, 26, 46, 0.06);
@@ -56,8 +54,6 @@
   --accent-light: rgba(217, 119, 6, 0.1);
   --accent-glow: rgba(217, 119, 6, 0.15);
   --accent-muted: rgba(217, 119, 6, 0.1);
-  --navy: #0A0A0F;
-  --navy-light: #18182B;
   --border: rgba(255, 255, 255, 0.08);
   --border-strong: rgba(255, 255, 255, 0.14);
   --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.2);
@@ -181,11 +177,6 @@ h1, h2, h3, h4 {
   border-color: var(--accent) !important;
 }
 
-.reading-card:hover {
-  border-color: var(--accent) !important;
-  box-shadow: var(--shadow-md);
-}
-
 .rule { border: none; border-top: 1px solid var(--border-strong); }
 .text-accent { color: var(--accent); }
 .text-muted { color: var(--fg-muted); }
@@ -230,23 +221,6 @@ h1, h2, h3, h4 {
   border-radius: var(--radius-xl);
 }
 
-/* ---------- Pillar Cards ---------- */
-.pillar-card {
-  padding: 2rem; background: var(--white);
-  border-radius: var(--radius-md); border: 1px solid var(--border-strong);
-  transition: all var(--duration-normal) var(--ease-out);
-}
-.dark .pillar-card { background: var(--bg-warm); }
-.pillar-card:hover {
-  border-color: var(--accent); box-shadow: var(--shadow-glow); transform: translateY(-4px);
-}
-.pillar-icon {
-  width: 48px; height: 48px;
-  display: flex; align-items: center; justify-content: center;
-  background: var(--accent-light); border-radius: var(--radius-sm);
-  color: var(--accent); margin-bottom: 1.25rem;
-}
-
 /* ---------- Input ---------- */
 .input {
   width: 100%; padding: 0.7rem 1rem;
@@ -259,12 +233,6 @@ h1, h2, h3, h4 {
 }
 .input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-light); }
 .input::placeholder { color: var(--fg-subtle); }
-
-/* ---------- Hero Shapes ---------- */
-.hero-shape {
-  position: absolute; border-radius: 50%; pointer-events: none;
-  filter: blur(80px); opacity: 0.4;
-}
 
 /* ---------- Scroll Animations ---------- */
 [data-animate] {
@@ -340,5 +308,14 @@ h1, h2, h3, h4 {
   transform: translateY(-2px);
 }
 
-@media (max-width: 767px) { .hero-shape { display: none; } }
+/* ---------- Reduced Motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
 @media print { body { font-size: 12pt; color: #000; } .btn-primary, .btn-ghost { display: none !important; } }

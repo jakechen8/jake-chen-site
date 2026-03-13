@@ -116,8 +116,10 @@ export default function AnimatedStat({ value, label, context, startFrom }: Anima
   }, [handleIntersection])
 
   return (
-    <div
+    <section
       ref={containerRef}
+      role="region"
+      aria-label={`${label}: ${value}`}
       className="my-8 rounded-lg border p-6 text-center sm:p-8"
       style={{
         borderColor: 'var(--border)',
@@ -129,6 +131,7 @@ export default function AnimatedStat({ value, label, context, startFrom }: Anima
     >
       {/* Main stat value */}
       <p
+        aria-live="polite"
         className="font-display text-5xl font-normal sm:text-6xl"
         style={{
           color: 'var(--fg)',
@@ -162,6 +165,6 @@ export default function AnimatedStat({ value, label, context, startFrom }: Anima
       >
         {context}
       </p>
-    </div>
+    </section>
   )
 }

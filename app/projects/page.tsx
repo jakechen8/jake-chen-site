@@ -31,17 +31,6 @@ const projects = [
     external: false,
   },
   {
-    title: 'Repo Decoder',
-    status: 'Live',
-    statusColor: 'var(--accent)',
-    description:
-      'An interactive quiz embedded in my essay "You Don\'t Need a Glossary. You Need a Map." Tests whether you can navigate a modern codebase using a simple three-question framework.',
-    tags: ['React', 'Interactive', 'Education'],
-    link: '/writing/you-dont-need-a-glossary-you-need-a-map',
-    linkLabel: 'Try it',
-    external: false,
-  },
-  {
     title: 'Justify the Spend',
     status: 'Live',
     statusColor: 'var(--accent)',

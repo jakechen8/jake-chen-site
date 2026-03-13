@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { getAllPosts, getPost } from '@/lib/posts'
+import { getAllPosts } from '@/lib/posts'
 import PostCard from '@/components/PostCard'
 import EmailCapture from '@/components/EmailCapture'
 
@@ -10,32 +10,6 @@ export const metadata: Metadata = {
 
 export default async function WritingPage() {
   const posts = await Promise.resolve(getAllPosts())
-
-  // Group series posts
-  const seriesMap = new Map<string, typeof posts>()
-  const standalonePosts: typeof posts = []
-
-  posts.forEach((p) => {
-    const full = getPost(p.slug)
-    if (full?.series) {
-      if (!seriesMap.has(full.series)) {
-        seriesMap.set(full.series, [])
-      }
-      seriesMap.get(full.series)!.push(p)
-    } else {
-      standalonePosts.push(p)
-    }
-  })
-
-  seriesMap.forEach((seriesPosts) => {
-    seriesPosts.sort((a, b) => {
-      const aFull = getPost(a.slug)
-      const bFull = getPost(b.slug)
-      return (aFull?.seriesOrder || 0) - (bFull?.seriesOrder || 0)
-    })
-  })
-
-  const seriesEntries = Array.from(seriesMap.entries())
 
   return (
     <div className="mx-auto max-w-4xl px-5 sm:px-8">
@@ -60,51 +34,14 @@ export default async function WritingPage() {
           </p>
         </div>
 
-        {/* Series */}
-        {seriesEntries.map(([seriesName, seriesPosts]) => (
-          <div key={seriesName} className="mb-10">
-            <div className="mb-4 flex items-center gap-3">
-              <div
-                className="inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-medium"
-                style={{ background: 'var(--accent-light)', color: 'var(--accent)' }}
-              >
-                <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor">
-                  <rect x="1" y="1" width="4" height="4" rx="0.5" opacity="0.5" />
-                  <rect x="7" y="1" width="4" height="4" rx="0.5" opacity="0.7" />
-                  <rect x="1" y="7" width="4" height="4" rx="0.5" opacity="0.7" />
-                  <rect x="7" y="7" width="4" height="4" rx="0.5" />
-                </svg>
-                {seriesName} — {seriesPosts.length} parts
-              </div>
-            </div>
-            <div className="grid gap-4">
-              {seriesPosts.map((post) => (
-                <PostCard key={post.slug} post={post} featured={false} />
-              ))}
-            </div>
+        {/* Posts */}
+        {posts.length > 0 ? (
+          <div className="grid gap-4">
+            {posts.map((post, i) => (
+              <PostCard key={post.slug} post={post} featured={i === 0} />
+            ))}
           </div>
-        ))}
-
-        {/* Standalone posts */}
-        {standalonePosts.length > 0 && (
-          <div className="mb-10">
-            {seriesEntries.length > 0 && (
-              <h2
-                className="mb-4 font-display text-xl font-normal tracking-tight"
-                style={{ color: 'var(--fg)' }}
-              >
-                Standalone Essays
-              </h2>
-            )}
-            <div className="grid gap-4">
-              {standalonePosts.map((post, i) => (
-                <PostCard key={post.slug} post={post} featured={i === 0 && seriesEntries.length === 0} />
-              ))}
-            </div>
-          </div>
-        )}
-
-        {posts.length === 0 && (
+        ) : (
           <div
             className="rounded-lg border py-16 text-center"
             style={{ borderColor: 'var(--border)' }}

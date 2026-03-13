@@ -119,6 +119,8 @@ export default function RepoDecoder() {
 
     return (
       <div
+        role="alert"
+        aria-live="assertive"
         className="my-8 rounded-lg border p-6 sm:p-8"
         style={{ borderColor: 'var(--border-strong)', background: 'var(--bg-warm)' }}
       >
@@ -132,6 +134,7 @@ export default function RepoDecoder() {
           <p
             className="mt-4 font-display text-4xl font-normal"
             style={{ color: 'var(--fg)' }}
+            aria-label={`Score: ${score} out of ${questions.length}`}
           >
             {score}/{questions.length}
           </p>
@@ -162,7 +165,7 @@ export default function RepoDecoder() {
         >
           Repo Decoder
         </p>
-        <p className="text-xs" style={{ color: 'var(--fg-subtle)' }}>
+        <p className="text-xs" style={{ color: 'var(--fg-subtle)' }} role="status" aria-live="polite">
           {current + 1} / {questions.length}
         </p>
       </div>
@@ -214,6 +217,7 @@ export default function RepoDecoder() {
               key={i}
               onClick={() => handleSelect(i)}
               disabled={selected !== null}
+              aria-pressed={selected === i}
               className="w-full rounded-md border px-4 py-3 text-left text-sm transition-all"
               style={{
                 borderColor,
@@ -223,7 +227,15 @@ export default function RepoDecoder() {
                 opacity: selected !== null && i !== selected && i !== q.correct ? 0.5 : 1,
               }}
             >
-              {opt}
+              <span className="flex items-center justify-between">
+                <span>{opt}</span>
+                {selected !== null && i === q.correct && (
+                  <span className="ml-2 text-xs font-semibold" style={{ color: '#16a34a' }}>Correct</span>
+                )}
+                {selected !== null && i === selected && i !== q.correct && (
+                  <span className="ml-2 text-xs font-semibold" style={{ color: '#dc2626' }}>Incorrect</span>
+                )}
+              </span>
             </button>
           )
         })}

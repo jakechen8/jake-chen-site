@@ -7,12 +7,8 @@ import ReadingProgress from '@/components/ReadingProgress'
 import TableOfContents from '@/components/TableOfContents'
 import RepoDecoder from '@/components/RepoDecoder'
 import ScenarioChoice from '@/components/ScenarioChoice'
-import MythReality from '@/components/MythReality'
-import PulseCheck from '@/components/PulseCheck'
 import AnimatedStat from '@/components/AnimatedStat'
 import TrustMatrix from '@/components/TrustMatrix'
-import IntegrationRace from '@/components/IntegrationRace'
-import SeriesNav from '@/components/SeriesNav'
 
 interface Props {
   params: { slug: string }
@@ -21,11 +17,8 @@ interface Props {
 const mdxComponents = {
   RepoDecoder,
   ScenarioChoice,
-  MythReality,
-  PulseCheck,
   AnimatedStat,
   TrustMatrix,
-  IntegrationRace,
 }
 
 export async function generateStaticParams() {
@@ -74,22 +67,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default function PostPage({ params }: Props) {
   const post = getPost(params.slug)
   if (!post) notFound()
-
-  const allPosts = getAllPosts()
-
-  // Find series posts if this post has a series
-  const seriesPosts = post.series
-    ? allPosts
-        .filter((p) => {
-          const full = getPost(p.slug)
-          return full?.series === post.series
-        })
-        .sort((a, b) => {
-          const aPost = getPost(a.slug)
-          const bPost = getPost(b.slug)
-          return (aPost?.seriesOrder || 0) - (bPost?.seriesOrder || 0)
-        })
-    : []
 
   const publishDate = new Date(post.date).toLocaleDateString('en-US', {
     year: 'numeric',
@@ -154,22 +131,6 @@ export default function PostPage({ params }: Props) {
             All writing
           </Link>
 
-          {/* Series badge */}
-          {post.series && (
-            <div
-              className="mb-4 inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-medium"
-              style={{ background: 'var(--accent-light)', color: 'var(--accent)' }}
-            >
-              <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor">
-                <rect x="1" y="1" width="4" height="4" rx="0.5" opacity="0.5" />
-                <rect x="7" y="1" width="4" height="4" rx="0.5" opacity="0.7" />
-                <rect x="1" y="7" width="4" height="4" rx="0.5" opacity="0.7" />
-                <rect x="7" y="7" width="4" height="4" rx="0.5" />
-              </svg>
-              {post.series} — Part {post.seriesOrder} of {seriesPosts.length}
-            </div>
-          )}
-
           {/* Article header */}
           <header className="mb-10 max-w-2xl">
             {post.tags && post.tags.length > 0 && (
@@ -223,15 +184,6 @@ export default function PostPage({ params }: Props) {
               <TableOfContents />
             </aside>
           </div>
-
-          {/* Series navigation */}
-          {seriesPosts.length > 1 && (
-            <SeriesNav
-              series={post.series!}
-              currentSlug={post.slug}
-              posts={seriesPosts}
-            />
-          )}
 
           {/* Footer nav */}
           <div

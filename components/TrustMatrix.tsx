@@ -61,6 +61,8 @@ export default function TrustMatrix() {
     <div
       className="my-8 rounded-lg border p-6 sm:p-8"
       style={{ borderColor: 'var(--border-strong)', background: 'var(--bg-warm)' }}
+      role="region"
+      aria-label="Interactive trust matrix — click systems to see where they fall on the stakes vs verification gap spectrum"
     >
       {/* Header */}
       <p
@@ -72,6 +74,14 @@ export default function TrustMatrix() {
 
       {/* Matrix Container */}
       <div className="mt-6">
+        {/* Axis label: Stakes (above matrix, left-aligned) */}
+        <p
+          className="mb-2 text-xs font-medium"
+          style={{ color: 'var(--fg-subtle)' }}
+        >
+          ↑ Stakes
+        </p>
+
         <div
           className="relative mx-auto"
           style={{
@@ -184,46 +194,18 @@ export default function TrustMatrix() {
             Trust but verify
           </div>
 
-          {/* Axis labels */}
-          <div
-            style={{
-              position: 'absolute',
-              bottom: '-28px',
-              left: '50%',
-              transform: 'translateX(-50%)',
-              fontSize: '11px',
-              fontWeight: 500,
-              color: 'var(--fg-subtle)',
-              whiteSpace: 'nowrap',
-            }}
-          >
-            Verification Gap →
-          </div>
-
-          <div
-            style={{
-              position: 'absolute',
-              left: '-120px',
-              top: '50%',
-              transform: 'translateY(-50%)',
-              fontSize: '11px',
-              fontWeight: 500,
-              color: 'var(--fg-subtle)',
-              whiteSpace: 'nowrap',
-            }}
-          >
-            Stakes ↑
-          </div>
-
           {/* System dots */}
           {systems.map((system) => {
             const isSelected = selected === system.name
             const xPercent = system.verificationGap
-            const yPercent = 100 - system.stakes // Flip Y axis so high stakes = top
+            const yPercent = 100 - system.stakes
 
             return (
-              <div
+              <button
                 key={system.name}
+                onClick={() => handleSystemClick(system.name)}
+                aria-label={`${system.name}: Verification gap ${system.verificationGap}%, Stakes ${system.stakes}%`}
+                aria-pressed={isSelected}
                 style={{
                   position: 'absolute',
                   left: `${xPercent}%`,
@@ -234,26 +216,38 @@ export default function TrustMatrix() {
                   borderRadius: '50%',
                   background: 'var(--accent)',
                   boxShadow: isSelected
-                    ? '0 0 12px rgba(var(--accent-rgb), 0.6), 0 0 24px rgba(var(--accent-rgb), 0.2)'
-                    : '0 0 8px rgba(var(--accent-rgb), 0.4)',
+                    ? '0 0 12px rgba(180, 83, 9, 0.6), 0 0 24px rgba(180, 83, 9, 0.2)'
+                    : '0 0 8px rgba(180, 83, 9, 0.4)',
                   transition: 'all 500ms cubic-bezier(0.34, 1.56, 0.64, 1)',
                   cursor: 'pointer',
                   zIndex: isSelected ? 10 : 5,
+                  border: 'none',
+                  padding: 0,
                 }}
               />
             )
           })}
         </div>
 
+        {/* Axis label: Verification Gap (below matrix, right-aligned) */}
+        <p
+          className="mt-2 text-right text-xs font-medium"
+          style={{ color: 'var(--fg-subtle)', maxWidth: '400px', margin: '8px auto 0' }}
+        >
+          Verification Gap →
+        </p>
+
         {/* System buttons - below matrix */}
         <div
           style={{
-            marginTop: '60px',
+            marginTop: '32px',
             display: 'flex',
             flexWrap: 'wrap',
             gap: '8px',
             justifyContent: 'center',
           }}
+          role="group"
+          aria-label="Select a system to see its trust profile"
         >
           {systems.map((system) => {
             const isActive = selected === system.name
@@ -262,6 +256,8 @@ export default function TrustMatrix() {
               <button
                 key={system.name}
                 onClick={() => handleSystemClick(system.name)}
+                aria-pressed={isActive}
+                aria-label={`${system.name}`}
                 style={{
                   display: 'inline-flex',
                   alignItems: 'center',
@@ -277,7 +273,7 @@ export default function TrustMatrix() {
                   transition: 'all 200ms',
                 }}
               >
-                <span>{system.emoji}</span>
+                <span aria-hidden="true">{system.emoji}</span>
                 <span>{system.name}</span>
               </button>
             )
@@ -287,6 +283,8 @@ export default function TrustMatrix() {
         {/* Insight text */}
         {selectedSystem && (
           <div
+            role="status"
+            aria-live="polite"
             style={{
               marginTop: '24px',
               padding: '16px',

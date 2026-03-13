@@ -122,7 +122,8 @@ export default function ScenarioChoice({ id }: ScenarioChoiceProps) {
       </p>
 
       {/* Choice buttons */}
-      <div className="mt-6 space-y-2">
+      <fieldset className="mt-6 space-y-2 border-0 p-0 m-0">
+        <legend className="sr-only">Choose your approach</legend>
         {choices.map((choice, i) => {
           let borderColor = 'var(--border-strong)'
           let bg = 'transparent'
@@ -139,6 +140,8 @@ export default function ScenarioChoice({ id }: ScenarioChoiceProps) {
               key={i}
               onClick={() => handleSelect(i)}
               disabled={selected !== null}
+              aria-pressed={selected === i}
+              aria-label={`${choice.label}${selected === i && choice.isRecommended ? ' — recommended path' : ''}`}
               className="w-full rounded-md border px-4 py-3 text-left text-sm transition-all"
               style={{
                 borderColor,
@@ -154,6 +157,7 @@ export default function ScenarioChoice({ id }: ScenarioChoiceProps) {
                   <span
                     className="text-sm font-medium"
                     style={{ color: 'var(--accent)' }}
+                    aria-hidden="true"
                   >
                     ✓
                   </span>
@@ -162,11 +166,13 @@ export default function ScenarioChoice({ id }: ScenarioChoiceProps) {
             </button>
           )
         })}
-      </div>
+      </fieldset>
 
       {/* Result reveal */}
       {selected !== null && (
         <div
+          role="status"
+          aria-live="polite"
           className="mt-6 rounded-md border p-4"
           style={{
             borderColor: 'var(--border)',
