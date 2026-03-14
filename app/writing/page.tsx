@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { getAllPosts } from '@/lib/posts'
-import PostCard from '@/components/PostCard'
+import TagFilter from '@/components/TagFilter'
 import EmailCapture from '@/components/EmailCapture'
 
 export const metadata: Metadata = {
@@ -35,13 +35,9 @@ export default async function WritingPage() {
           </p>
         </div>
 
-        {/* Posts */}
+        {/* Posts with tag filtering */}
         {posts.length > 0 ? (
-          <div className="grid gap-4">
-            {posts.map((post, i) => (
-              <PostCard key={post.slug} post={post} featured={i === 0} />
-            ))}
-          </div>
+          <TagFilter posts={posts} />
         ) : (
           <div
             className="rounded-lg border py-16 text-center"

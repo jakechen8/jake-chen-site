@@ -127,6 +127,55 @@ export default function AboutPage() {
 
         <div className="h-px" style={{ background: 'var(--border)' }} />
 
+        {/* Tools & skills */}
+        <div className="py-16">
+          <h2
+            className="mb-8 font-display text-2xl font-normal tracking-tight"
+            style={{ color: 'var(--fg)' }}
+          >
+            Tools I reach for
+          </h2>
+          <div className="grid gap-6 sm:grid-cols-2">
+            {[
+              {
+                category: 'Strategy',
+                items: ['Competitive analysis', 'Pricing models', 'Go-to-market', 'Scenario planning', 'M&A diligence'],
+              },
+              {
+                category: 'Technical',
+                items: ['TypeScript', 'React', 'Next.js', 'Python', 'SQL', 'Tailwind', 'Node.js'],
+              },
+              {
+                category: 'AI & Data',
+                items: ['Claude', 'GPT-4', 'Cursor', 'Jupyter', 'pandas', 'Perplexity'],
+              },
+              {
+                category: 'Design & Product',
+                items: ['Figma', 'Excalidraw', 'Vercel', 'GitHub', 'Notion'],
+              },
+            ].map((group) => (
+              <div key={group.category}>
+                <p className="mb-2 text-xs font-semibold uppercase tracking-widest" style={{ color: 'var(--accent)' }}>
+                  {group.category}
+                </p>
+                <div className="flex flex-wrap gap-1.5">
+                  {group.items.map((item) => (
+                    <span
+                      key={item}
+                      className="rounded-full border px-2.5 py-1 text-xs"
+                      style={{ borderColor: 'var(--border-strong)', color: 'var(--fg-muted)' }}
+                    >
+                      {item}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="h-px" style={{ background: 'var(--border)' }} />
+
         {/* Contact section — merged from /contact */}
         <div className="py-16" id="contact">
           <h2

@@ -1,0 +1,65 @@
+---
+title: "The Autonomy Spectrum: Why 'How Much AI' Is the Wrong Question"
+date: "2026-01-20"
+excerpt: "People frame AI decisions as 'human vs. machine.' The real question is where to sit on the spectrum between them — and most organizations choose poorly."
+tags: ["Autonomy", "AI Systems", "Decision-Making"]
+published: true
+---
+
+Every conversation I've had about AI in the last two years eventually arrives at the same question: how much should the AI decide on its own?
+
+And every time, the framing is binary. Either the human decides, or the AI decides. Team Human vs. Team Machine. As if there were a single switch you flip.
+
+That's not how it works. I work on autonomous systems. The decisions we make daily aren't "should the AI drive or not" — they're much more granular. How much should the system handle without checking in? Under what conditions does a human need to step in? What does "stepping in" actually look like when the system is making thousands of decisions per minute?
+
+The binary framing isn't just wrong. It's dangerous. Because it lets organizations avoid the hard question: where exactly on the spectrum should you sit, and why?
+
+## The spectrum nobody talks about
+
+Between "a human makes every decision" and "the AI runs fully autonomously," there are at least five distinct zones. Each has different trade-offs, different risks, and different organizational requirements.
+
+<AutonomySpectrum />
+
+Most organizations default to Zone 2 — "AI advises, human decides" — because it sounds responsible. It sounds like you're keeping humans in the loop. But here's the dirty secret of advisory AI: when the AI recommends an action and the human approves it 97% of the time, you don't have a human-in-the-loop system. You have an AI-in-charge system with a rubber stamp.
+
+Studies on automation have shown this for decades. Humans monitoring automated systems eventually stop monitoring. It's not laziness. It's rational behavior. If the system is right 97 times out of 100, the expected cost of checking is higher than the expected cost of not checking.
+
+So you end up in the worst possible position: the AI is effectively making decisions, but the human is nominally accountable for them. You get neither the efficiency of full automation nor the quality control of genuine human oversight.
+
+## Why the right zone depends on failure cost
+
+The right position on the spectrum isn't a function of how good your AI is. It's a function of what happens when your AI is wrong.
+
+For spam filtering, the cost of a false positive (blocking a legitimate email) is low. A few missed emails. Some mild annoyance. That's a context where full autonomy makes sense. The speed and scale benefits far outweigh the occasional error.
+
+For medical diagnosis, the cost of a false negative (missing a cancer) is catastrophic. That's a context where Zone 2 — AI advises, human decides — is appropriate. But only if the human is genuinely equipped to evaluate the AI's recommendation. A radiologist reviewing an AI-flagged scan can add judgment. A general practitioner who doesn't understand the model's confidence calibration is just rubber-stamping.
+
+For self-driving, the interesting thing is that we're not at the endpoints. We're not at "human drives" or "AI drives." We're somewhere in the messy middle, where the system handles most situations autonomously but specific edge cases — construction zones, unusual weather, novel road configurations — require different levels of system confidence and different intervention strategies.
+
+The point isn't that one zone is better than another. It's that choosing the wrong zone for your context is more dangerous than choosing any specific zone intentionally.
+
+## The organizational cost of the spectrum
+
+Here's what's missing from most technical discussions about autonomy: each zone on the spectrum requires a different operating model.
+
+Zone 1 (fully human) is expensive in terms of labor but simple in terms of systems. You need skilled people and clear processes.
+
+Zone 3 (AI decides, human reviews exceptions) is where things get organizationally complex. You need exception handling processes. You need humans who are expert enough to evaluate the hardest cases — because by definition, the easy cases are the ones the AI handled already. You need to staff for the exception rate, which is hard to predict and tends to grow over time as the system encounters new edge cases.
+
+Zone 5 (fully autonomous) requires the least operational labor per decision but the most sophisticated monitoring, testing, and validation infrastructure. You need to trust the system at a statistical level because you can't inspect individual decisions. That means extensive simulation, shadow testing, and real-world performance tracking.
+
+Most organizations pick a zone based on their technical capabilities — what the model can do. They should be picking based on their organizational capabilities — what they can operate, monitor, and be accountable for.
+
+## The question underneath the question
+
+When a CEO asks "how much should we automate?" what they're really asking is "how much accountability am I comfortable delegating to a system I can't fully explain?"
+
+That's not a technical question. It's a leadership question. And the answer changes based on your industry, your risk tolerance, your regulatory environment, and — more than anyone wants to admit — how much you personally trust the team that built the system.
+
+I've seen teams deploy models they weren't ready to operate because a leader said "just ship it." And I've seen teams hold back models that were ready because a leader didn't trust something they couldn't explain.
+
+Neither response is inherently right. The right response is the one that honestly matches your position on the spectrum with your ability to operate at that position.
+
+Where you sit on the autonomy spectrum isn't a technology decision. It's a bet on what kind of failures you're willing to accept.
+
+Choose carefully.

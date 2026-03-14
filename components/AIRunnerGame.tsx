@@ -768,6 +768,10 @@ export default function AIRunnerGame() {
           setScore(finalScore)
           setHighScore((prev) => Math.max(prev, finalScore))
           setGameState('dead')
+          // Dispatch event for GameWrapper
+          window.dispatchEvent(new CustomEvent('game-over', {
+            detail: { score: finalScore, boostsUsed: 0 },
+          }))
           died = true
           break
         }

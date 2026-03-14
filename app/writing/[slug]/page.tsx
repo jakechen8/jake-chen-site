@@ -9,6 +9,11 @@ import RepoDecoder from '@/components/RepoDecoder'
 import ScenarioChoice from '@/components/ScenarioChoice'
 import AnimatedStat from '@/components/AnimatedStat'
 import TrustMatrix from '@/components/TrustMatrix'
+import DemoToRetention from '@/components/DemoToRetention'
+import StrategyVsOps from '@/components/StrategyVsOps'
+import AutonomySpectrum from '@/components/AutonomySpectrum'
+import VibeCodingScorecard from '@/components/VibeCodingScorecard'
+import SecondOrderChain from '@/components/SecondOrderChain'
 
 interface Props {
   params: { slug: string }
@@ -19,6 +24,11 @@ const mdxComponents = {
   ScenarioChoice,
   AnimatedStat,
   TrustMatrix,
+  DemoToRetention,
+  StrategyVsOps,
+  AutonomySpectrum,
+  VibeCodingScorecard,
+  SecondOrderChain,
 }
 
 export async function generateStaticParams() {
@@ -186,6 +196,55 @@ export default function PostPage({ params }: Props) {
               <TableOfContents />
             </aside>
           </div>
+
+          {/* Related posts */}
+          {(() => {
+            const allPosts = getAllPosts()
+            const related = allPosts
+              .filter((p) => p.slug !== post.slug)
+              .map((p) => ({
+                ...p,
+                overlap: (p.tags || []).filter((t) => (post.tags || []).includes(t)).length,
+              }))
+              .filter((p) => p.overlap > 0)
+              .sort((a, b) => b.overlap - a.overlap)
+              .slice(0, 2)
+
+            if (related.length === 0) return null
+
+            return (
+              <div
+                className="mt-16 border-t pt-10"
+                style={{ borderColor: 'var(--border)' }}
+              >
+                <h3
+                  className="mb-5 text-xs font-semibold uppercase tracking-widest"
+                  style={{ color: 'var(--fg-subtle)' }}
+                >
+                  You might also like
+                </h3>
+                <div className="grid gap-4 sm:grid-cols-2">
+                  {related.map((r) => (
+                    <Link
+                      key={r.slug}
+                      href={`/writing/${r.slug}`}
+                      className="group rounded-lg border p-4 transition-all hover:border-[color:var(--accent)]"
+                      style={{ borderColor: 'var(--border-strong)' }}
+                    >
+                      <p className="mb-1 text-sm font-semibold group-hover:text-[color:var(--accent)]" style={{ color: 'var(--fg)' }}>
+                        {r.title}
+                      </p>
+                      {r.excerpt && (
+                        <p className="text-xs leading-relaxed line-clamp-2" style={{ color: 'var(--fg-muted)' }}>
+                          {r.excerpt}
+                        </p>
+                      )}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )
+          })()}
 
           {/* Footer nav */}
           <div

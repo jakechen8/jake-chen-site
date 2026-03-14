@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import AIRunnerGame from '@/components/AIRunnerGame'
+import GameWrapper from '@/components/GameWrapper'
 
 export const metadata: Metadata = {
   title: 'Play — AI Runner',
@@ -30,7 +30,7 @@ export default function PlayPage() {
           </p>
         </div>
 
-        <AIRunnerGame />
+        <GameWrapper />
 
         <div
           className="mt-8 rounded-lg border p-5"

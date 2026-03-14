@@ -4,6 +4,7 @@ import type { Metadata } from 'next'
 import { getAllPosts } from '@/lib/posts'
 import PostCard from '@/components/PostCard'
 import EmailCapture from '@/components/EmailCapture'
+import Bookshelf from '@/components/Bookshelf'
 
 export const metadata: Metadata = {
   title: 'Jake Chen — Strategy, AI, and What Actually Changes',
@@ -126,6 +127,49 @@ export default async function HomePage() {
 
         <div className="h-px" style={{ background: 'var(--border)' }} />
 
+        {/* ── Featured Project ── */}
+        <section className="py-16 sm:py-20">
+          <div className="mb-8">
+            <p
+              className="text-xs font-semibold uppercase tracking-widest"
+              style={{ color: 'var(--accent)' }}
+            >
+              Featured project
+            </p>
+          </div>
+          <Link
+            href="/play"
+            className="group block rounded-lg border p-6 transition-all sm:p-8"
+            style={{ borderColor: 'var(--border-strong)', background: 'var(--bg-warm)' }}
+          >
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <h3
+                  className="mb-1 font-display text-xl font-normal tracking-tight sm:text-2xl"
+                  style={{ color: 'var(--fg)' }}
+                >
+                  AI Runner
+                </h3>
+                <p className="max-w-md text-sm leading-relaxed" style={{ color: 'var(--fg-muted)' }}>
+                  An endless runner where you deploy an AI agent through bugs, firewalls, and hallucinations. Built with Canvas and React. How far can your model go?
+                </p>
+              </div>
+              <span
+                className="inline-flex shrink-0 items-center gap-1.5 rounded-md border px-4 py-2 text-sm font-medium transition-colors group-hover:border-[color:var(--accent)] group-hover:text-[color:var(--accent)]"
+                style={{ borderColor: 'var(--border-strong)', color: 'var(--fg-muted)' }}
+              >
+                Play it
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="2" y1="7" x2="12" y2="7" />
+                  <polyline points="8 3 12 7 8 11" />
+                </svg>
+              </span>
+            </div>
+          </Link>
+        </section>
+
+        <div className="h-px" style={{ background: 'var(--border)' }} />
+
         {/* ── Recent Writing ── */}
         {recentPosts.length > 0 && (
           <section className="py-16 sm:py-20">
@@ -156,6 +200,13 @@ export default async function HomePage() {
             </div>
           </section>
         )}
+
+        <div className="h-px" style={{ background: 'var(--border)' }} />
+
+        {/* ── Bookshelf ── */}
+        <section className="py-16 sm:py-20">
+          <Bookshelf />
+        </section>
 
         <div className="h-px" style={{ background: 'var(--border)' }} />
 

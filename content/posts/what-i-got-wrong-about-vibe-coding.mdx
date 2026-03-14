@@ -1,0 +1,75 @@
+---
+title: "What I Got Wrong About Vibe Coding"
+date: "2026-02-14"
+excerpt: "I went all-in on vibe coding for a real project. The speed was unreal. The debugging was a nightmare. Here's the honest scorecard."
+tags: ["Software", "Vibe Coding", "AI Tools"]
+published: true
+---
+
+A few months ago I wrote about learning to read code as a non-engineer. I made the case that understanding a codebase is more valuable than writing one — that you need a map, not a glossary.
+
+Then I tried vibe coding for an actual project. Not a tutorial. Not a toy. A real product with users and a deadline.
+
+And I learned that my previous essay was right about the map. But it was wrong about how much the map matters when you're moving at light speed and the terrain keeps changing.
+
+## The experiment
+
+The project was VeraRide — one of my side projects. Upload a car dealer quote, get instant analysis of hidden fees and negotiation scripts. Nothing groundbreaking architecturally, but it needed a real backend, real parsing logic, real user flows.
+
+I decided to build the whole thing with Cursor as my primary tool. Not using it as autocomplete — using it as the driver. I'd describe what I wanted in natural language and let it generate. Edit by describing changes. Debug by pasting errors and asking for fixes.
+
+Full vibe coding. Pure "describe and deploy."
+
+Here's what happened.
+
+## The first 48 hours were magic
+
+I'm not exaggerating. In two days I had a working prototype with file upload, OCR-based document parsing, a structured output pipeline, and a clean frontend. Two days. This would have taken me two weeks working manually, minimum.
+
+The creative loop was insane. I'd think of a feature, describe it, watch it appear, test it, refine. The gap between idea and implementation shrank to almost nothing. It felt like having a junior engineer who types at the speed of thought and never argues about approach.
+
+I shipped the prototype to friends. They loved it. I was sold. Vibe coding was the future. I was going to build everything this way.
+
+Then week two started.
+
+## Where it broke down
+
+The first real bug took me four hours to find. Four hours. The kind of bug that an experienced developer would have caught in twenty minutes — a race condition in the file upload pipeline where the OCR step sometimes started before the file was fully written to disk.
+
+The AI had written the code. I'd reviewed it. It looked reasonable. But I didn't fully understand the async flow it had chosen, so when it broke, I was debugging someone else's architectural decision that I'd rubber-stamped.
+
+I asked the AI to fix it. It did — by restructuring the entire upload flow. Which introduced a new bug in the error handling. Which I asked it to fix. Which broke the progress indicator. This cycle — fix one thing, break another — happened five times before I sat down and actually read the code line by line.
+
+That was the moment I realized: vibe coding is fast until it isn't. And when it stops being fast, it's slower than writing the code yourself, because you're navigating a codebase written by a system that optimized for "works right now" rather than "makes sense long-term."
+
+## The scorecard
+
+I started rating my experience across six dimensions. Give it a try — rate vibe coding based on your experience, and see how my ratings compare.
+
+<VibeCodingScorecard />
+
+The pattern is clear: vibe coding is phenomenal for speed and fun. Those two scores pull you in and keep you coming back. But the scores on quality, debugging, and maintainability tell a different story — one that only becomes visible when you try to live with the code you generated.
+
+## What I'd do differently
+
+I'm not anti-vibe-coding. I still use AI tools every day. But I've changed how I use them.
+
+**I vibe-code the prototype, then rewrite the foundation.** The AI is incredible at scaffolding. Getting from zero to "something that works" in a day is genuinely valuable. But once I know what the product needs to be, I go back and rewrite the core architecture by hand — or at least hand-guide the AI through it with much more detailed prompts and much more careful review.
+
+**I never let the AI make architectural decisions.** Feature implementation? Sure. Bug fixes in well-understood code? Great. But decisions about data flow, state management, API design — those need to be intentional. The AI will always pick the path of least resistance, and that's often not the path of best architecture.
+
+**I read every line before merging.** This sounds obvious but it's hard to maintain when the AI is generating 200 lines at a time and all of them look reasonable. I've slowed down my review process deliberately. It costs velocity in the short term and saves days of debugging in the long term.
+
+**I write the comments myself.** This is the weirdest lesson. The AI can generate comments, but AI-generated comments describe what the code does, not why. The "why" is the thing that matters when you come back in a month. So I write the comments by hand, as a forcing function to make sure I actually understand the code.
+
+## The meta-lesson
+
+Here's what I think is actually going on with vibe coding: it shifts the hard part of building software from writing to reading.
+
+In the old world, writing was the bottleneck. You needed to translate intent into syntax, handle edge cases, remember APIs. The AI eliminates that bottleneck almost entirely.
+
+But reading — understanding what the code does, evaluating whether the approach is correct, predicting how it will behave under stress — that's still entirely on you. And it might actually be harder now, because you're reading code written by a system whose reasoning you can't inspect.
+
+The best vibe coders I know aren't the ones who generate the most code. They're the ones who read the fastest and edit the most aggressively. The AI writes the first draft. The human shapes it into something that lasts.
+
+The glossary still doesn't matter. The map matters more than ever.

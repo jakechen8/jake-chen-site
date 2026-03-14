@@ -1,0 +1,61 @@
+---
+title: "Every Company Has an AI Strategy. Almost None Have an AI Operating Model."
+date: "2025-11-18"
+excerpt: "Strategy decks are easy. The hard part is who retrains the model, who handles the 2am edge case, and who decides when to override the AI."
+tags: ["AI Strategy", "Enterprise", "Operations"]
+published: true
+---
+
+I've read a lot of AI strategy decks. Probably more than most people should in a lifetime. They all have the same bones: market sizing, use case prioritization matrix, a build-vs-buy framework, a responsible AI section with the right buzzwords. Maybe a timeline with ambitious quarterly milestones.
+
+Most of them are fine. Some are even good. And almost none of them answer the questions that actually matter.
+
+Who retrains the model when the data distribution shifts? What happens when the AI makes a decision that's technically correct but violates a business rule nobody thought to encode? Who decides to roll back a model at 2am on a Saturday? Who owns that decision — data science, product, or the on-call engineer who's never seen this model before?
+
+That's not strategy. That's an operating model. And the absence of one is why so many AI deployments stall between pilot and production.
+
+## Strategy is a document. An operating model is a system.
+
+A strategy tells you what to do. An operating model tells you how to do it — repeatedly, reliably, when things go wrong.
+
+The distinction matters because AI systems are not software features. A software feature ships and stabilizes. An AI model ships and drifts. It needs ongoing care: monitoring, retraining, evaluation, governance. It behaves differently in production than in testing. It degrades in ways that are hard to detect and harder to explain.
+
+Most organizations treat AI deployment like a software launch. Build it, ship it, move on to the next thing. That works for a login page. It doesn't work for a system that makes probabilistic decisions on live data.
+
+## The gap nobody plans for
+
+I built this to illustrate the problem. These are real scenarios I've seen play out — not at one company, but across a dozen.
+
+<StrategyVsOps />
+
+Every one of those scenarios has the same root cause: someone planned the optimistic case and nobody planned the messy case. The strategy deck assumes the model works. The operating model plans for when it doesn't.
+
+## What an operating model actually looks like
+
+The best AI teams I've worked with — the ones where models stay in production for years, not weeks — all share a few structural decisions.
+
+**They have clear model ownership.** Not "the data science team owns it." A specific person, with a specific on-call rotation, who knows what the model does, how it was trained, and what its failure modes look like. When that person leaves, there's a documented handoff. Not a Confluence page nobody reads — an actual handoff.
+
+**They separate the decision to deploy from the decision to build.** The team that builds the model shouldn't be the only team that decides whether it goes live. Build is a technical decision. Deploy is a business decision. The best teams I've seen have a lightweight review that includes at least one person from product, one from engineering reliability, and one from legal or compliance. Not a committee. A conversation.
+
+**They invest in rollback infrastructure.** Most teams can deploy a model in hours. How many can roll one back in minutes? The ability to revert to a previous model version — quickly, safely, without losing data — is the single most important operational capability for AI in production. It's also the one most teams skip because it's not in the demo.
+
+**They monitor for drift, not just accuracy.** Accuracy metrics tell you how the model is performing right now. Drift metrics tell you how it's going to perform next month. The teams that catch problems early are the ones monitoring input distributions, prediction confidence, and feature importance shifts — not just top-line accuracy numbers.
+
+## The org chart problem
+
+Here's the uncomfortable part: most companies can't build an AI operating model because their org chart won't support it.
+
+AI models cut across teams. The data comes from one team, the model is built by another, the product it powers is owned by a third, and the customers who are affected are managed by a fourth. Nobody owns the full lifecycle.
+
+This isn't a technology problem. It's a management problem. And it's the reason I've seen more AI projects stall due to organizational friction than due to model performance.
+
+The best operating models I've seen don't solve this by creating an "AI Center of Excellence" — which is usually just a consulting team with no real authority. They solve it by giving AI models the same operational rigor as any other production system: ownership, monitoring, incident response, and post-mortems.
+
+## The question I ask every executive team
+
+When someone tells me their company has an AI strategy, I always ask the same question: "Your model made a mistake that cost a customer money. Walk me through the next four hours."
+
+If the answer involves looking up who owns the model, figuring out how to check the logs, or convening an emergency meeting to decide what to do — you don't have an operating model. You have a strategy deck and a prayer.
+
+The companies that win with AI won't be the ones with the best models. They'll be the ones who know what to do when the model is wrong.

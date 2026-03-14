@@ -17,7 +17,7 @@ export default function Footer() {
             Strategy · AI · Builder
           </p>
           <p className="text-xs" style={{ color: 'var(--fg-subtle)' }}>
-            &copy; {year}
+            &copy; {year} &middot; Built with Next.js, TypeScript, and too much coffee.
           </p>
         </div>
 
