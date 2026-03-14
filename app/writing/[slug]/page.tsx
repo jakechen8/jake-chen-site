@@ -15,6 +15,8 @@ import AutonomySpectrum from '@/components/AutonomySpectrum'
 import VibeCodingScorecard from '@/components/VibeCodingScorecard'
 import SecondOrderChain from '@/components/SecondOrderChain'
 import BottleneckShift from '@/components/BottleneckShift'
+import ValueMigration from '@/components/ValueMigration'
+import StrategyBifurcation from '@/components/StrategyBifurcation'
 
 interface Props {
   params: { slug: string }
@@ -31,6 +33,8 @@ const mdxComponents = {
   VibeCodingScorecard,
   SecondOrderChain,
   BottleneckShift,
+  ValueMigration,
+  StrategyBifurcation,
 }
 
 export async function generateStaticParams() {
