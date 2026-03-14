@@ -5,6 +5,7 @@ import { getAllPosts } from '@/lib/posts'
 import PostCard from '@/components/PostCard'
 import EmailCapture from '@/components/EmailCapture'
 import Bookshelf from '@/components/Bookshelf'
+import ParallaxHero from '@/components/ParallaxHero'
 
 export const metadata: Metadata = {
   title: 'Jake Chen — Strategy, AI, and What Actually Changes',
@@ -26,6 +27,7 @@ export default async function HomePage() {
         {/* Signature gradient accent */}
         <div className="accent-gradient-bar" />
 
+        <ParallaxHero>
         <div className="mx-auto max-w-4xl px-5 sm:px-8">
           <div className="relative z-10 py-20 sm:py-28">
             {/* Eyebrow */}
@@ -82,6 +84,7 @@ export default async function HomePage() {
             </div>
           </div>
         </div>
+        </ParallaxHero>
         <div className="h-px" style={{ background: 'var(--border)' }} />
       </section>
 

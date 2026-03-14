@@ -397,6 +397,7 @@ export default function AIRunnerGame() {
     doubleJumpTrail: 0,
     ambientDots: [] as { x: number; y: number; speed: number; alpha: number; r: number }[],
     groundTicks: 0,
+    boostCount: 0,
   })
 
   const settingsRef = useRef(DIFFICULTY_SETTINGS.normal)
@@ -489,6 +490,7 @@ export default function AIRunnerGame() {
     const g = gameRef.current
     if (g.boostTimer <= 0) {
       g.boostTimer = 180
+      g.boostCount++
       boostRef.current = true
       setBoostActive(true)
     }
@@ -520,6 +522,7 @@ export default function AIRunnerGame() {
     g.nearMissFlash = 0
     g.doubleJumpTrail = 0
     g.comboScale = 0
+    g.boostCount = 0
     g.milestoneScale = 0
     g.groundTicks = 0
     // Seed ambient floating dots
@@ -770,7 +773,7 @@ export default function AIRunnerGame() {
           setGameState('dead')
           // Dispatch event for GameWrapper
           window.dispatchEvent(new CustomEvent('game-over', {
-            detail: { score: finalScore, boostsUsed: 0 },
+            detail: { score: finalScore, boostsUsed: g.boostCount },
           }))
           died = true
           break
