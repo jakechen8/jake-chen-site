@@ -6,6 +6,8 @@ import PostCard from '@/components/PostCard'
 import EmailCapture from '@/components/EmailCapture'
 import Bookshelf from '@/components/Bookshelf'
 import ParallaxHero from '@/components/ParallaxHero'
+import StrategyQuiz from '@/components/StrategyQuiz'
+import IndustryBottleneck from '@/components/IndustryBottleneck'
 
 export const metadata: Metadata = {
   title: 'Jake Chen — Strategy, AI, and What Actually Changes',
@@ -169,6 +171,40 @@ export default async function HomePage() {
               </span>
             </div>
           </Link>
+        </section>
+
+        <div className="h-px" style={{ background: 'var(--border)' }} />
+
+        {/* ── Try It Yourself ── */}
+        <section className="py-16 sm:py-20">
+          <div className="mb-8">
+            <p
+              className="mb-3 text-xs font-semibold uppercase tracking-widest"
+              style={{ color: 'var(--accent)' }}
+            >
+              Try it yourself
+            </p>
+            <h2
+              className="font-display text-2xl font-normal tracking-tight sm:text-3xl"
+              style={{ color: 'var(--fg)' }}
+            >
+              Interactive experiments
+            </h2>
+          </div>
+          <div className="grid gap-6 sm:grid-cols-2">
+            <div>
+              <h3 className="mb-3 text-sm font-semibold" style={{ color: 'var(--fg)' }}>
+                What&apos;s your AI strategy score?
+              </h3>
+              <StrategyQuiz />
+            </div>
+            <div>
+              <h3 className="mb-3 text-sm font-semibold" style={{ color: 'var(--fg)' }}>
+                The bottleneck finder
+              </h3>
+              <IndustryBottleneck />
+            </div>
+          </div>
         </section>
 
         <div className="h-px" style={{ background: 'var(--border)' }} />
