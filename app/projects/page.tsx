@@ -66,8 +66,30 @@ const projects = [
   },
 ]
 
+const projectsSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  name: 'Projects by Jake Chen',
+  description: 'Side projects by Jake Chen — AI games, developer tools, and strategy experiments.',
+  url: 'https://jake-chen.com/projects',
+  author: { '@type': 'Person', name: 'Jake Chen' },
+  hasPart: projects.filter((p) => p.external).map((p) => ({
+    '@type': 'SoftwareApplication',
+    name: p.title,
+    description: p.description,
+    url: p.link,
+    applicationCategory: 'WebApplication',
+    author: { '@type': 'Person', name: 'Jake Chen' },
+  })),
+}
+
 export default function ProjectsPage() {
   return (
+    <>
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(projectsSchema) }}
+    />
     <div className="mx-auto max-w-4xl px-5 sm:px-8">
       <div className="py-16 sm:py-24">
         {/* Header */}
@@ -192,5 +214,6 @@ export default function ProjectsPage() {
         </div>
       </div>
     </div>
+    </>
   )
 }

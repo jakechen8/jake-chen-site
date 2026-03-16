@@ -40,7 +40,7 @@ export default async function HomePage() {
               >
                 <Image
                   src="/images/headshot1.jpg"
-                  alt="Jake Chen"
+                  alt="Jake Chen, Strategy Lead at Waymo"
                   fill
                   className="object-cover"
                   priority
@@ -77,7 +77,7 @@ export default async function HomePage() {
             <div className="mt-8 flex flex-wrap gap-3">
               <Link href="/writing" className="btn-primary">
                 Read my essays
-                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                   <line x1="2" y1="7" x2="12" y2="7" />
                   <polyline points="8 3 12 7 8 11" />
                 </svg>
@@ -124,7 +124,7 @@ export default async function HomePage() {
                 After hours
               </p>
               <p className="text-sm leading-relaxed" style={{ color: 'var(--fg)' }}>
-                Tinkering with code. Built an <Link href="/play" className="underline underline-offset-2 transition-colors hover:text-[color:var(--accent)]" style={{ color: 'var(--accent)' }}>AI-themed game</Link> and this site from scratch.
+                Tinkering with code. Built an <Link href="/play" className="underline underline-offset-2 transition-colors hover:text-[color:var(--accent)]" style={{ color: 'var(--accent)' }}>AI-themed game arcade</Link> and coded this site from scratch in TypeScript and&nbsp;React.
               </p>
             </div>
           </div>
@@ -164,7 +164,7 @@ export default async function HomePage() {
                 style={{ borderColor: 'var(--border-strong)', color: 'var(--fg-muted)' }}
               >
                 Play it
-                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                   <line x1="2" y1="7" x2="12" y2="7" />
                   <polyline points="8 3 12 7 8 11" />
                 </svg>
@@ -225,7 +225,7 @@ export default async function HomePage() {
                 style={{ color: 'var(--fg-muted)' }}
               >
                 All writing
-                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                   <line x1="2" y1="7" x2="12" y2="7" />
                   <polyline points="8 3 12 7 8 11" />
                 </svg>

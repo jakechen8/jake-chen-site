@@ -74,8 +74,11 @@ export default function UsesPage() {
             What I use
           </h1>
           <p className="text-base leading-relaxed" style={{ color: 'var(--fg-muted)' }}>
-            The tools and software I reach for daily. Updated occasionally.
+            The tools and software I reach for daily.
             Not an affiliate link farm &mdash; just what actually works for&nbsp;me.
+          </p>
+          <p className="mt-2 text-xs" style={{ color: 'var(--fg-subtle)' }}>
+            Last updated March 2026
           </p>
         </div>
 

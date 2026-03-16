@@ -42,7 +42,7 @@ export default function Bookshelf() {
         {books.map((book) => (
           <div
             key={book.title}
-            className="group rounded-lg border p-5 transition-all"
+            className="book-card group rounded-lg border p-5"
             style={{ borderColor: 'var(--border-strong)' }}
           >
             <p className="text-sm font-semibold" style={{ color: 'var(--fg)' }}>

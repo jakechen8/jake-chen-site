@@ -19,7 +19,21 @@ export default async function WritingPage() {
   // Pick a "start here" post — the most recent long-form piece
   const startHere = posts.find((p) => p.slug === 'second-order-effects') || posts[0]
 
+  const breadcrumbSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://jake-chen.com' },
+      { '@type': 'ListItem', position: 2, name: 'Writing', item: 'https://jake-chen.com/writing' },
+    ],
+  }
+
   return (
+    <>
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+    />
     <div className="mx-auto max-w-4xl px-5 sm:px-8">
       <div className="py-16 sm:py-24">
         {/* Header */}
@@ -124,5 +138,6 @@ export default async function WritingPage() {
         </div>
       </div>
     </div>
+    </>
   )
 }

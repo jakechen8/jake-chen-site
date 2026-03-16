@@ -70,7 +70,7 @@ function MobileMenu({ pathname }: { pathname: string }) {
   return (
     <div className="relative">
       <details className="group">
-        <summary className="flex cursor-pointer list-none items-center rounded-md p-1.5 transition-colors hover:bg-[color:var(--border)]">
+        <summary className="flex cursor-pointer list-none items-center rounded-md p-1.5 transition-colors hover:bg-[color:var(--border)]" aria-label="Open menu">
           <svg
             width="18"
             height="18"
@@ -79,6 +79,7 @@ function MobileMenu({ pathname }: { pathname: string }) {
             stroke="currentColor"
             strokeWidth="1.5"
             strokeLinecap="round"
+            aria-hidden="true"
           >
             <line x1="2" y1="5" x2="16" y2="5" />
             <line x1="2" y1="9" x2="16" y2="9" />

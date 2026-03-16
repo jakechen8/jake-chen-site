@@ -100,9 +100,10 @@ export default function RootLayout({
       <body className="font-sans antialiased">
         <ThemeProvider>
           <JsonLd />
+          <a href="#main-content" className="skip-to-content">Skip to content</a>
           <div className="flex min-h-screen flex-col">
             <Nav />
-            <main className="flex-1">{children}</main>
+            <main id="main-content" className="flex-1">{children}</main>
             <Footer />
           </div>
           <ScrollToTop />

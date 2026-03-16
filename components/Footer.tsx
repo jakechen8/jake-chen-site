@@ -21,7 +21,7 @@ export default function Footer() {
           </p>
         </div>
 
-        <nav className="flex flex-wrap gap-5">
+        <nav className="grid grid-cols-4 gap-3 sm:flex sm:flex-wrap sm:gap-5" aria-label="Footer navigation">
           {[
             { href: '/writing', label: 'Writing' },
             { href: '/projects', label: 'Projects' },

@@ -106,8 +106,8 @@ export default function AboutPage() {
               { label: 'Why protocols beat models', href: '/writing/openclaw-new-operating-layer' },
               { label: 'The future of strategy work', href: '/writing/the-forward-deployed-strategist' },
               { label: 'Vibe coding (what works, what doesn\'t)', href: '/writing/what-i-got-wrong-about-vibe-coding' },
-              { label: 'Autonomous vehicle strategy', href: '/about' },
-              { label: 'Go-to-market for deep tech', href: '/about' },
+              { label: 'Autonomous vehicle strategy', href: '/writing/the-autonomy-spectrum' },
+              { label: 'Go-to-market for deep tech', href: '/writing/the-demo-trap' },
               { label: 'Building things for fun', href: '/play' },
             ].map((item) => (
               <Link

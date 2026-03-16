@@ -60,7 +60,7 @@ export default function TableOfContents() {
   if (headings.length < 3) return null
 
   return (
-    <nav className="hidden xl:block">
+    <nav className="hidden lg:block">
       <div className="sticky top-24">
         <p
           className="mb-3 text-xs font-semibold uppercase tracking-widest"

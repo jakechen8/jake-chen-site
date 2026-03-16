@@ -86,7 +86,7 @@ export default function EmailCapture({
       )}
       <form
         onSubmit={handleSubmit}
-        className="flex gap-2"
+        className="flex flex-col gap-2 sm:flex-row"
         noValidate
       >
         <input
@@ -115,7 +115,7 @@ export default function EmailCapture({
               Sending
             </span>
           ) : (
-            'Subscribe'
+            'Get new essays'
           )}
         </button>
       </form>
