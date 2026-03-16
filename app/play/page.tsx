@@ -1,9 +1,9 @@
 import type { Metadata } from 'next'
-import GameWrapper from '@/components/GameWrapper'
+import GameArcade from '@/components/GameArcade'
 
 export const metadata: Metadata = {
-  title: 'Play — AI Runner',
-  description: 'A fast-paced endless runner where you deploy an AI agent through obstacles. How far can your model go before it crashes?',
+  title: 'Play — AI Games & Experiments',
+  description: 'A mini arcade of AI-themed games: an endless runner, a prompt word puzzle, and a fictional AI stock trading sim. Built for fun by Jake Chen.',
   alternates: { canonical: 'https://jake-chen.com/play' },
 }
 
@@ -11,37 +11,26 @@ export default function PlayPage() {
   return (
     <div className="mx-auto max-w-4xl px-5 sm:px-8">
       <div className="py-16 sm:py-24">
-        <div className="mb-8 max-w-xl">
+        <div className="mb-10 max-w-xl">
           <p
-            className="mb-3 text-xs font-medium uppercase tracking-widest"
+            className="mb-3 text-xs font-semibold uppercase tracking-widest"
             style={{ color: 'var(--accent)' }}
           >
-            Just for fun
+            The Arcade
           </p>
           <h1
             className="mb-4 font-display text-4xl font-normal tracking-tight sm:text-5xl"
             style={{ color: 'var(--fg)' }}
           >
-            AI Runner
+            Games &amp; Experiments
           </h1>
           <p className="text-base leading-relaxed" style={{ color: 'var(--fg-muted)' }}>
-            Deploy your AI agent and dodge the obstacles. Hit Space or tap to jump.
-            How far can you go before the model crashes?
+            AI-themed games I built for fun. No strategic insight here &mdash;
+            just the belief that the best way to understand systems is to play with&nbsp;them.
           </p>
         </div>
 
-        <GameWrapper />
-
-        <div
-          className="mt-8 rounded-lg border p-5"
-          style={{ borderColor: 'var(--border)', background: 'var(--bg-warm)' }}
-        >
-          <p className="text-sm leading-relaxed" style={{ color: 'var(--fg-muted)' }}>
-            <span style={{ color: 'var(--fg)' }} className="font-medium">Why a game on a strategy site?</span>{' '}
-            Because the best way to understand complex systems is to play with them.
-            Also, I just think it&apos;s fun. Press Space to start.
-          </p>
-        </div>
+        <GameArcade />
       </div>
     </div>
   )
