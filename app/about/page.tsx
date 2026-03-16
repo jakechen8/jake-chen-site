@@ -5,8 +5,8 @@ import CareerTimeline from '@/components/CareerTimeline'
 import HeadshotEasterEgg from '@/components/HeadshotEasterEgg'
 
 export const metadata: Metadata = {
-  title: 'About',
-  description: 'Jake Chen — Strategy Lead at Waymo. 15+ years across McKinsey, HubSpot, Microsoft, and Deloitte. MIT Sloan MBA.',
+  title: 'About — Strategy Lead at Waymo, MIT Sloan MBA',
+  description: 'Jake Chen — Strategy Lead at Waymo. 15+ years across McKinsey, HubSpot, Microsoft, and Deloitte. Writing about AI strategy, autonomous systems, and what changes when AI meets the real world. MIT Sloan MBA.',
   alternates: { canonical: 'https://jake-chen.com/about' },
 }
 

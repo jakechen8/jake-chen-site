@@ -4,8 +4,8 @@ import TagFilter from '@/components/TagFilter'
 import EmailCapture from '@/components/EmailCapture'
 
 export const metadata: Metadata = {
-  title: 'Writing',
-  description: 'Essays on how AI reshapes decisions, organizations, and the systems we build around them. By Jake Chen.',
+  title: 'Writing — Essays on AI Strategy, Trust & Second-Order Effects',
+  description: 'Long-form essays by Jake Chen on AI strategy, second-order effects, autonomous systems, trust at scale, and the gap between what gets announced and what actually ships.',
   alternates: { canonical: 'https://jake-chen.com/writing' },
 }
 

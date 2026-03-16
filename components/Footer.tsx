@@ -25,6 +25,7 @@ export default function Footer() {
           {[
             { href: '/writing', label: 'Writing' },
             { href: '/projects', label: 'Projects' },
+            { href: '/uses', label: 'Uses' },
             { href: '/about', label: 'About' },
             { href: 'https://linkedin.com/in/jiakechen', label: 'LinkedIn', external: true },
             { href: 'https://x.com/mitjake', label: 'X', external: true },

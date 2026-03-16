@@ -1,8 +1,8 @@
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Uses',
-  description: 'The tools, hardware, and software Jake Chen uses daily for strategy, coding, and everything in between.',
+  title: 'Uses — Tools, Hardware & Software for Strategy and Code',
+  description: 'The tools, hardware, and software Jake Chen uses daily — from Cursor and Claude to MacBook Pro and Figma. A working setup for AI strategy and side projects.',
   alternates: { canonical: 'https://jake-chen.com/uses' },
 }
 

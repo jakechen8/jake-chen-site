@@ -63,6 +63,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       type: 'article',
       publishedTime: post.date,
       authors: ['Jake Chen'],
+      tags: post.tags || [],
       url: `${siteUrl}/writing/${post.slug}`,
       images: [
         {
@@ -118,12 +119,85 @@ export default function PostPage({ params }: Props) {
     keywords: post.tags?.join(', '),
   }
 
+  // Extract FAQ-style Q&A from H2 headings that are phrased as questions or statements
+  const faqItems: { question: string; answer: string }[] = []
+  const sections = post.content.split(/^## /m).slice(1) // split on H2 headings
+  for (const section of sections) {
+    const lines = section.trim().split('\n')
+    const heading = lines[0]?.trim()
+    if (!heading) continue
+    // Grab the first non-empty paragraph as the answer
+    const paragraphs = lines
+      .slice(1)
+      .join('\n')
+      .split('\n\n')
+      .map((p) => p.replace(/[#*_`<>[\]()]/g, '').trim())
+      .filter((p) => p.length > 30 && !p.startsWith('<'))
+    if (paragraphs.length > 0) {
+      faqItems.push({
+        question: heading.replace(/[#*_`]/g, '').trim(),
+        answer: paragraphs[0].slice(0, 300) + (paragraphs[0].length > 300 ? '...' : ''),
+      })
+    }
+  }
+
+  const faqSchema =
+    faqItems.length >= 2
+      ? {
+          '@context': 'https://schema.org',
+          '@type': 'FAQPage',
+          mainEntity: faqItems.slice(0, 5).map((item) => ({
+            '@type': 'Question',
+            name: item.question,
+            acceptedAnswer: {
+              '@type': 'Answer',
+              text: item.answer,
+            },
+          })),
+        }
+      : null
+
+  const breadcrumbSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: 'Home',
+        item: siteUrl,
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: 'Writing',
+        item: `${siteUrl}/writing`,
+      },
+      {
+        '@type': 'ListItem',
+        position: 3,
+        name: post.title,
+        item: `${siteUrl}/writing/${post.slug}`,
+      },
+    ],
+  }
+
   return (
     <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
       />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
+      {faqSchema && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+        />
+      )}
       <ReadingProgress />
       <div className="mx-auto max-w-4xl px-5 sm:px-8">
         <div className="py-12 sm:py-16">

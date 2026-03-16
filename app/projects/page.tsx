@@ -2,9 +2,9 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 
 export const metadata: Metadata = {
-  title: 'Projects',
+  title: 'Projects — AI Tools, Games & Strategy Experiments',
   description:
-    'Things Jake Chen builds after hours — games, tools, and experiments at the intersection of strategy and code.',
+    'Side projects by Jake Chen — an AI-themed endless runner game, car deal analyzer, push notification previewer, and more. Built with React, Canvas, TypeScript, and AI.',
   alternates: { canonical: 'https://jake-chen.com/projects' },
 }
 
