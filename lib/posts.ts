@@ -93,3 +93,16 @@ export function getAllTags(): string[] {
   posts.forEach((p) => p.tags?.forEach((t) => tagSet.add(t)))
   return Array.from(tagSet).sort()
 }
+
+export function getTotalWordCount(): number {
+  const files = getPostFiles()
+  let total = 0
+  for (const file of files) {
+    const fullPath = path.join(POSTS_DIR, file)
+    const source = fs.readFileSync(fullPath, 'utf-8')
+    const { data, content } = matter(source)
+    if (data.published === false) continue
+    total += content.split(/\s+/).filter(Boolean).length
+  }
+  return total
+}

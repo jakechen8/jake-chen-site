@@ -91,6 +91,70 @@ export default function AboutPage() {
 
         <div className="h-px" style={{ background: 'var(--border)' }} />
 
+        {/* Ask me about */}
+        <div className="py-16">
+          <h2
+            className="mb-6 font-display text-2xl font-normal tracking-tight"
+            style={{ color: 'var(--fg)' }}
+          >
+            Ask me about
+          </h2>
+          <div className="flex flex-wrap gap-2">
+            {[
+              { label: 'Second-order effects of AI', href: '/writing/second-order-effects' },
+              { label: 'Trust in autonomous systems', href: '/writing/on-trust-in-systems' },
+              { label: 'Why protocols beat models', href: '/writing/openclaw-new-operating-layer' },
+              { label: 'The future of strategy work', href: '/writing/the-forward-deployed-strategist' },
+              { label: 'Vibe coding (what works, what doesn\'t)', href: '/writing/what-i-got-wrong-about-vibe-coding' },
+              { label: 'Autonomous vehicle strategy', href: '/about' },
+              { label: 'Go-to-market for deep tech', href: '/about' },
+              { label: 'Building things for fun', href: '/play' },
+            ].map((item) => (
+              <Link
+                key={item.label}
+                href={item.href}
+                className="rounded-full border px-3.5 py-1.5 text-sm transition-all hover:border-[color:var(--accent)] hover:text-[color:var(--accent)]"
+                style={{ borderColor: 'var(--border-strong)', color: 'var(--fg-muted)' }}
+              >
+                {item.label}
+              </Link>
+            ))}
+          </div>
+        </div>
+
+        <div className="h-px" style={{ background: 'var(--border)' }} />
+
+        {/* Fun facts */}
+        <div className="py-16">
+          <h2
+            className="mb-6 font-display text-2xl font-normal tracking-tight"
+            style={{ color: 'var(--fg)' }}
+          >
+            Things you might not guess
+          </h2>
+          <div className="grid gap-4 sm:grid-cols-2">
+            {[
+              { emoji: '🎮', text: 'Built an AI-themed endless runner game from scratch — play it on this site.' },
+              { emoji: '🏃', text: 'Ran a marathon. Once. That was enough data to make the decision not to do it again.' },
+              { emoji: '🌏', text: 'Grew up in Minnesota, did grad school in Boston, now based in the Bay Area.' },
+              { emoji: '📚', text: 'Re-read "Thinking in Systems" every year. It gets better each time.' },
+            ].map((fact) => (
+              <div
+                key={fact.text}
+                className="flex gap-3 rounded-lg border p-4"
+                style={{ borderColor: 'var(--border)' }}
+              >
+                <span className="text-xl">{fact.emoji}</span>
+                <p className="text-sm leading-relaxed" style={{ color: 'var(--fg-muted)' }}>
+                  {fact.text}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="h-px" style={{ background: 'var(--border)' }} />
+
         {/* Tools & skills */}
         <div className="py-16">
           <h2

@@ -5,6 +5,7 @@ import { getAllPosts, getPost } from '@/lib/posts'
 import { MDXRemote } from 'next-mdx-remote/rsc'
 import ReadingProgress from '@/components/ReadingProgress'
 import TableOfContents from '@/components/TableOfContents'
+import CopyLinkButton from '@/components/CopyLinkButton'
 import RepoDecoder from '@/components/RepoDecoder'
 import ScenarioChoice from '@/components/ScenarioChoice'
 import AnimatedStat from '@/components/AnimatedStat'
@@ -351,18 +352,21 @@ export default function PostPage({ params }: Props) {
               </svg>
               All essays
             </Link>
-            <a
-              href="/feed.xml"
-              className="flex items-center gap-1.5 text-sm transition-colors hover:text-[color:var(--accent)]"
-              style={{ color: 'var(--fg-muted)' }}
-            >
-              RSS
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor">
-                <rect x="1" y="9" width="3" height="3" rx="0.5" />
-                <path d="M1 5.5a7 7 0 0 1 7 7" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-                <path d="M1 1.5a10.5 10.5 0 0 1 10.5 10.5" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-              </svg>
-            </a>
+            <div className="flex items-center gap-4">
+              <CopyLinkButton />
+              <a
+                href="/feed.xml"
+                className="flex items-center gap-1.5 text-sm transition-colors hover:text-[color:var(--accent)]"
+                style={{ color: 'var(--fg-muted)' }}
+              >
+                RSS
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor">
+                  <rect x="1" y="9" width="3" height="3" rx="0.5" />
+                  <path d="M1 5.5a7 7 0 0 1 7 7" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                  <path d="M1 1.5a10.5 10.5 0 0 1 10.5 10.5" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                </svg>
+              </a>
+            </div>
           </div>
         </div>
       </div>

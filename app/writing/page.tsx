@@ -1,6 +1,8 @@
 import type { Metadata } from 'next'
-import { getAllPosts } from '@/lib/posts'
+import Link from 'next/link'
+import { getAllPosts, getAllTags, getTotalWordCount } from '@/lib/posts'
 import TagFilter from '@/components/TagFilter'
+import WritingStats from '@/components/WritingStats'
 import EmailCapture from '@/components/EmailCapture'
 
 export const metadata: Metadata = {
@@ -11,6 +13,11 @@ export const metadata: Metadata = {
 
 export default async function WritingPage() {
   const posts = await Promise.resolve(getAllPosts())
+  const totalWords = getTotalWordCount()
+  const totalTags = getAllTags().length
+
+  // Pick a "start here" post — the most recent long-form piece
+  const startHere = posts.find((p) => p.slug === 'second-order-effects') || posts[0]
 
   return (
     <div className="mx-auto max-w-4xl px-5 sm:px-8">
@@ -34,6 +41,44 @@ export default async function WritingPage() {
             the second-order effects nobody talks about. Published when&nbsp;ready.
           </p>
         </div>
+
+        {/* Stats */}
+        <WritingStats totalPosts={posts.length} totalWords={totalWords} totalTags={totalTags} />
+
+        {/* Start Here callout */}
+        {startHere && (
+          <Link
+            href={`/writing/${startHere.slug}`}
+            className="group mb-10 flex items-center gap-4 rounded-lg border p-4 transition-all hover:border-[color:var(--accent)] sm:p-5"
+            style={{ borderColor: 'var(--border-strong)', background: 'var(--bg-warm)' }}
+          >
+            <div
+              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full"
+              style={{ background: 'var(--accent-light)' }}
+            >
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="var(--accent)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <polygon points="5 3 13 8 5 13" />
+              </svg>
+            </div>
+            <div className="min-w-0 flex-1">
+              <p className="text-xs font-semibold uppercase tracking-widest" style={{ color: 'var(--accent)' }}>
+                Start here
+              </p>
+              <p className="truncate text-sm font-medium group-hover:text-[color:var(--accent)]" style={{ color: 'var(--fg)' }}>
+                {startHere.title}
+              </p>
+              {startHere.excerpt && (
+                <p className="mt-0.5 truncate text-xs" style={{ color: 'var(--fg-subtle)' }}>
+                  {startHere.excerpt}
+                </p>
+              )}
+            </div>
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="shrink-0" style={{ color: 'var(--fg-muted)' }}>
+              <line x1="2" y1="7" x2="12" y2="7" />
+              <polyline points="8 3 12 7 8 11" />
+            </svg>
+          </Link>
+        )}
 
         {/* Posts with tag filtering */}
         {posts.length > 0 ? (

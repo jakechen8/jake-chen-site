@@ -29,7 +29,7 @@ export default function Nav() {
         {/* Wordmark */}
         <Link
           href="/"
-          className="font-display text-lg tracking-tight transition-opacity hover:opacity-70"
+          className="logo-hover font-display text-lg tracking-tight"
           style={{ color: 'var(--fg)' }}
         >
           Jake Chen
