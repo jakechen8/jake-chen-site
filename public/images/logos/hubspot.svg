@@ -1,19 +1,22 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
-  <!-- HubSpot sprocket mark -->
-  <g transform="translate(32,32)">
-    <!-- Outer spokes -->
-    <rect x="-3" y="-24" width="6" height="12" rx="2" fill="#FFFFFF"/>
-    <rect x="-3" y="-24" width="6" height="12" rx="2" fill="#FFFFFF" transform="rotate(60)"/>
-    <rect x="-3" y="-24" width="6" height="12" rx="2" fill="#FFFFFF" transform="rotate(120)"/>
-    <rect x="-3" y="-24" width="6" height="12" rx="2" fill="#FFFFFF" transform="rotate(180)"/>
-    <rect x="-3" y="-24" width="6" height="12" rx="2" fill="#FFFFFF" transform="rotate(240)"/>
-    <rect x="-3" y="-24" width="6" height="12" rx="2" fill="#FFFFFF" transform="rotate(300)"/>
-    <!-- Outer ring -->
-    <circle cx="0" cy="0" r="17" stroke="#FFFFFF" stroke-width="5" fill="none"/>
-    <!-- Inner circle -->
-    <circle cx="0" cy="0" r="7" fill="#FFFFFF"/>
-    <!-- Handle -->
-    <line x1="22" y1="8" x2="28" y2="8" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round"/>
-    <circle cx="29" cy="8" r="5" stroke="#FFFFFF" stroke-width="3" fill="none"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" fill="none">
+  <!-- HubSpot sprocket - accurate gear with handle -->
+  <g fill="#FFFFFF" transform="translate(36, 34)">
+    <!-- Center hub -->
+    <circle cx="0" cy="0" r="8" fill="#FFFFFF"/>
+    <!-- Center hole -->
+    <circle cx="0" cy="0" r="4" fill="none" stroke="#FF7A59" stroke-width="2"/>
+    <!-- Spokes with nubs (6 spokes at 60 deg intervals) -->
+    <rect x="-3" y="-22" width="6" height="10" rx="2"/>
+    <rect x="-3" y="-22" width="6" height="10" rx="2" transform="rotate(60)"/>
+    <rect x="-3" y="-22" width="6" height="10" rx="2" transform="rotate(120)"/>
+    <rect x="-3" y="-22" width="6" height="10" rx="2" transform="rotate(180)"/>
+    <rect x="-3" y="-22" width="6" height="10" rx="2" transform="rotate(240)"/>
+    <rect x="-3" y="-22" width="6" height="10" rx="2" transform="rotate(300)"/>
+    <!-- Outer ring connecting spokes -->
+    <circle cx="0" cy="0" r="16" fill="none" stroke="#FFFFFF" stroke-width="5"/>
   </g>
+  <!-- Handle arm -->
+  <line x1="56" y1="42" x2="64" y2="42" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round"/>
+  <!-- Handle circle -->
+  <circle cx="68" cy="42" r="6" fill="none" stroke="#FFFFFF" stroke-width="3"/>
 </svg>

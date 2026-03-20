@@ -1,9 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
-  <!-- McKinsey & Company shield-style mark -->
-  <g fill="#FFFFFF">
-    <!-- Shield outline -->
-    <path d="M32 6L8 16v18c0 14 10.7 22 24 26 13.3-4 24-12 24-26V16L32 6z" fill="none" stroke="#FFFFFF" stroke-width="3"/>
-    <!-- Inner M -->
-    <path d="M20 42V24l6 8 6-8 6 8 6-8v18h-4V30l-4.5 6-3.5-6v12h-4V30l-4.5 6L20 30v12z" fill="#FFFFFF"/>
-  </g>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" fill="none">
+  <!-- McKinsey - Clean wordmark style with ampersand accent -->
+  <text x="40" y="42" font-family="Georgia, 'Times New Roman', serif" font-size="20" fill="#FFFFFF" text-anchor="middle" font-weight="700" letter-spacing="-0.5">McKinsey</text>
+  <text x="40" y="58" font-family="Georgia, 'Times New Roman', serif" font-size="10" fill="rgba(255,255,255,0.7)" text-anchor="middle" font-style="italic">&amp; Company</text>
 </svg>

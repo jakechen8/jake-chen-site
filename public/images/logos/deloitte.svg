@@ -1,5 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
-  <!-- Deloitte wordmark-style "D" + green dot -->
-  <text x="8" y="46" font-family="Georgia, serif" font-size="42" font-weight="bold" fill="#FFFFFF">D.</text>
-  <circle cx="50" cy="40" r="6" fill="#86BC25"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" fill="none">
+  <!-- Deloitte - The iconic green dot is their most recognizable mark -->
+  <circle cx="40" cy="36" r="22" fill="#FFFFFF"/>
+  <text x="40" y="68" font-family="Arial, Helvetica, sans-serif" font-size="10" fill="rgba(255,255,255,0.85)" text-anchor="middle" font-weight="300" letter-spacing="1.5">DELOITTE</text>
 </svg>
