@@ -1,19 +1,9 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" fill="none">
-  <!-- University of Minnesota - Block M accurate proportions -->
-  <g fill="#FFF">
-    <!-- Left pillar -->
-    <rect x="8" y="14" width="11" height="52"/>
-    <!-- Left inner pillar -->
-    <rect x="25" y="30" width="8" height="36"/>
-    <!-- Right inner pillar -->
-    <rect x="47" y="30" width="8" height="36"/>
-    <!-- Right pillar -->
-    <rect x="61" y="14" width="11" height="52"/>
-    <!-- Left diagonal -->
-    <polygon points="19,14 33,38 25,38 8,14"/>
-    <!-- Right diagonal -->
-    <polygon points="61,14 55,14 47,38 55,38"/>
-    <!-- Center V -->
-    <polygon points="25,30 40,56 55,30 47,30 40,44 33,30"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none">
+  <!-- University of Minnesota Block M - maroon with gold outline -->
+  <g transform="translate(5, 10) scale(0.9)">
+    <!-- Gold border -->
+    <path d="M8 84V16l6-2 22 28 14-18 14 18 22-28 6 2v68h-16V38l-16 20-10-14-10 14-16-20v46z" fill="#FFCC33" stroke="#FFCC33" stroke-width="6" stroke-linejoin="miter"/>
+    <!-- Maroon inner -->
+    <path d="M14 80V22l18 23 18-24 18 24 18-23v58h-8V34l-20 26-8-12-8 12-20-26v46z" fill="#7A0019"/>
   </g>
 </svg>

@@ -267,8 +267,8 @@ export default function ResumeRunner() {
     const idx = nextMilestoneRef.current
     if (idx >= MILESTONES.length) return
     const m = MILESTONES[idx]
-    const blockW = 90
-    const blockH = 72 + Math.random() * 14
+    const blockW = 94
+    const blockH = 78 + Math.random() * 12
     blocksRef.current.push({
       x: W + 60,
       w: blockW,
@@ -613,7 +613,7 @@ export default function ResumeRunner() {
       }
       ctx.globalAlpha = 1
 
-      // ── Draw blocks ──
+      // ── Draw blocks (card-style: white card with colored accent) ──
       for (const b of blocks) {
         const bx = b.x
         const by = b.falling ? b.fallY : GROUND_Y - b.h
@@ -631,51 +631,52 @@ export default function ResumeRunner() {
           ctx.translate(-cx, -cy)
         }
 
-        // Block shadow
+        // Card shadow
         if (!b.falling) {
-          ctx.fillStyle = 'rgba(0,0,0,0.08)'
-          roundedRect(ctx, bx + 3, by + 3, bw, bh, 10)
+          ctx.fillStyle = 'rgba(0,0,0,0.12)'
+          roundedRect(ctx, bx + 2, by + 3, bw, bh, 10)
           ctx.fill()
         }
 
-        // Block gradient body
-        const blockGrad = ctx.createLinearGradient(bx, by, bx, by + bh)
-        blockGrad.addColorStop(0, b.milestone.colorLight)
-        blockGrad.addColorStop(1, b.milestone.color)
-        ctx.fillStyle = blockGrad
+        // White card body
+        ctx.fillStyle = '#FFFFFF'
         roundedRect(ctx, bx, by, bw, bh, 10)
         ctx.fill()
 
-        // Subtle inner highlight
-        const highlightGrad = ctx.createLinearGradient(bx, by, bx, by + bh * 0.4)
-        highlightGrad.addColorStop(0, 'rgba(255,255,255,0.2)')
-        highlightGrad.addColorStop(1, 'rgba(255,255,255,0)')
-        ctx.fillStyle = highlightGrad
-        roundedRect(ctx, bx, by, bw, bh, 10)
-        ctx.fill()
+        // Colored accent strip on top
+        ctx.save()
+        ctx.beginPath()
+        roundedRect(ctx, bx, by, bw, 8, 10)
+        ctx.clip()
+        ctx.fillStyle = b.milestone.color
+        ctx.fillRect(bx, by, bw, 14) // slightly taller to fill rounded bottom
+        ctx.restore()
 
-        // Logo on block (centered, generous size)
+        // Subtle card border
+        ctx.strokeStyle = hexToRgba(b.milestone.color, 0.25)
+        ctx.lineWidth = 1
+        roundedRect(ctx, bx, by, bw, bh, 10)
+        ctx.stroke()
+
+        // Logo on card (centered, large)
         const logoImg = logosRef.current[b.milestone.logoKey]
         if (logoImg && logoImg.complete && logoImg.naturalWidth > 0) {
-          const logoSize = 34
+          const logoSize = 38
           ctx.drawImage(
             logoImg,
             bx + (bw - logoSize) / 2,
-            by + (bh - logoSize) / 2 - 4,
+            by + 12 + (bh - 12 - logoSize) / 2 - 2,
             logoSize,
             logoSize,
           )
         }
 
-        // Company name below logo
+        // Year label at bottom
         ctx.font = '600 8px Inter, system-ui, sans-serif'
-        ctx.fillStyle = 'rgba(255,255,255,0.85)'
+        ctx.fillStyle = b.milestone.color
         ctx.textAlign = 'center'
         ctx.textBaseline = 'alphabetic'
-        const label = b.milestone.company.length > 14
-          ? b.milestone.company.slice(0, 13) + '…'
-          : b.milestone.company
-        ctx.fillText(label, bx + bw / 2, by + bh - 8)
+        ctx.fillText(b.milestone.year, bx + bw / 2, by + bh - 6)
 
         ctx.restore()
       }
@@ -978,10 +979,10 @@ export default function ResumeRunner() {
                   animation: `fadeUp 0.4s ease-out ${i * 0.05}s both`,
                 }}
               >
-                {/* Logo badge */}
+                {/* Logo badge - white bg with colored border for full-color logo visibility */}
                 <div
-                  className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg shadow-sm"
-                  style={{ background: m.color }}
+                  className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border-2 bg-white shadow-sm"
+                  style={{ borderColor: m.color }}
                 >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img

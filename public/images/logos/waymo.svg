@@ -1,8 +1,11 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" fill="none">
-  <!-- Waymo - Stylized W with characteristic curves -->
-  <g fill="#FFFFFF">
-    <path d="M8 22h10l8 28 8-20 8 20 8-28h10l-14 42h-8l-6-18-6 18h-8L8 22z"/>
-    <!-- Sensor dot -->
-    <circle cx="40" cy="70" r="4"/>
-  </g>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 70" fill="none">
+  <!-- Waymo W logo - green and blue overlapping rounded strokes -->
+  <!-- Blue right V (behind) -->
+  <path d="M36 6L54 54L72 6" stroke="#4285F4" stroke-width="16" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  <!-- Green left V (in front) -->
+  <path d="M8 6L26 54L44 6" stroke="#00E676" stroke-width="16" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  <!-- Overlap blend -->
+  <path d="M36 6L40 16" stroke="#1B9E5A" stroke-width="16" stroke-linecap="round" fill="none"/>
+  <!-- Green dot top right -->
+  <circle cx="80" cy="6" r="8" fill="#00E676"/>
 </svg>

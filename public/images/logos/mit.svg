@@ -1,14 +1,11 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" fill="none">
-  <!-- MIT - Accurate block column logo -->
-  <g fill="#FFFFFF">
-    <!-- M: three columns + two half blocks -->
-    <rect x="6" y="10" width="10" height="60"/>
-    <rect x="16" y="10" width="10" height="16"/>
-    <rect x="26" y="10" width="10" height="60"/>
-    <!-- I: one column -->
-    <rect x="42" y="10" width="10" height="60"/>
-    <!-- T: top bar + column -->
-    <rect x="58" y="10" width="16" height="16"/>
-    <rect x="62" y="10" width="10" height="60"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 70" fill="none">
+  <!-- MIT block column logo - MIT red (#A31F34) - exact proportions -->
+  <g fill="#A31F34">
+    <rect x="4" y="0" width="12" height="70"/>
+    <rect x="20" y="0" width="10" height="18"/>
+    <rect x="34" y="0" width="12" height="70"/>
+    <rect x="52" y="0" width="12" height="70"/>
+    <rect x="70" y="0" width="26" height="18"/>
+    <rect x="74" y="0" width="12" height="70"/>
   </g>
 </svg>
