@@ -153,17 +153,17 @@ export default async function HomePage() {
                   className="mb-1 font-display text-xl font-normal tracking-tight sm:text-2xl"
                   style={{ color: 'var(--fg)' }}
                 >
-                  AI Runner
+                  Resume Runner
                 </h3>
                 <p className="max-w-md text-sm leading-relaxed" style={{ color: 'var(--fg-muted)' }}>
-                  An endless runner where you deploy an AI agent through bugs, firewalls, and hallucinations. Built with Canvas and React. How far can your model go?
+                  Jump over career milestones to build my resume in real time. From undergrad to Waymo &mdash; clear all seven blocks to see the full picture. Built with Canvas and React.
                 </p>
               </div>
               <span
                 className="inline-flex shrink-0 items-center gap-1.5 rounded-md border px-4 py-2 text-sm font-medium transition-colors group-hover:border-[color:var(--accent)] group-hover:text-[color:var(--accent)]"
                 style={{ borderColor: 'var(--border-strong)', color: 'var(--fg-muted)' }}
               >
-                Play it
+                Play now
                 <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                   <line x1="2" y1="7" x2="12" y2="7" />
                   <polyline points="8 3 12 7 8 11" />

@@ -10,11 +10,11 @@ export const metadata: Metadata = {
 
 const projects = [
   {
-    title: 'AI Runner',
+    title: 'Resume Runner',
     status: 'Live',
     statusColor: 'var(--accent)',
     description:
-      'An endless runner where you deploy an AI agent through bugs, firewalls, and hallucinations. Three difficulty modes. A boost button when things get desperate. Built with HTML5 Canvas and React.',
+      'An interactive game where you jump over career milestones to build my resume in real time. Clear all seven blocks — from undergrad to Waymo — to see the full picture. Built with HTML5 Canvas and React.',
     tags: ['Canvas', 'React', 'Game Dev'],
     link: '/play',
     linkLabel: 'Play it',
