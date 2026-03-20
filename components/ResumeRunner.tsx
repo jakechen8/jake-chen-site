@@ -4,10 +4,10 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 
 /* ─── Canvas dimensions ─── */
 const W = 800
-const H = 320
-const GROUND_Y = 250
-const PLAYER_W = 28
-const PLAYER_H = 38
+const H = 360
+const GROUND_Y = 280
+const PLAYER_W = 32
+const PLAYER_H = 44
 
 /* ─── Logo paths (SVGs served from /public) ─── */
 const LOGO_PATHS: Record<string, string> = {
@@ -20,6 +20,19 @@ const LOGO_PATHS: Record<string, string> = {
   waymo: '/images/logos/waymo.svg',
 }
 
+/* ─── Particle system ─── */
+interface Particle {
+  x: number
+  y: number
+  vx: number
+  vy: number
+  life: number
+  maxLife: number
+  color: string
+  size: number
+  type: 'burst' | 'dust' | 'trail' | 'star'
+}
+
 /* ─── Career milestones (chronological) ─── */
 interface Milestone {
   year: string
@@ -27,6 +40,7 @@ interface Milestone {
   company: string
   detail: string
   color: string
+  colorLight: string
   logoKey: string
 }
 
@@ -37,6 +51,7 @@ const MILESTONES: Milestone[] = [
     company: 'University of Minnesota',
     detail: 'Double major in Finance and Information Systems. First spark of interest in how complex systems create value.',
     color: '#7A0019',
+    colorLight: '#9B1B30',
     logoKey: 'umn',
   },
   {
@@ -45,6 +60,7 @@ const MILESTONES: Milestone[] = [
     company: 'Deloitte',
     detail: 'Five years across TMT and financial services. Customer acquisition, platform strategy, digital transformation. Learned to structure ambiguous problems.',
     color: '#86B817',
+    colorLight: '#9FD42E',
     logoKey: 'deloitte',
   },
   {
@@ -53,6 +69,7 @@ const MILESTONES: Milestone[] = [
     company: 'Microsoft',
     detail: 'Product strategy for Office 365 — onboarding, churn reduction, retention. First exposure to enterprise software meets user behavior.',
     color: '#0078D4',
+    colorLight: '#1A8FE8',
     logoKey: 'microsoft',
   },
   {
@@ -61,6 +78,7 @@ const MILESTONES: Milestone[] = [
     company: 'HubSpot',
     detail: 'Built prospect scoring models and A/B testing programs. Growth teams operate fast — data-driven, allergic to vanity metrics.',
     color: '#FF7A59',
+    colorLight: '#FF9A80',
     logoKey: 'hubspot',
   },
   {
@@ -69,6 +87,7 @@ const MILESTONES: Milestone[] = [
     company: 'MIT Sloan',
     detail: 'Focused on technology strategy and operations. Where analytical rigor met real-world messiness.',
     color: '#A31F34',
+    colorLight: '#C4354C',
     logoKey: 'mit',
   },
   {
@@ -77,6 +96,7 @@ const MILESTONES: Milestone[] = [
     company: 'McKinsey & Company',
     detail: 'Led growth strategy, pricing, and M&A engagements across tech, media, financial services, and retail. Managed teams of 3–8.',
     color: '#003B5C',
+    colorLight: '#005580',
     logoKey: 'mckinsey',
   },
   {
@@ -85,6 +105,7 @@ const MILESTONES: Milestone[] = [
     company: 'Waymo',
     detail: 'Executive-level strategy for autonomous mobility. Go-to-market, pricing architecture, competitive positioning. AI meets the real world.',
     color: '#00BFA5',
+    colorLight: '#1AD6BB',
     logoKey: 'waymo',
   },
 ]
@@ -99,9 +120,34 @@ interface Block {
   falling: boolean
   fallY: number
   fallVel: number
+  fallRotation: number
+  opacity: number
 }
 
 type GameState = 'idle' | 'running' | 'complete' | 'dead'
+
+/* ─── Helper: rounded rect path ─── */
+function roundedRect(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, r: number) {
+  ctx.beginPath()
+  ctx.moveTo(x + r, y)
+  ctx.lineTo(x + w - r, y)
+  ctx.arcTo(x + w, y, x + w, y + r, r)
+  ctx.lineTo(x + w, y + h - r)
+  ctx.arcTo(x + w, y + h, x + w - r, y + h, r)
+  ctx.lineTo(x + r, y + h)
+  ctx.arcTo(x, y + h, x, y + h - r, r)
+  ctx.lineTo(x, y + r)
+  ctx.arcTo(x, y, x + r, y, r)
+  ctx.closePath()
+}
+
+/* ─── Helper: hex to rgba ─── */
+function hexToRgba(hex: string, alpha: number): string {
+  const r = parseInt(hex.slice(1, 3), 16)
+  const g = parseInt(hex.slice(3, 5), 16)
+  const b = parseInt(hex.slice(5, 7), 16)
+  return `rgba(${r},${g},${b},${alpha})`
+}
 
 export default function ResumeRunner() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -113,7 +159,7 @@ export default function ResumeRunner() {
 
   // Refs for game loop
   const stateRef = useRef<GameState>('idle')
-  const playerRef = useRef({ x: 80, y: GROUND_Y - PLAYER_H, vy: 0, jumping: false, doubleJumped: false })
+  const playerRef = useRef({ x: 100, y: GROUND_Y - PLAYER_H, vy: 0, jumping: false, doubleJumped: false })
   const blocksRef = useRef<Block[]>([])
   const clearedRef = useRef<Milestone[]>([])
   const nextMilestoneRef = useRef(0)
@@ -122,6 +168,9 @@ export default function ResumeRunner() {
   const distRef = useRef(0)
   const animRef = useRef<number>(0)
   const logosRef = useRef<Record<string, HTMLImageElement>>({})
+  const particlesRef = useRef<Particle[]>([])
+  const screenFlashRef = useRef(0)
+  const shakeRef = useRef({ x: 0, y: 0, intensity: 0 })
 
   // Responsive scaling
   useEffect(() => {
@@ -147,19 +196,81 @@ export default function ResumeRunner() {
     logosRef.current = loaded
   }, [])
 
-  const GRAVITY = 0.65
-  const JUMP_FORCE = -12.5
-  const DOUBLE_JUMP_FORCE = -10
+  const GRAVITY = 0.62
+  const JUMP_FORCE = -13
+  const DOUBLE_JUMP_FORCE = -10.5
+
+  /* ─── Spawn particles ─── */
+  const spawnBurst = useCallback((x: number, y: number, color: string, count: number) => {
+    const newP: Particle[] = []
+    for (let i = 0; i < count; i++) {
+      const angle = (Math.PI * 2 * i) / count + (Math.random() - 0.5) * 0.5
+      const speed = 2 + Math.random() * 4
+      newP.push({
+        x, y,
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed - 2,
+        life: 1,
+        maxLife: 30 + Math.random() * 20,
+        color,
+        size: 2 + Math.random() * 4,
+        type: 'burst',
+      })
+    }
+    // Also spawn stars
+    for (let i = 0; i < 5; i++) {
+      newP.push({
+        x: x + (Math.random() - 0.5) * 40,
+        y: y - Math.random() * 30,
+        vx: (Math.random() - 0.5) * 2,
+        vy: -1 - Math.random() * 3,
+        life: 1,
+        maxLife: 40 + Math.random() * 20,
+        color: '#FFD700',
+        size: 3 + Math.random() * 3,
+        type: 'star',
+      })
+    }
+    particlesRef.current.push(...newP)
+  }, [])
+
+  const spawnDust = useCallback((x: number, y: number) => {
+    if (Math.random() > 0.3) return
+    particlesRef.current.push({
+      x: x + Math.random() * 10,
+      y,
+      vx: -1 - Math.random() * 2,
+      vy: -0.5 - Math.random() * 1.5,
+      life: 1,
+      maxLife: 15 + Math.random() * 10,
+      color: 'rgba(160,155,145,0.5)',
+      size: 1.5 + Math.random() * 2.5,
+      type: 'dust',
+    })
+  }, [])
+
+  const spawnTrail = useCallback((x: number, y: number, color: string) => {
+    particlesRef.current.push({
+      x, y,
+      vx: -0.5 + Math.random() * -1,
+      vy: (Math.random() - 0.5) * 0.5,
+      life: 1,
+      maxLife: 12 + Math.random() * 6,
+      color,
+      size: 2 + Math.random() * 2,
+      type: 'trail',
+    })
+  }, [])
 
   /* ─── Spawn next milestone block ─── */
   const spawnNext = useCallback(() => {
     const idx = nextMilestoneRef.current
     if (idx >= MILESTONES.length) return
     const m = MILESTONES[idx]
-    const blockW = 80
-    const blockH = 58 + Math.random() * 12
+    const blockW = 90
+    const blockH = 72 + Math.random() * 14
     blocksRef.current.push({
-      x: W + 40,
+      x: W + 60,
       w: blockW,
       h: blockH,
       milestone: m,
@@ -167,24 +278,28 @@ export default function ResumeRunner() {
       falling: false,
       fallY: GROUND_Y - blockH,
       fallVel: 0,
+      fallRotation: 0,
+      opacity: 1,
     })
     nextMilestoneRef.current = idx + 1
   }, [])
 
   /* ─── Start / Restart ─── */
   const startGame = useCallback(() => {
-    playerRef.current = { x: 80, y: GROUND_Y - PLAYER_H, vy: 0, jumping: false, doubleJumped: false }
+    playerRef.current = { x: 100, y: GROUND_Y - PLAYER_H, vy: 0, jumping: false, doubleJumped: false }
     blocksRef.current = []
     clearedRef.current = []
     nextMilestoneRef.current = 0
     speedRef.current = 3.5
     frameRef.current = 0
     distRef.current = 0
+    particlesRef.current = []
+    screenFlashRef.current = 0
+    shakeRef.current = { x: 0, y: 0, intensity: 0 }
     setClearedMilestones([])
     setShowFullResume(false)
     setGameState('running')
     stateRef.current = 'running'
-    // Spawn first block
     spawnNext()
   }, [spawnNext])
 
@@ -201,9 +316,38 @@ export default function ResumeRunner() {
       p.vy = JUMP_FORCE
       p.jumping = true
       p.doubleJumped = false
+      // Jump dust
+      for (let i = 0; i < 6; i++) {
+        particlesRef.current.push({
+          x: p.x + PLAYER_W / 2 + (Math.random() - 0.5) * 20,
+          y: GROUND_Y,
+          vx: (Math.random() - 0.5) * 3,
+          vy: -1 - Math.random() * 2,
+          life: 1,
+          maxLife: 15 + Math.random() * 10,
+          color: 'rgba(160,155,145,0.6)',
+          size: 2 + Math.random() * 3,
+          type: 'dust',
+        })
+      }
     } else if (!p.doubleJumped) {
       p.vy = DOUBLE_JUMP_FORCE
       p.doubleJumped = true
+      // Double jump burst
+      for (let i = 0; i < 8; i++) {
+        const angle = (Math.PI * 2 * i) / 8
+        particlesRef.current.push({
+          x: p.x + PLAYER_W / 2,
+          y: p.y + PLAYER_H / 2,
+          vx: Math.cos(angle) * 2,
+          vy: Math.sin(angle) * 2,
+          life: 1,
+          maxLife: 10,
+          color: 'rgba(180,83,9,0.5)',
+          size: 2,
+          type: 'trail',
+        })
+      }
     }
   }, [startGame])
 
@@ -219,6 +363,20 @@ export default function ResumeRunner() {
     return () => window.removeEventListener('keydown', onKey)
   }, [jump])
 
+  /* ─── Draw a star shape ─── */
+  const drawStar = (ctx: CanvasRenderingContext2D, cx: number, cy: number, r: number, points: number) => {
+    ctx.beginPath()
+    for (let i = 0; i < points * 2; i++) {
+      const angle = (i * Math.PI) / points - Math.PI / 2
+      const radius = i % 2 === 0 ? r : r * 0.4
+      const x = cx + Math.cos(angle) * radius
+      const y = cy + Math.sin(angle) * radius
+      if (i === 0) ctx.moveTo(x, y)
+      else ctx.lineTo(x, y)
+    }
+    ctx.closePath()
+  }
+
   /* ─── Game loop ─── */
   useEffect(() => {
     const canvas = canvasRef.current
@@ -226,45 +384,95 @@ export default function ResumeRunner() {
     const ctx = canvas.getContext('2d')
     if (!ctx) return
 
+    // Cache CSS values (read once, update periodically)
+    let cssFrame = 0
+    let bgColor = '#FAFAF8'
+    let fgColor = '#1A1A2E'
+    let fgSubtle = '#8E8E9A'
+    let accent = '#B45309'
+    let borderColor = '#E5E5E5'
+
+    const readCSS = () => {
+      const s = getComputedStyle(document.documentElement)
+      bgColor = s.getPropertyValue('--bg').trim() || '#FAFAF8'
+      fgColor = s.getPropertyValue('--fg').trim() || '#1A1A2E'
+      fgSubtle = s.getPropertyValue('--fg-subtle').trim() || '#8E8E9A'
+      accent = s.getPropertyValue('--accent').trim() || '#B45309'
+      borderColor = s.getPropertyValue('--border').trim() || '#E5E5E5'
+    }
+    readCSS()
+
     const loop = () => {
       animRef.current = requestAnimationFrame(loop)
       const state = stateRef.current
       const p = playerRef.current
       const blocks = blocksRef.current
+      const particles = particlesRef.current
 
       frameRef.current++
-      ctx.clearRect(0, 0, W, H)
+      cssFrame++
+      if (cssFrame % 60 === 0) readCSS()
+
+      // Screen shake decay
+      const shake = shakeRef.current
+      if (shake.intensity > 0) {
+        shake.x = (Math.random() - 0.5) * shake.intensity
+        shake.y = (Math.random() - 0.5) * shake.intensity
+        shake.intensity *= 0.88
+        if (shake.intensity < 0.3) shake.intensity = 0
+      }
+
+      ctx.save()
+      ctx.translate(shake.x, shake.y)
+      ctx.clearRect(-10, -10, W + 20, H + 20)
 
       // ── Background ──
-      ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--bg').trim() || '#FAFAF8'
-      ctx.fillRect(0, 0, W, H)
+      ctx.fillStyle = bgColor
+      ctx.fillRect(-10, -10, W + 20, H + 20)
 
-      // ── Ground line ──
-      const fgSubtle = getComputedStyle(document.documentElement).getPropertyValue('--fg-subtle').trim() || '#8E8E9A'
-      ctx.strokeStyle = fgSubtle
-      ctx.lineWidth = 1
+      // ── Subtle background dots ──
+      ctx.fillStyle = hexToRgba(fgSubtle, 0.07)
+      const dotOffset = (distRef.current * 0.3) % 40
+      for (let dx = -dotOffset; dx < W + 40; dx += 40) {
+        for (let dy = 20; dy < GROUND_Y - 20; dy += 40) {
+          ctx.beginPath()
+          ctx.arc(dx, dy, 1, 0, Math.PI * 2)
+          ctx.fill()
+        }
+      }
+
+      // ── Ground ──
+      // Main ground line
+      ctx.strokeStyle = borderColor
+      ctx.lineWidth = 2
       ctx.beginPath()
       ctx.moveTo(0, GROUND_Y)
       ctx.lineTo(W, GROUND_Y)
       ctx.stroke()
 
-      // ── Ground hash marks (scrolling) ──
+      // Ground texture (subtle hash marks)
       if (state === 'running') {
         distRef.current += speedRef.current
       }
-      const offset = distRef.current % 30
-      ctx.strokeStyle = fgSubtle
-      ctx.lineWidth = 0.5
-      for (let x = -offset; x < W; x += 30) {
+      const offset = distRef.current % 24
+      ctx.strokeStyle = hexToRgba(fgSubtle, 0.15)
+      ctx.lineWidth = 1
+      for (let x = -offset; x < W; x += 24) {
         ctx.beginPath()
-        ctx.moveTo(x, GROUND_Y)
-        ctx.lineTo(x + 6, GROUND_Y + 6)
+        ctx.moveTo(x, GROUND_Y + 1)
+        ctx.lineTo(x + 8, GROUND_Y + 10)
         ctx.stroke()
       }
 
+      // Subtle ground fill below line
+      const groundGrad = ctx.createLinearGradient(0, GROUND_Y, 0, H)
+      groundGrad.addColorStop(0, hexToRgba(fgSubtle, 0.03))
+      groundGrad.addColorStop(1, 'transparent')
+      ctx.fillStyle = groundGrad
+      ctx.fillRect(0, GROUND_Y, W, H - GROUND_Y)
+
       // ── Update physics ──
       if (state === 'running') {
-        // Gravity
         p.vy += GRAVITY
         p.y += p.vy
         if (p.y >= GROUND_Y - PLAYER_H) {
@@ -274,8 +482,17 @@ export default function ResumeRunner() {
           p.doubleJumped = false
         }
 
-        // Speed ramp
-        speedRef.current = Math.min(7, 3.5 + frameRef.current * 0.0005)
+        speedRef.current = Math.min(6.5, 3.5 + frameRef.current * 0.0004)
+
+        // Running dust
+        if (!p.jumping) {
+          spawnDust(p.x, GROUND_Y)
+        }
+
+        // Player trail when jumping
+        if (p.jumping) {
+          spawnTrail(p.x + PLAYER_W / 2, p.y + PLAYER_H / 2, hexToRgba(accent, 0.3))
+        }
 
         // Move blocks
         for (const b of blocks) {
@@ -291,20 +508,31 @@ export default function ResumeRunner() {
             b.falling = true
             b.fallY = GROUND_Y - b.h
             b.fallVel = 0
+            b.fallRotation = 0
             clearedRef.current = [...clearedRef.current, b.milestone]
             setClearedMilestones([...clearedRef.current])
 
-            // Spawn next if available
+            // Celebration effects
+            spawnBurst(b.x + b.w / 2, GROUND_Y - b.h / 2, b.milestone.color, 18)
+            screenFlashRef.current = 1
+            shakeRef.current.intensity = 4
+
             if (nextMilestoneRef.current < MILESTONES.length) {
-              // Delay spawn slightly
-              setTimeout(() => spawnNext(), 300)
+              setTimeout(() => spawnNext(), 400)
             } else {
-              // All milestones cleared — win!
+              // Big win celebration
+              setTimeout(() => {
+                spawnBurst(W / 2, H / 2, accent, 30)
+                spawnBurst(W / 3, H / 2, '#FFD700', 20)
+                spawnBurst((W * 2) / 3, H / 2, '#FFD700', 20)
+                shakeRef.current.intensity = 8
+                screenFlashRef.current = 1
+              }, 400)
               setTimeout(() => {
                 stateRef.current = 'complete'
                 setGameState('complete')
                 setShowFullResume(true)
-              }, 800)
+              }, 900)
             }
           }
         }
@@ -314,17 +542,32 @@ export default function ResumeRunner() {
           if (b.cleared || b.falling) continue
           const px = p.x, py = p.y, pw = PLAYER_W, ph = PLAYER_H
           if (
-            px + pw > b.x + 4 &&
-            px < b.x + b.w - 4 &&
-            py + ph > GROUND_Y - b.h + 4 &&
+            px + pw > b.x + 6 &&
+            px < b.x + b.w - 6 &&
+            py + ph > GROUND_Y - b.h + 6 &&
             py < GROUND_Y
           ) {
             stateRef.current = 'dead'
             setGameState('dead')
+            shakeRef.current.intensity = 10
+            // Death particles
+            for (let i = 0; i < 12; i++) {
+              particlesRef.current.push({
+                x: px + pw / 2,
+                y: py + ph / 2,
+                vx: (Math.random() - 0.5) * 6,
+                vy: -2 - Math.random() * 4,
+                life: 1,
+                maxLife: 25 + Math.random() * 15,
+                color: accent,
+                size: 2 + Math.random() * 3,
+                type: 'burst',
+              })
+            }
           }
         }
 
-        // Remove offscreen blocks that are falling
+        // Remove offscreen blocks
         blocksRef.current = blocks.filter((b) => {
           if (b.falling && b.fallY > H + 100) return false
           if (!b.falling && b.x + b.w < -100) return false
@@ -335,180 +578,346 @@ export default function ResumeRunner() {
       // ── Animate falling blocks ──
       for (const b of blocks) {
         if (b.falling) {
-          b.fallVel += 0.5
+          b.fallVel += 0.6
           b.fallY += b.fallVel
+          b.fallRotation += 0.03
+          b.opacity = Math.max(0, b.opacity - 0.015)
         }
       }
 
-      // ── Draw blocks ──
-      const fg = getComputedStyle(document.documentElement).getPropertyValue('--fg').trim() || '#1A1A2E'
-      const bgColor = getComputedStyle(document.documentElement).getPropertyValue('--bg').trim() || '#FAFAF8'
+      // ── Update & draw particles ──
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const part = particles[i]
+        part.x += part.vx
+        part.y += part.vy
+        if (part.type === 'burst') part.vy += 0.1
+        if (part.type === 'dust') part.vy -= 0.02
+        part.life -= 1 / part.maxLife
+        if (part.life <= 0) {
+          particles.splice(i, 1)
+          continue
+        }
 
+        ctx.globalAlpha = part.life * (part.type === 'dust' ? 0.6 : 1)
+
+        if (part.type === 'star') {
+          ctx.fillStyle = part.color
+          drawStar(ctx, part.x, part.y, part.size * part.life, 4)
+          ctx.fill()
+        } else {
+          ctx.fillStyle = part.color
+          ctx.beginPath()
+          ctx.arc(part.x, part.y, part.size * (part.type === 'burst' ? part.life : 1), 0, Math.PI * 2)
+          ctx.fill()
+        }
+      }
+      ctx.globalAlpha = 1
+
+      // ── Draw blocks ──
       for (const b of blocks) {
         const bx = b.x
         const by = b.falling ? b.fallY : GROUND_Y - b.h
         const bw = b.w
         const bh = b.h
 
-        // Block body
-        ctx.fillStyle = b.milestone.color
-        ctx.beginPath()
-        const r = 6
-        ctx.moveTo(bx + r, by)
-        ctx.lineTo(bx + bw - r, by)
-        ctx.arcTo(bx + bw, by, bx + bw, by + r, r)
-        ctx.lineTo(bx + bw, by + bh - r)
-        ctx.arcTo(bx + bw, by + bh, bx + bw - r, by + bh, r)
-        ctx.lineTo(bx + r, by + bh)
-        ctx.arcTo(bx, by + bh, bx, by + bh - r, r)
-        ctx.lineTo(bx, by + r)
-        ctx.arcTo(bx, by, bx + r, by, r)
+        ctx.save()
+        ctx.globalAlpha = b.opacity
+
+        if (b.falling) {
+          const cx = bx + bw / 2
+          const cy = by + bh / 2
+          ctx.translate(cx, cy)
+          ctx.rotate(b.fallRotation)
+          ctx.translate(-cx, -cy)
+        }
+
+        // Block shadow
+        if (!b.falling) {
+          ctx.fillStyle = 'rgba(0,0,0,0.08)'
+          roundedRect(ctx, bx + 3, by + 3, bw, bh, 10)
+          ctx.fill()
+        }
+
+        // Block gradient body
+        const blockGrad = ctx.createLinearGradient(bx, by, bx, by + bh)
+        blockGrad.addColorStop(0, b.milestone.colorLight)
+        blockGrad.addColorStop(1, b.milestone.color)
+        ctx.fillStyle = blockGrad
+        roundedRect(ctx, bx, by, bw, bh, 10)
         ctx.fill()
 
-        // Logo on block (centered in upper portion)
+        // Subtle inner highlight
+        const highlightGrad = ctx.createLinearGradient(bx, by, bx, by + bh * 0.4)
+        highlightGrad.addColorStop(0, 'rgba(255,255,255,0.2)')
+        highlightGrad.addColorStop(1, 'rgba(255,255,255,0)')
+        ctx.fillStyle = highlightGrad
+        roundedRect(ctx, bx, by, bw, bh, 10)
+        ctx.fill()
+
+        // Logo on block (centered, generous size)
         const logoImg = logosRef.current[b.milestone.logoKey]
         if (logoImg && logoImg.complete && logoImg.naturalWidth > 0) {
-          const logoSize = 26
+          const logoSize = 34
           ctx.drawImage(
             logoImg,
             bx + (bw - logoSize) / 2,
-            by + bh * 0.38 - logoSize / 2,
+            by + (bh - logoSize) / 2 - 4,
             logoSize,
             logoSize,
           )
         }
 
-        // Company label below logo
-        ctx.font = '7px Inter, system-ui, sans-serif'
-        ctx.fillStyle = 'rgba(255,255,255,0.9)'
+        // Company name below logo
+        ctx.font = '600 8px Inter, system-ui, sans-serif'
+        ctx.fillStyle = 'rgba(255,255,255,0.85)'
         ctx.textAlign = 'center'
         ctx.textBaseline = 'alphabetic'
-        const companyText = b.milestone.company.length > 12
-          ? b.milestone.company.slice(0, 11) + '…'
+        const label = b.milestone.company.length > 14
+          ? b.milestone.company.slice(0, 13) + '…'
           : b.milestone.company
-        ctx.fillText(companyText, bx + bw / 2, by + bh - 6)
+        ctx.fillText(label, bx + bw / 2, by + bh - 8)
+
+        ctx.restore()
       }
 
       // ── Draw player ──
-      const accent = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#B45309'
       const px = p.x
       const py = p.y
 
+      // Player shadow on ground
+      if (!p.jumping) {
+        ctx.fillStyle = 'rgba(0,0,0,0.08)'
+        ctx.beginPath()
+        ctx.ellipse(px + PLAYER_W / 2, GROUND_Y, 14, 4, 0, 0, Math.PI * 2)
+        ctx.fill()
+      } else {
+        // Shrink shadow when airborne
+        const airRatio = Math.min(1, Math.abs(py - (GROUND_Y - PLAYER_H)) / 100)
+        ctx.fillStyle = `rgba(0,0,0,${0.06 * (1 - airRatio)})`
+        ctx.beginPath()
+        ctx.ellipse(px + PLAYER_W / 2, GROUND_Y, 14 * (1 - airRatio * 0.5), 3, 0, 0, Math.PI * 2)
+        ctx.fill()
+      }
+
+      // Player glow when running
+      if (state === 'running') {
+        const glowGrad = ctx.createRadialGradient(px + PLAYER_W / 2, py + PLAYER_H / 2, 0, px + PLAYER_W / 2, py + PLAYER_H / 2, 30)
+        glowGrad.addColorStop(0, hexToRgba(accent, 0.12))
+        glowGrad.addColorStop(1, 'transparent')
+        ctx.fillStyle = glowGrad
+        ctx.fillRect(px - 20, py - 20, PLAYER_W + 40, PLAYER_H + 40)
+      }
+
       // Body
-      ctx.fillStyle = fg
-      ctx.beginPath()
-      ctx.roundRect(px + 4, py + 12, 20, 22, 3)
+      ctx.fillStyle = fgColor
+      roundedRect(ctx, px + 5, py + 14, 22, 24, 4)
       ctx.fill()
 
       // Head
       ctx.fillStyle = accent
       ctx.beginPath()
-      ctx.arc(px + 14, py + 8, 8, 0, Math.PI * 2)
+      ctx.arc(px + 16, py + 9, 10, 0, Math.PI * 2)
       ctx.fill()
 
-      // Eyes (show direction)
+      // Eye
       ctx.fillStyle = bgColor
       ctx.beginPath()
-      ctx.arc(px + 17, py + 7, 2, 0, Math.PI * 2)
+      ctx.arc(px + 20, py + 8, 2.5, 0, Math.PI * 2)
+      ctx.fill()
+      // Pupil
+      ctx.fillStyle = fgColor
+      ctx.beginPath()
+      ctx.arc(px + 21, py + 8, 1, 0, Math.PI * 2)
       ctx.fill()
 
       // Running legs
       if (state === 'running' && !p.jumping) {
         const legPhase = Math.sin(frameRef.current * 0.3)
-        ctx.strokeStyle = fg
-        ctx.lineWidth = 3
+        ctx.strokeStyle = fgColor
+        ctx.lineWidth = 3.5
         ctx.lineCap = 'round'
-        // Left leg
         ctx.beginPath()
-        ctx.moveTo(px + 10, py + 34)
-        ctx.lineTo(px + 10 + legPhase * 6, py + PLAYER_H)
+        ctx.moveTo(px + 12, py + 38)
+        ctx.lineTo(px + 12 + legPhase * 7, py + PLAYER_H)
         ctx.stroke()
-        // Right leg
         ctx.beginPath()
-        ctx.moveTo(px + 18, py + 34)
-        ctx.lineTo(px + 18 - legPhase * 6, py + PLAYER_H)
+        ctx.moveTo(px + 20, py + 38)
+        ctx.lineTo(px + 20 - legPhase * 7, py + PLAYER_H)
         ctx.stroke()
       } else {
-        // Standing / jumping legs
-        ctx.strokeStyle = fg
-        ctx.lineWidth = 3
+        ctx.strokeStyle = fgColor
+        ctx.lineWidth = 3.5
         ctx.lineCap = 'round'
-        ctx.beginPath()
-        ctx.moveTo(px + 10, py + 34)
-        ctx.lineTo(px + 8, py + PLAYER_H)
-        ctx.stroke()
-        ctx.beginPath()
-        ctx.moveTo(px + 18, py + 34)
-        ctx.lineTo(px + 20, py + PLAYER_H)
-        ctx.stroke()
+        if (p.jumping && p.vy < 0) {
+          // Tucked jump pose
+          ctx.beginPath()
+          ctx.moveTo(px + 12, py + 38)
+          ctx.lineTo(px + 8, py + 42)
+          ctx.stroke()
+          ctx.beginPath()
+          ctx.moveTo(px + 20, py + 38)
+          ctx.lineTo(px + 24, py + 42)
+          ctx.stroke()
+        } else {
+          ctx.beginPath()
+          ctx.moveTo(px + 12, py + 38)
+          ctx.lineTo(px + 10, py + PLAYER_H)
+          ctx.stroke()
+          ctx.beginPath()
+          ctx.moveTo(px + 20, py + 38)
+          ctx.lineTo(px + 22, py + PLAYER_H)
+          ctx.stroke()
+        }
       }
 
       // ── Progress bar ──
       const progress = clearedRef.current.length / MILESTONES.length
-      ctx.fillStyle = 'rgba(128,128,128,0.2)'
-      ctx.fillRect(20, 12, W - 40, 6)
-      ctx.fillStyle = accent
-      ctx.beginPath()
-      ctx.roundRect(20, 12, (W - 40) * progress, 6, 3)
+      const barX = 24
+      const barY = 16
+      const barW = W - 48
+      const barH = 6
+
+      // Track
+      ctx.fillStyle = hexToRgba(fgSubtle, 0.12)
+      roundedRect(ctx, barX, barY, barW, barH, 3)
       ctx.fill()
 
-      // Progress label
+      // Fill
+      if (progress > 0) {
+        const fillGrad = ctx.createLinearGradient(barX, 0, barX + barW * progress, 0)
+        fillGrad.addColorStop(0, accent)
+        fillGrad.addColorStop(1, hexToRgba(accent, 0.7))
+        ctx.fillStyle = fillGrad
+        roundedRect(ctx, barX, barY, barW * progress, barH, 3)
+        ctx.fill()
+
+        // Glow pip at end
+        ctx.fillStyle = hexToRgba(accent, 0.4)
+        ctx.beginPath()
+        ctx.arc(barX + barW * progress, barY + barH / 2, 4, 0, Math.PI * 2)
+        ctx.fill()
+      }
+
+      // Progress text
       ctx.fillStyle = fgSubtle
-      ctx.font = '10px Inter, system-ui, sans-serif'
+      ctx.font = '500 10px Inter, system-ui, sans-serif'
       ctx.textAlign = 'left'
-      ctx.fillText(`${clearedRef.current.length} / ${MILESTONES.length} milestones`, 20, 32)
+      ctx.textBaseline = 'alphabetic'
+      ctx.fillText(`${clearedRef.current.length} / ${MILESTONES.length} milestones`, barX, barY + barH + 14)
+
+      // Next milestone name on right
+      if (state === 'running' && nextMilestoneRef.current <= MILESTONES.length) {
+        const nextIdx = Math.min(nextMilestoneRef.current, MILESTONES.length) - 1
+        if (nextIdx >= 0 && nextIdx < MILESTONES.length) {
+          const upcoming = blocks.find(b => !b.cleared && !b.falling)
+          if (upcoming) {
+            ctx.textAlign = 'right'
+            ctx.font = '500 10px Inter, system-ui, sans-serif'
+            ctx.fillStyle = upcoming.milestone.color
+            ctx.fillText(`Next: ${upcoming.milestone.company}`, W - barX, barY + barH + 14)
+          }
+        }
+      }
+
+      // ── Screen flash overlay ──
+      if (screenFlashRef.current > 0) {
+        ctx.fillStyle = hexToRgba(accent, screenFlashRef.current * 0.15)
+        ctx.fillRect(-10, -10, W + 20, H + 20)
+        screenFlashRef.current *= 0.9
+        if (screenFlashRef.current < 0.01) screenFlashRef.current = 0
+      }
 
       // ── Idle screen ──
       if (state === 'idle') {
-        ctx.fillStyle = fg
-        ctx.font = '600 22px "Playfair Display", Georgia, serif'
+        // Subtle backdrop
+        ctx.fillStyle = hexToRgba(bgColor, 0.6)
+        ctx.fillRect(0, 0, W, H)
+
+        // Animated dots around title
+        const t = frameRef.current * 0.02
+        for (let i = 0; i < 8; i++) {
+          const a = (Math.PI * 2 * i) / 8 + t
+          const dotX = W / 2 + Math.cos(a) * 120
+          const dotY = H / 2 + Math.sin(a) * 40
+          ctx.fillStyle = hexToRgba(accent, 0.15 + Math.sin(t + i) * 0.1)
+          ctx.beginPath()
+          ctx.arc(dotX, dotY, 2, 0, Math.PI * 2)
+          ctx.fill()
+        }
+
+        ctx.fillStyle = fgColor
+        ctx.font = '600 26px "Playfair Display", Georgia, serif'
         ctx.textAlign = 'center'
-        ctx.fillText('Run Through My Resume', W / 2, H / 2 - 30)
+        ctx.textBaseline = 'middle'
+        ctx.fillText('Run Through My Resume', W / 2, H / 2 - 36)
 
-        ctx.font = '13px Inter, system-ui, sans-serif'
+        ctx.font = '14px Inter, system-ui, sans-serif'
         ctx.fillStyle = fgSubtle
-        ctx.fillText('Jump over each career milestone to build my resume below', W / 2, H / 2)
+        ctx.fillText('Jump over each milestone to build my career story below', W / 2, H / 2 - 4)
 
-        ctx.font = '600 14px Inter, system-ui, sans-serif'
+        // Pulsing CTA
+        const pulse = 0.85 + Math.sin(frameRef.current * 0.06) * 0.15
+        ctx.globalAlpha = pulse
+        ctx.font = '600 15px Inter, system-ui, sans-serif'
         ctx.fillStyle = accent
-        ctx.fillText('Press Space or Tap to Start', W / 2, H / 2 + 30)
+        ctx.fillText('Press Space or Tap to Start', W / 2, H / 2 + 32)
+        ctx.globalAlpha = 1
+
+        // Small hint
+        ctx.font = '11px Inter, system-ui, sans-serif'
+        ctx.fillStyle = hexToRgba(fgSubtle, 0.6)
+        ctx.fillText('Double-tap for double jump', W / 2, H / 2 + 56)
       }
 
       // ── Dead screen ──
       if (state === 'dead') {
-        ctx.fillStyle = 'rgba(0,0,0,0.4)'
-        ctx.fillRect(0, 0, W, H)
+        ctx.fillStyle = 'rgba(0,0,0,0.5)'
+        ctx.fillRect(-10, -10, W + 20, H + 20)
 
-        ctx.fillStyle = '#fff'
-        ctx.font = '600 22px "Playfair Display", Georgia, serif'
+        ctx.fillStyle = '#FFFFFF'
+        ctx.font = '600 26px "Playfair Display", Georgia, serif'
         ctx.textAlign = 'center'
-        ctx.fillText('Career Interrupted!', W / 2, H / 2 - 20)
+        ctx.textBaseline = 'middle'
+        ctx.fillText('Career Interrupted!', W / 2, H / 2 - 24)
 
-        ctx.font = '13px Inter, system-ui, sans-serif'
-        ctx.fillStyle = 'rgba(255,255,255,0.8)'
-        ctx.fillText(`Cleared ${clearedRef.current.length} of ${MILESTONES.length} milestones`, W / 2, H / 2 + 8)
+        ctx.font = '14px Inter, system-ui, sans-serif'
+        ctx.fillStyle = 'rgba(255,255,255,0.75)'
+        ctx.fillText(`Cleared ${clearedRef.current.length} of ${MILESTONES.length} milestones`, W / 2, H / 2 + 6)
 
-        ctx.font = '600 13px Inter, system-ui, sans-serif'
+        const pulse = 0.8 + Math.sin(frameRef.current * 0.06) * 0.2
+        ctx.globalAlpha = pulse
+        ctx.font = '600 14px Inter, system-ui, sans-serif'
         ctx.fillStyle = accent
         ctx.fillText('Tap or Press Space to Try Again', W / 2, H / 2 + 36)
+        ctx.globalAlpha = 1
       }
 
       // ── Win screen ──
       if (state === 'complete') {
-        ctx.fillStyle = accent
-        ctx.font = '600 22px "Playfair Display", Georgia, serif'
-        ctx.textAlign = 'center'
-        ctx.fillText('Resume Complete!', W / 2, H / 2 - 10)
+        // Gradient overlay
+        const winGrad = ctx.createRadialGradient(W / 2, H / 2, 0, W / 2, H / 2, W / 2)
+        winGrad.addColorStop(0, hexToRgba(accent, 0.15))
+        winGrad.addColorStop(1, hexToRgba(bgColor, 0.8))
+        ctx.fillStyle = winGrad
+        ctx.fillRect(-10, -10, W + 20, H + 20)
 
-        ctx.font = '13px Inter, system-ui, sans-serif'
+        ctx.fillStyle = accent
+        ctx.font = '600 28px "Playfair Display", Georgia, serif'
+        ctx.textAlign = 'center'
+        ctx.textBaseline = 'middle'
+        ctx.fillText('Resume Complete!', W / 2, H / 2 - 14)
+
+        ctx.font = '14px Inter, system-ui, sans-serif'
         ctx.fillStyle = fgSubtle
-        ctx.fillText('Scroll down to see the full picture', W / 2, H / 2 + 16)
+        ctx.fillText('Scroll down to see the full picture', W / 2, H / 2 + 18)
       }
+
+      ctx.restore() // undo shake transform
     }
 
     animRef.current = requestAnimationFrame(loop)
     return () => cancelAnimationFrame(animRef.current)
-  }, [spawnNext])
+  }, [spawnNext, spawnBurst, spawnDust, spawnTrail])
 
   const handleCanvasClick = useCallback(() => {
     if (stateRef.current === 'dead') {
@@ -522,8 +931,8 @@ export default function ResumeRunner() {
     <div ref={containerRef}>
       {/* Canvas */}
       <div
-        className="overflow-hidden rounded-lg border"
-        style={{ borderColor: 'var(--border-strong)' }}
+        className="overflow-hidden rounded-xl border-2 shadow-lg"
+        style={{ borderColor: 'var(--border)' }}
       >
         <canvas
           ref={canvasRef}
@@ -542,19 +951,19 @@ export default function ResumeRunner() {
         />
       </div>
 
-      {/* Mobile hint */}
-      <p className="mt-2 text-center text-[10px] sm:hidden" style={{ color: 'var(--fg-subtle)' }}>
+      {/* Hints */}
+      <p className="mt-2 text-center text-[11px] sm:hidden" style={{ color: 'var(--fg-subtle)' }}>
         Tap to jump · Double tap for double jump
       </p>
-      <p className="mt-2 hidden text-center text-[10px] sm:block" style={{ color: 'var(--fg-subtle)' }}>
+      <p className="mt-2 hidden text-center text-[11px] sm:block" style={{ color: 'var(--fg-subtle)' }}>
         Space or ↑ to jump · Press twice for double jump
       </p>
 
-      {/* Cleared milestones — build up as you play */}
+      {/* Cleared milestones — builds up as you play */}
       {clearedMilestones.length > 0 && (
-        <div className="mt-6">
+        <div className="mt-8">
           <p
-            className="mb-3 text-xs font-semibold uppercase tracking-widest"
+            className="mb-4 text-xs font-semibold uppercase tracking-widest"
             style={{ color: 'var(--accent)' }}
           >
             {showFullResume ? 'The full picture' : 'Building the resume…'}
@@ -563,39 +972,39 @@ export default function ResumeRunner() {
             {clearedMilestones.map((m, i) => (
               <div
                 key={m.year}
-                className="flex gap-4 border-l-2 py-3 pl-4"
+                className="flex items-start gap-4 border-l-2 py-3.5 pl-5"
                 style={{
                   borderColor: m.color,
                   animation: `fadeUp 0.4s ease-out ${i * 0.05}s both`,
                 }}
               >
-                {/* Logo */}
+                {/* Logo badge */}
                 <div
-                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md"
+                  className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg shadow-sm"
                   style={{ background: m.color }}
                 >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={LOGO_PATHS[m.logoKey]}
                     alt={`${m.company} logo`}
-                    className="h-6 w-6"
+                    className="h-7 w-7"
                   />
                 </div>
-                <div className="w-16 shrink-0 pt-0.5">
-                  <p className="text-xs font-semibold" style={{ color: m.color }}>
+                <div className="w-[4.5rem] shrink-0 pt-1">
+                  <p className="text-xs font-bold" style={{ color: m.color }}>
                     {m.year}
                   </p>
                 </div>
                 <div className="min-w-0 flex-1 pt-0.5">
-                  <p className="text-sm font-medium" style={{ color: 'var(--fg)' }}>
+                  <p className="text-sm font-semibold" style={{ color: 'var(--fg)' }}>
                     {m.title}
                   </p>
-                  <p className="text-xs" style={{ color: 'var(--fg-subtle)' }}>
+                  <p className="text-xs font-medium" style={{ color: 'var(--fg-subtle)' }}>
                     {m.company}
                   </p>
                   {showFullResume && (
                     <p
-                      className="mt-1 text-xs leading-relaxed"
+                      className="mt-1.5 text-xs leading-relaxed"
                       style={{ color: 'var(--fg-muted)' }}
                     >
                       {m.detail}
@@ -609,32 +1018,32 @@ export default function ResumeRunner() {
           {/* Win state CTA */}
           {showFullResume && (
             <div
-              className="mt-6 rounded-lg border p-5 text-center"
+              className="mt-8 rounded-xl border-2 p-6 text-center"
               style={{
                 borderColor: 'var(--accent)',
                 background: 'var(--accent-light)',
                 animation: 'fadeUp 0.5s ease-out 0.3s both',
               }}
             >
-              <p className="mb-1 text-sm font-semibold" style={{ color: 'var(--accent)' }}>
+              <p className="mb-1 text-base font-semibold" style={{ color: 'var(--accent)' }}>
                 You made it through my entire career!
               </p>
-              <p className="mb-4 text-xs" style={{ color: 'var(--fg-muted)' }}>
+              <p className="mb-5 text-sm" style={{ color: 'var(--fg-muted)' }}>
                 Now that you know my background, let&apos;s connect.
               </p>
               <div className="flex flex-wrap justify-center gap-3">
-                <a href="mailto:hello@jake-chen.com" className="btn-primary text-xs">
+                <a href="mailto:hello@jake-chen.com" className="btn-primary text-sm">
                   Say hello
                 </a>
                 <a
                   href="https://linkedin.com/in/jiakechen"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="btn-ghost text-xs"
+                  className="btn-ghost text-sm"
                 >
                   LinkedIn
                 </a>
-                <a href="/writing" className="btn-ghost text-xs">
+                <a href="/writing" className="btn-ghost text-sm">
                   Read my essays
                 </a>
               </div>
