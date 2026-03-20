@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <!-- MIT Sloan block logo approximation -->
+  <!-- Three columns like MIT's real logo -->
+  <g fill="#FFFFFF">
+    <!-- M column -->
+    <rect x="4" y="8" width="8" height="48"/>
+    <rect x="12" y="8" width="8" height="12"/>
+    <rect x="20" y="8" width="8" height="48"/>
+    <!-- I column -->
+    <rect x="32" y="8" width="8" height="48"/>
+    <!-- T column -->
+    <rect x="44" y="8" width="16" height="12"/>
+    <rect x="48" y="8" width="8" height="48"/>
+  </g>
+</svg>

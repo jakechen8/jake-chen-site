@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <!-- Waymo "W" mark with sensor ring -->
+  <g fill="#FFFFFF">
+    <!-- W letterform -->
+    <path d="M6 16h8l6 22 6-22h8l6 22 6-22h8L44 50h-8l-4-16-4 16h-8L6 16z"/>
+    <!-- Sensor dot -->
+    <circle cx="32" cy="56" r="4" fill="#FFFFFF"/>
+  </g>
+</svg>

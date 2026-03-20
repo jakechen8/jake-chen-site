@@ -9,86 +9,15 @@ const GROUND_Y = 250
 const PLAYER_W = 28
 const PLAYER_H = 38
 
-/* ─── Logo drawing functions (simplified brand marks drawn on canvas) ─── */
-type LogoDrawFn = (ctx: CanvasRenderingContext2D, cx: number, cy: number, size: number) => void
-
-const drawLogoUMN: LogoDrawFn = (ctx, cx, cy, s) => {
-  // Minnesota "M" — maroon block letter
-  ctx.fillStyle = '#FFFFFF'
-  ctx.font = `bold ${s}px "Playfair Display", Georgia, serif`
-  ctx.textAlign = 'center'
-  ctx.textBaseline = 'middle'
-  ctx.fillText('M', cx, cy + 1)
-}
-
-const drawLogoDeloitte: LogoDrawFn = (ctx, cx, cy, s) => {
-  // Deloitte green dot
-  ctx.fillStyle = '#FFFFFF'
-  ctx.beginPath()
-  ctx.arc(cx, cy, s * 0.4, 0, Math.PI * 2)
-  ctx.fill()
-}
-
-const drawLogoMicrosoft: LogoDrawFn = (ctx, cx, cy, s) => {
-  // Microsoft 4-square window
-  const half = s * 0.35
-  const gap = 1.5
-  ctx.fillStyle = '#F25022'; ctx.fillRect(cx - half - gap / 2, cy - half - gap / 2, half, half) // red
-  ctx.fillStyle = '#7FBA00'; ctx.fillRect(cx + gap / 2, cy - half - gap / 2, half, half) // green
-  ctx.fillStyle = '#00A4EF'; ctx.fillRect(cx - half - gap / 2, cy + gap / 2, half, half) // blue
-  ctx.fillStyle = '#FFB900'; ctx.fillRect(cx + gap / 2, cy + gap / 2, half, half) // yellow
-}
-
-const drawLogoHubSpot: LogoDrawFn = (ctx, cx, cy, s) => {
-  // HubSpot sprocket — simplified gear shape
-  ctx.strokeStyle = '#FFFFFF'
-  ctx.lineWidth = 2
-  ctx.beginPath()
-  ctx.arc(cx, cy, s * 0.3, 0, Math.PI * 2)
-  ctx.stroke()
-  // Spokes
-  for (let i = 0; i < 6; i++) {
-    const angle = (i / 6) * Math.PI * 2
-    ctx.beginPath()
-    ctx.moveTo(cx + Math.cos(angle) * s * 0.3, cy + Math.sin(angle) * s * 0.3)
-    ctx.lineTo(cx + Math.cos(angle) * s * 0.48, cy + Math.sin(angle) * s * 0.48)
-    ctx.stroke()
-  }
-  ctx.fillStyle = '#FFFFFF'
-  ctx.beginPath()
-  ctx.arc(cx, cy, s * 0.12, 0, Math.PI * 2)
-  ctx.fill()
-}
-
-const drawLogoMIT: LogoDrawFn = (ctx, cx, cy, s) => {
-  // MIT block letters
-  ctx.fillStyle = '#FFFFFF'
-  ctx.font = `bold ${s * 0.7}px "Inter", system-ui, sans-serif`
-  ctx.textAlign = 'center'
-  ctx.textBaseline = 'middle'
-  ctx.fillText('MIT', cx, cy + 1)
-}
-
-const drawLogoMcKinsey: LogoDrawFn = (ctx, cx, cy, s) => {
-  // McKinsey — stylized "Mc" text
-  ctx.fillStyle = '#FFFFFF'
-  ctx.font = `600 ${s * 0.55}px "Playfair Display", Georgia, serif`
-  ctx.textAlign = 'center'
-  ctx.textBaseline = 'middle'
-  ctx.fillText('McK', cx, cy + 1)
-}
-
-const drawLogoWaymo: LogoDrawFn = (ctx, cx, cy, s) => {
-  // Waymo — "W" with a small circle (sensor dot)
-  ctx.fillStyle = '#FFFFFF'
-  ctx.font = `bold ${s * 0.8}px "Inter", system-ui, sans-serif`
-  ctx.textAlign = 'center'
-  ctx.textBaseline = 'middle'
-  ctx.fillText('W', cx, cy)
-  // Sensor dot above
-  ctx.beginPath()
-  ctx.arc(cx, cy - s * 0.42, 2, 0, Math.PI * 2)
-  ctx.fill()
+/* ─── Logo paths (SVGs served from /public) ─── */
+const LOGO_PATHS: Record<string, string> = {
+  umn: '/images/logos/umn.svg',
+  deloitte: '/images/logos/deloitte.svg',
+  microsoft: '/images/logos/microsoft.svg',
+  hubspot: '/images/logos/hubspot.svg',
+  mit: '/images/logos/mit.svg',
+  mckinsey: '/images/logos/mckinsey.svg',
+  waymo: '/images/logos/waymo.svg',
 }
 
 /* ─── Career milestones (chronological) ─── */
@@ -98,7 +27,7 @@ interface Milestone {
   company: string
   detail: string
   color: string
-  drawLogo: LogoDrawFn
+  logoKey: string
 }
 
 const MILESTONES: Milestone[] = [
@@ -108,7 +37,7 @@ const MILESTONES: Milestone[] = [
     company: 'University of Minnesota',
     detail: 'Double major in Finance and Information Systems. First spark of interest in how complex systems create value.',
     color: '#7A0019',
-    drawLogo: drawLogoUMN,
+    logoKey: 'umn',
   },
   {
     year: '2009–2014',
@@ -116,7 +45,7 @@ const MILESTONES: Milestone[] = [
     company: 'Deloitte',
     detail: 'Five years across TMT and financial services. Customer acquisition, platform strategy, digital transformation. Learned to structure ambiguous problems.',
     color: '#86B817',
-    drawLogo: drawLogoDeloitte,
+    logoKey: 'deloitte',
   },
   {
     year: '2015',
@@ -124,7 +53,7 @@ const MILESTONES: Milestone[] = [
     company: 'Microsoft',
     detail: 'Product strategy for Office 365 — onboarding, churn reduction, retention. First exposure to enterprise software meets user behavior.',
     color: '#0078D4',
-    drawLogo: drawLogoMicrosoft,
+    logoKey: 'microsoft',
   },
   {
     year: '2015–2016',
@@ -132,7 +61,7 @@ const MILESTONES: Milestone[] = [
     company: 'HubSpot',
     detail: 'Built prospect scoring models and A/B testing programs. Growth teams operate fast — data-driven, allergic to vanity metrics.',
     color: '#FF7A59',
-    drawLogo: drawLogoHubSpot,
+    logoKey: 'hubspot',
   },
   {
     year: '2016',
@@ -140,7 +69,7 @@ const MILESTONES: Milestone[] = [
     company: 'MIT Sloan',
     detail: 'Focused on technology strategy and operations. Where analytical rigor met real-world messiness.',
     color: '#A31F34',
-    drawLogo: drawLogoMIT,
+    logoKey: 'mit',
   },
   {
     year: '2016–2019',
@@ -148,7 +77,7 @@ const MILESTONES: Milestone[] = [
     company: 'McKinsey & Company',
     detail: 'Led growth strategy, pricing, and M&A engagements across tech, media, financial services, and retail. Managed teams of 3–8.',
     color: '#003B5C',
-    drawLogo: drawLogoMcKinsey,
+    logoKey: 'mckinsey',
   },
   {
     year: '2019–Present',
@@ -156,7 +85,7 @@ const MILESTONES: Milestone[] = [
     company: 'Waymo',
     detail: 'Executive-level strategy for autonomous mobility. Go-to-market, pricing architecture, competitive positioning. AI meets the real world.',
     color: '#00BFA5',
-    drawLogo: drawLogoWaymo,
+    logoKey: 'waymo',
   },
 ]
 
@@ -192,6 +121,7 @@ export default function ResumeRunner() {
   const frameRef = useRef(0)
   const distRef = useRef(0)
   const animRef = useRef<number>(0)
+  const logosRef = useRef<Record<string, HTMLImageElement>>({})
 
   // Responsive scaling
   useEffect(() => {
@@ -204,6 +134,17 @@ export default function ResumeRunner() {
     measure()
     window.addEventListener('resize', measure)
     return () => window.removeEventListener('resize', measure)
+  }, [])
+
+  // Preload logo images
+  useEffect(() => {
+    const loaded: Record<string, HTMLImageElement> = {}
+    for (const [key, path] of Object.entries(LOGO_PATHS)) {
+      const img = new Image()
+      img.src = path
+      loaded[key] = img
+    }
+    logosRef.current = loaded
   }, [])
 
   const GRAVITY = 0.65
@@ -425,9 +366,17 @@ export default function ResumeRunner() {
         ctx.fill()
 
         // Logo on block (centered in upper portion)
-        ctx.save()
-        b.milestone.drawLogo(ctx, bx + bw / 2, by + bh * 0.38, 20)
-        ctx.restore()
+        const logoImg = logosRef.current[b.milestone.logoKey]
+        if (logoImg && logoImg.complete && logoImg.naturalWidth > 0) {
+          const logoSize = 26
+          ctx.drawImage(
+            logoImg,
+            bx + (bw - logoSize) / 2,
+            by + bh * 0.38 - logoSize / 2,
+            logoSize,
+            logoSize,
+          )
+        }
 
         // Company label below logo
         ctx.font = '7px Inter, system-ui, sans-serif'
@@ -620,12 +569,24 @@ export default function ResumeRunner() {
                   animation: `fadeUp 0.4s ease-out ${i * 0.05}s both`,
                 }}
               >
-                <div className="w-20 shrink-0">
+                {/* Logo */}
+                <div
+                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md"
+                  style={{ background: m.color }}
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={LOGO_PATHS[m.logoKey]}
+                    alt={`${m.company} logo`}
+                    className="h-6 w-6"
+                  />
+                </div>
+                <div className="w-16 shrink-0 pt-0.5">
                   <p className="text-xs font-semibold" style={{ color: m.color }}>
                     {m.year}
                   </p>
                 </div>
-                <div className="min-w-0 flex-1">
+                <div className="min-w-0 flex-1 pt-0.5">
                   <p className="text-sm font-medium" style={{ color: 'var(--fg)' }}>
                     {m.title}
                   </p>
