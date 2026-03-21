@@ -54,6 +54,9 @@ export default async function WritingPage() {
             How AI is reshaping decisions, organizations, and the systems we rely on &mdash;
             the second-order effects nobody talks about. Published when&nbsp;ready.
           </p>
+          <p className="mt-3 text-xs italic" style={{ color: 'var(--fg-subtle)' }}>
+            These essays reflect my personal perspectives only and do not represent the views of my employer.
+          </p>
         </div>
 
         {/* Stats */}

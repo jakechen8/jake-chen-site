@@ -7,7 +7,7 @@ const W = 800
 const H = 360
 const GROUND_Y = 280
 const PLAYER_W = 32
-const PLAYER_H = 44
+const PLAYER_H = 50
 
 /* ─── Logo paths (SVGs served from /public) ─── */
 const LOGO_PATHS: Record<string, string> = {
@@ -159,7 +159,7 @@ export default function ResumeRunner() {
 
   // Refs for game loop
   const stateRef = useRef<GameState>('idle')
-  const playerRef = useRef({ x: 100, y: GROUND_Y - PLAYER_H, vy: 0, jumping: false, doubleJumped: false })
+  const playerRef = useRef({ x: 100, y: GROUND_Y - PLAYER_H, vy: 0, jumping: false, doubleJumped: false, wasJumping: false, landFrame: 0 })
   const blocksRef = useRef<Block[]>([])
   const clearedRef = useRef<Milestone[]>([])
   const nextMilestoneRef = useRef(0)
@@ -286,7 +286,7 @@ export default function ResumeRunner() {
 
   /* ─── Start / Restart ─── */
   const startGame = useCallback(() => {
-    playerRef.current = { x: 100, y: GROUND_Y - PLAYER_H, vy: 0, jumping: false, doubleJumped: false }
+    playerRef.current = { x: 100, y: GROUND_Y - PLAYER_H, vy: 0, jumping: false, doubleJumped: false, wasJumping: false, landFrame: 0 }
     blocksRef.current = []
     clearedRef.current = []
     nextMilestoneRef.current = 0
@@ -471,12 +471,63 @@ export default function ResumeRunner() {
       ctx.fillStyle = groundGrad
       ctx.fillRect(0, GROUND_Y, W, H - GROUND_Y)
 
+      // ── Parallax background hills ──
+      if (state === 'running' || state === 'idle') {
+        const hillColor = hexToRgba(fgSubtle, 0.04)
+        const hillOffset1 = (distRef.current * 0.15) % W
+        const hillOffset2 = (distRef.current * 0.08) % W
+
+        // Far hills
+        ctx.fillStyle = hillColor
+        ctx.beginPath()
+        ctx.moveTo(0, GROUND_Y)
+        for (let hx = -50; hx < W + 50; hx += 10) {
+          const hy = GROUND_Y - 30 - Math.sin((hx + hillOffset2) * 0.008) * 25 - Math.sin((hx + hillOffset2) * 0.003) * 15
+          ctx.lineTo(hx, hy)
+        }
+        ctx.lineTo(W + 50, GROUND_Y)
+        ctx.closePath()
+        ctx.fill()
+
+        // Near hills
+        ctx.fillStyle = hexToRgba(fgSubtle, 0.03)
+        ctx.beginPath()
+        ctx.moveTo(0, GROUND_Y)
+        for (let hx = -50; hx < W + 50; hx += 10) {
+          const hy = GROUND_Y - 15 - Math.sin((hx + hillOffset1) * 0.012) * 18 - Math.sin((hx + hillOffset1) * 0.005) * 10
+          ctx.lineTo(hx, hy)
+        }
+        ctx.lineTo(W + 50, GROUND_Y)
+        ctx.closePath()
+        ctx.fill()
+      }
+
       // ── Update physics ──
       if (state === 'running') {
         p.vy += GRAVITY
         p.y += p.vy
+        p.wasJumping = p.jumping
         if (p.y >= GROUND_Y - PLAYER_H) {
           p.y = GROUND_Y - PLAYER_H
+          // Landing detection
+          if (p.wasJumping && p.vy > 4) {
+            p.landFrame = frameRef.current
+            // Landing dust burst
+            for (let i = 0; i < 8; i++) {
+              particlesRef.current.push({
+                x: p.x + PLAYER_W / 2 + (Math.random() - 0.5) * 24,
+                y: GROUND_Y,
+                vx: (Math.random() - 0.5) * 4,
+                vy: -1.5 - Math.random() * 2,
+                life: 1,
+                maxLife: 12 + Math.random() * 8,
+                color: 'rgba(160,155,145,0.7)',
+                size: 2 + Math.random() * 3,
+                type: 'dust',
+              })
+            }
+            shakeRef.current.intensity = 2
+          }
           p.vy = 0
           p.jumping = false
           p.doubleJumped = false
@@ -681,95 +732,310 @@ export default function ResumeRunner() {
         ctx.restore()
       }
 
+      // ── Speed lines when fast ──
+      if (state === 'running' && speedRef.current > 4.5) {
+        const lineAlpha = (speedRef.current - 4.5) / 3
+        ctx.strokeStyle = hexToRgba(accent, lineAlpha * 0.15)
+        ctx.lineWidth = 1
+        for (let i = 0; i < 4; i++) {
+          const ly = 80 + i * 50 + Math.sin(frameRef.current * 0.1 + i) * 15
+          const lx = 50 + Math.sin(frameRef.current * 0.05 + i * 2) * 30
+          const len = 30 + speedRef.current * 8
+          ctx.beginPath()
+          ctx.moveTo(lx, ly)
+          ctx.lineTo(lx + len, ly)
+          ctx.stroke()
+        }
+      }
+
       // ── Draw player ──
       const px = p.x
       const py = p.y
+      const cx = px + PLAYER_W / 2
+      const frame = frameRef.current
 
-      // Player shadow on ground
+      // Squash/stretch
+      let scaleX = 1, scaleY = 1
+      const landAge = frame - p.landFrame
+      if (!p.jumping && landAge < 8) {
+        // Landing squash
+        const t = landAge / 8
+        const squash = Math.sin(t * Math.PI) * 0.18
+        scaleX = 1 + squash
+        scaleY = 1 - squash
+      } else if (p.jumping && p.vy < -6) {
+        // Stretch upward
+        scaleX = 0.88
+        scaleY = 1.12
+      } else if (p.jumping && p.vy > 6) {
+        // Stretch downward (falling)
+        scaleX = 0.92
+        scaleY = 1.08
+      } else if (!p.jumping && state === 'running') {
+        // Subtle bob while running
+        scaleX = 1 + Math.sin(frame * 0.6) * 0.02
+        scaleY = 1 - Math.sin(frame * 0.6) * 0.02
+      }
+
+      // Shadow on ground
       if (!p.jumping) {
-        ctx.fillStyle = 'rgba(0,0,0,0.08)'
+        ctx.fillStyle = 'rgba(0,0,0,0.1)'
         ctx.beginPath()
-        ctx.ellipse(px + PLAYER_W / 2, GROUND_Y, 14, 4, 0, 0, Math.PI * 2)
+        ctx.ellipse(cx, GROUND_Y, 14, 4, 0, 0, Math.PI * 2)
         ctx.fill()
       } else {
-        // Shrink shadow when airborne
-        const airRatio = Math.min(1, Math.abs(py - (GROUND_Y - PLAYER_H)) / 100)
-        ctx.fillStyle = `rgba(0,0,0,${0.06 * (1 - airRatio)})`
+        const airRatio = Math.min(1, Math.abs(py - (GROUND_Y - PLAYER_H)) / 120)
+        ctx.fillStyle = `rgba(0,0,0,${0.06 * (1 - airRatio * 0.8)})`
         ctx.beginPath()
-        ctx.ellipse(px + PLAYER_W / 2, GROUND_Y, 14 * (1 - airRatio * 0.5), 3, 0, 0, Math.PI * 2)
+        ctx.ellipse(cx, GROUND_Y, 14 * (1 - airRatio * 0.4), 3 * (1 - airRatio * 0.6), 0, 0, Math.PI * 2)
         ctx.fill()
       }
 
-      // Player glow when running
+      // Glow when running
       if (state === 'running') {
-        const glowGrad = ctx.createRadialGradient(px + PLAYER_W / 2, py + PLAYER_H / 2, 0, px + PLAYER_W / 2, py + PLAYER_H / 2, 30)
-        glowGrad.addColorStop(0, hexToRgba(accent, 0.12))
+        const glowGrad = ctx.createRadialGradient(cx, py + PLAYER_H / 2, 0, cx, py + PLAYER_H / 2, 28)
+        glowGrad.addColorStop(0, hexToRgba(accent, 0.1))
         glowGrad.addColorStop(1, 'transparent')
         ctx.fillStyle = glowGrad
-        ctx.fillRect(px - 20, py - 20, PLAYER_W + 40, PLAYER_H + 40)
+        ctx.fillRect(px - 16, py - 16, PLAYER_W + 32, PLAYER_H + 32)
       }
 
-      // Body
-      ctx.fillStyle = fgColor
-      roundedRect(ctx, px + 5, py + 14, 22, 24, 4)
-      ctx.fill()
+      ctx.save()
+      ctx.translate(cx, py + PLAYER_H)
+      ctx.scale(scaleX, scaleY)
+      ctx.translate(-cx, -(py + PLAYER_H))
 
-      // Head
+      // ─ Character anatomy ─
+      const headCY = py + 10
+      const headR = 9
+      const neckY = headCY + headR
+      const shoulderY = neckY + 3
+      const hipY = shoulderY + 16
+      const kneeOffset = 10
+      const footOffset = 12
+
+      ctx.strokeStyle = fgColor
+      ctx.lineWidth = 3.5
+      ctx.lineCap = 'round'
+      ctx.lineJoin = 'round'
+
+      // Run cycle phase
+      const runPhase = frame * 0.25
+
+      if (state === 'running' && !p.jumping) {
+        // ── RUNNING POSE ──
+        const sin = Math.sin(runPhase)
+        const cos = Math.cos(runPhase)
+
+        // Back leg (draws first, behind body)
+        const bHipX = cx - 2
+        const bKneeX = bHipX - cos * 8
+        const bKneeY = hipY + kneeOffset + Math.abs(cos) * 2
+        const bFootX = bKneeX + sin * 5
+        const bFootY = bKneeY + footOffset - Math.max(0, cos) * 6
+        ctx.strokeStyle = hexToRgba(fgColor, 0.5)
+        ctx.beginPath()
+        ctx.moveTo(bHipX, hipY)
+        ctx.lineTo(bKneeX, bKneeY)
+        ctx.lineTo(bFootX, Math.min(bFootY, GROUND_Y))
+        ctx.stroke()
+
+        // Back arm
+        const bArmX = cx - 1
+        const bElbowX = bArmX + cos * 6
+        const bElbowY = shoulderY + 8
+        const bHandX = bElbowX + cos * 3
+        const bHandY = bElbowY + 6
+        ctx.strokeStyle = hexToRgba(fgColor, 0.4)
+        ctx.lineWidth = 2.5
+        ctx.beginPath()
+        ctx.moveTo(bArmX, shoulderY)
+        ctx.lineTo(bElbowX, bElbowY)
+        ctx.lineTo(bHandX, bHandY)
+        ctx.stroke()
+        ctx.lineWidth = 3.5
+
+        // Torso
+        ctx.fillStyle = fgColor
+        roundedRect(ctx, cx - 8, shoulderY - 2, 16, hipY - shoulderY + 4, 4)
+        ctx.fill()
+
+        // Front leg
+        const fHipX = cx + 2
+        const fKneeX = fHipX + cos * 8
+        const fKneeY = hipY + kneeOffset + Math.abs(sin) * 2
+        const fFootX = fKneeX - sin * 5
+        const fFootY = fKneeY + footOffset - Math.max(0, -cos) * 6
+        ctx.strokeStyle = fgColor
+        ctx.beginPath()
+        ctx.moveTo(fHipX, hipY)
+        ctx.lineTo(fKneeX, fKneeY)
+        ctx.lineTo(fFootX, Math.min(fFootY, GROUND_Y))
+        ctx.stroke()
+
+        // Front arm
+        const fArmX = cx + 1
+        const fElbowX = fArmX - cos * 6
+        const fElbowY = shoulderY + 8
+        const fHandX = fElbowX - cos * 3
+        const fHandY = fElbowY + 6
+        ctx.strokeStyle = fgColor
+        ctx.lineWidth = 2.5
+        ctx.beginPath()
+        ctx.moveTo(fArmX, shoulderY)
+        ctx.lineTo(fElbowX, fElbowY)
+        ctx.lineTo(fHandX, fHandY)
+        ctx.stroke()
+        ctx.lineWidth = 3.5
+
+      } else if (p.jumping) {
+        // ── JUMP POSE ──
+        // Torso
+        ctx.fillStyle = fgColor
+        roundedRect(ctx, cx - 8, shoulderY - 2, 16, hipY - shoulderY + 4, 4)
+        ctx.fill()
+
+        if (p.vy < -3) {
+          // Ascending — legs tucked up
+          ctx.strokeStyle = fgColor
+          // Left leg: tucked back
+          ctx.beginPath()
+          ctx.moveTo(cx - 3, hipY)
+          ctx.lineTo(cx - 8, hipY + 8)
+          ctx.lineTo(cx - 4, hipY + 14)
+          ctx.stroke()
+          // Right leg: tucked forward
+          ctx.beginPath()
+          ctx.moveTo(cx + 3, hipY)
+          ctx.lineTo(cx + 10, hipY + 6)
+          ctx.lineTo(cx + 6, hipY + 14)
+          ctx.stroke()
+          // Arms up
+          ctx.lineWidth = 2.5
+          ctx.beginPath()
+          ctx.moveTo(cx - 6, shoulderY)
+          ctx.lineTo(cx - 14, shoulderY - 6)
+          ctx.stroke()
+          ctx.beginPath()
+          ctx.moveTo(cx + 6, shoulderY)
+          ctx.lineTo(cx + 14, shoulderY - 6)
+          ctx.stroke()
+          ctx.lineWidth = 3.5
+        } else if (p.vy > 3) {
+          // Descending — legs extended down
+          ctx.strokeStyle = fgColor
+          ctx.beginPath()
+          ctx.moveTo(cx - 3, hipY)
+          ctx.lineTo(cx - 5, hipY + 10)
+          ctx.lineTo(cx - 3, hipY + 20)
+          ctx.stroke()
+          ctx.beginPath()
+          ctx.moveTo(cx + 3, hipY)
+          ctx.lineTo(cx + 5, hipY + 10)
+          ctx.lineTo(cx + 3, hipY + 20)
+          ctx.stroke()
+          // Arms back
+          ctx.lineWidth = 2.5
+          ctx.beginPath()
+          ctx.moveTo(cx - 6, shoulderY)
+          ctx.lineTo(cx - 12, shoulderY + 6)
+          ctx.stroke()
+          ctx.beginPath()
+          ctx.moveTo(cx + 6, shoulderY)
+          ctx.lineTo(cx + 12, shoulderY + 6)
+          ctx.stroke()
+          ctx.lineWidth = 3.5
+        } else {
+          // Apex — spread out
+          ctx.strokeStyle = fgColor
+          ctx.beginPath()
+          ctx.moveTo(cx - 3, hipY)
+          ctx.lineTo(cx - 10, hipY + 6)
+          ctx.lineTo(cx - 6, hipY + 16)
+          ctx.stroke()
+          ctx.beginPath()
+          ctx.moveTo(cx + 3, hipY)
+          ctx.lineTo(cx + 10, hipY + 6)
+          ctx.lineTo(cx + 6, hipY + 16)
+          ctx.stroke()
+          // Arms out
+          ctx.lineWidth = 2.5
+          ctx.beginPath()
+          ctx.moveTo(cx - 6, shoulderY)
+          ctx.lineTo(cx - 14, shoulderY)
+          ctx.stroke()
+          ctx.beginPath()
+          ctx.moveTo(cx + 6, shoulderY)
+          ctx.lineTo(cx + 14, shoulderY)
+          ctx.stroke()
+          ctx.lineWidth = 3.5
+        }
+      } else {
+        // ── IDLE / STANDING POSE ──
+        // Torso
+        ctx.fillStyle = fgColor
+        roundedRect(ctx, cx - 8, shoulderY - 2, 16, hipY - shoulderY + 4, 4)
+        ctx.fill()
+
+        // Standing legs — slightly apart
+        ctx.strokeStyle = fgColor
+        ctx.beginPath()
+        ctx.moveTo(cx - 3, hipY)
+        ctx.lineTo(cx - 5, hipY + 10)
+        ctx.lineTo(cx - 4, GROUND_Y)
+        ctx.stroke()
+        ctx.beginPath()
+        ctx.moveTo(cx + 3, hipY)
+        ctx.lineTo(cx + 5, hipY + 10)
+        ctx.lineTo(cx + 4, GROUND_Y)
+        ctx.stroke()
+
+        // Arms at rest
+        ctx.lineWidth = 2.5
+        ctx.beginPath()
+        ctx.moveTo(cx - 7, shoulderY)
+        ctx.lineTo(cx - 10, shoulderY + 10)
+        ctx.stroke()
+        ctx.beginPath()
+        ctx.moveTo(cx + 7, shoulderY)
+        ctx.lineTo(cx + 10, shoulderY + 10)
+        ctx.stroke()
+        ctx.lineWidth = 3.5
+      }
+
+      // ── Head (always on top) ──
       ctx.fillStyle = accent
       ctx.beginPath()
-      ctx.arc(px + 16, py + 9, 10, 0, Math.PI * 2)
+      ctx.arc(cx, headCY, headR, 0, Math.PI * 2)
       ctx.fill()
 
       // Eye
       ctx.fillStyle = bgColor
       ctx.beginPath()
-      ctx.arc(px + 20, py + 8, 2.5, 0, Math.PI * 2)
+      ctx.arc(cx + 4, headCY - 1, 2.5, 0, Math.PI * 2)
       ctx.fill()
-      // Pupil
       ctx.fillStyle = fgColor
       ctx.beginPath()
-      ctx.arc(px + 21, py + 8, 1, 0, Math.PI * 2)
+      ctx.arc(cx + 5, headCY - 1, 1, 0, Math.PI * 2)
       ctx.fill()
 
-      // Running legs
-      if (state === 'running' && !p.jumping) {
-        const legPhase = Math.sin(frameRef.current * 0.3)
-        ctx.strokeStyle = fgColor
-        ctx.lineWidth = 3.5
-        ctx.lineCap = 'round'
+      // Scarf / cape trailing behind (visual flair)
+      if (state === 'running') {
+        const scarfWave = Math.sin(frame * 0.2) * 3
+        ctx.strokeStyle = accent
+        ctx.lineWidth = 3
         ctx.beginPath()
-        ctx.moveTo(px + 12, py + 38)
-        ctx.lineTo(px + 12 + legPhase * 7, py + PLAYER_H)
+        ctx.moveTo(cx - 4, neckY)
+        ctx.quadraticCurveTo(cx - 18, neckY + 4 + scarfWave, cx - 24, neckY + 2 + scarfWave * 1.5)
         ctx.stroke()
+        ctx.lineWidth = 2
         ctx.beginPath()
-        ctx.moveTo(px + 20, py + 38)
-        ctx.lineTo(px + 20 - legPhase * 7, py + PLAYER_H)
+        ctx.moveTo(cx - 4, neckY + 2)
+        ctx.quadraticCurveTo(cx - 16, neckY + 8 + scarfWave * 0.7, cx - 20, neckY + 8 + scarfWave)
         ctx.stroke()
-      } else {
-        ctx.strokeStyle = fgColor
-        ctx.lineWidth = 3.5
-        ctx.lineCap = 'round'
-        if (p.jumping && p.vy < 0) {
-          // Tucked jump pose
-          ctx.beginPath()
-          ctx.moveTo(px + 12, py + 38)
-          ctx.lineTo(px + 8, py + 42)
-          ctx.stroke()
-          ctx.beginPath()
-          ctx.moveTo(px + 20, py + 38)
-          ctx.lineTo(px + 24, py + 42)
-          ctx.stroke()
-        } else {
-          ctx.beginPath()
-          ctx.moveTo(px + 12, py + 38)
-          ctx.lineTo(px + 10, py + PLAYER_H)
-          ctx.stroke()
-          ctx.beginPath()
-          ctx.moveTo(px + 20, py + 38)
-          ctx.lineTo(px + 22, py + PLAYER_H)
-          ctx.stroke()
-        }
       }
+
+      ctx.restore() // undo squash/stretch
 
       // ── Progress bar ──
       const progress = clearedRef.current.length / MILESTONES.length

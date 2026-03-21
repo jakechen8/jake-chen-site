@@ -253,27 +253,35 @@ export default function PostPage({ params }: Props) {
             )}
 
             <div
-              className="mt-6 flex flex-wrap items-center gap-3 border-b pb-6 text-sm"
-              style={{ borderColor: 'var(--border)', color: 'var(--fg-subtle)' }}
+              className="mt-6 border-b pb-6"
+              style={{ borderColor: 'var(--border)' }}
             >
-              <span>Jake Chen</span>
-              <span>&middot;</span>
-              <time dateTime={post.date}>{publishDate}</time>
-              {post.readingTime && (
-                <>
-                  <span>&middot;</span>
-                  <span>{post.readingTime}</span>
-                </>
-              )}
+              <div
+                className="flex flex-wrap items-center gap-3 text-sm"
+                style={{ color: 'var(--fg-subtle)' }}
+              >
+                <span>Jake Chen</span>
+                <span>&middot;</span>
+                <time dateTime={post.date}>{publishDate}</time>
+                {post.readingTime && (
+                  <>
+                    <span>&middot;</span>
+                    <span>{post.readingTime}</span>
+                  </>
+                )}
+              </div>
+              <p className="mt-2 text-[11px] italic" style={{ color: 'var(--fg-subtle)', opacity: 0.7 }}>
+                Personal perspectives only — does not represent the views of my employer.
+              </p>
             </div>
           </header>
 
           {/* Content with sidebar TOC */}
-          <div className="relative flex gap-12">
-            <article className="prose prose-neutral max-w-2xl flex-1">
+          <div className="relative lg:flex lg:gap-12">
+            <article className="prose prose-neutral min-w-0 max-w-2xl flex-1">
               <MDXRemote source={post.content} components={mdxComponents} />
             </article>
-            <aside className="w-48 shrink-0">
+            <aside className="hidden w-48 shrink-0 lg:block">
               <TableOfContents />
             </aside>
           </div>
