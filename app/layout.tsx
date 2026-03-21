@@ -6,6 +6,7 @@ import Footer from '@/components/Footer'
 import JsonLd from '@/components/JsonLd'
 import ScrollToTop from '@/components/ScrollToTop'
 import EasterEggs from '@/components/EasterEggs'
+import { Analytics } from '@vercel/analytics/next'
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://jake-chen.com'
 
@@ -108,6 +109,7 @@ export default function RootLayout({
           </div>
           <ScrollToTop />
           <EasterEggs />
+          <Analytics />
         </ThemeProvider>
       </body>
     </html>
