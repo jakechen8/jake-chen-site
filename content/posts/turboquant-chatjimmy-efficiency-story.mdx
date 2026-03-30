@@ -1,0 +1,129 @@
+---
+title: "TurboQuant, ChatJimmy, and the AI Efficiency Story We're Missing"
+date: "2026-03-24"
+series: "efficiency-stack"
+seriesOrder: 3
+excerpt: "Everyone asks how smart the model is becoming. The better question is how cheap intelligence is becoming to deliver."
+tags: ["AI Strategy", "Infrastructure", "Efficiency"]
+published: true
+---
+
+Everyone asks how smart the model is becoming. The better question is how cheap intelligence is becoming to deliver.
+
+The public conversation about AI is still narrated through model IQ. Which model reasons better. Which one holds more context. Which one scores higher on the next benchmark. Which lab is ahead this quarter.
+
+Those questions matter. They are just not the whole story.
+
+Sometimes the most important shift in AI does not arrive as a new model at all. It arrives lower in the stack — in the less glamorous layer where memory, latency, and cost decide what intelligence can actually become in the real world.
+
+That is why two recent developments caught my attention: Google's TurboQuant and Taalas's ChatJimmy.
+
+On the surface, these look like different stories. One is an algorithmic breakthrough in compression. The other is a hardware story about hard-wiring models into silicon. But I think they are pointing at the same thing.
+
+The next phase of AI may be defined less by dramatic gains in intelligence alone and more by dramatic gains in the economics of intelligence.
+
+That sounds less exciting. It may be more consequential.
+
+## What TurboQuant actually does
+
+Google Research says TurboQuant reduces LLM key-value cache memory by at least 6x. It can quantize KV cache down to roughly 3 bits without training or fine-tuning. And it delivers up to 8x faster attention-logit computation on H100 GPUs while preserving downstream accuracy across long-context benchmarks on Gemma and Mistral.
+
+<AnimatedStat value="6x" startFrom="1x" label="Memory reduction" context="TurboQuant compresses KV cache to roughly 3 bits — no fine-tuning required — freeing memory for longer contexts and more concurrent users." />
+
+That is a technical sentence. It is also a strategic one.
+
+One of the hidden truths of modern AI is that model intelligence is only half the product. The other half is delivery. How much memory does it consume? How much latency does it introduce? How expensive is it to run? How many users can it serve before the economics break? How much context can it hold before the system starts dragging around a giant memory tax?
+
+KV cache is one of those invisible bottlenecks. Models store prior token information there so they do not have to recompute everything from scratch. That helps inference, but the cache grows with model size and context length and becomes a major memory constraint.
+
+The clever part of TurboQuant is not just that it compresses. Compression alone is not new. The more interesting part is that it attacks the overhead of compression itself.
+
+Traditional vector quantization often saves space while quietly reintroducing cost through bookkeeping: extra constants, extra metadata, extra memory overhead. TurboQuant gets around that with two components — PolarQuant, which rotates and restructures the data into a more compressible form, and QJL, which uses a 1-bit residual correction step to remove bias in inner-product estimation. It is not merely squeezing vectors harder. It is squeezing them cleanly enough that the model keeps its footing.
+
+## What ChatJimmy represents
+
+Taalas says its first public product is a hard-wired Llama 3.1 8B, available through chatjimmy.ai and an inference API. The company reports that the system reaches 17,000 tokens per second per user — nearly 10x faster than the current state of the art — while costing 20x less to build and consuming 10x less power.
+
+<AnimatedStat value="17,000" startFrom="0" label="Tokens per second per user" context="Taalas claims nearly 10x the current state of the art, achieved by collapsing memory and compute onto purpose-built silicon." />
+
+Those are company-reported numbers, not independent benchmarks. But the directional claim matters: the future of AI performance is not just better models. It is radically more specialized delivery systems.
+
+Taalas's thesis is unusually blunt. Instead of treating memory and compute as separate pieces of the machine, it argues for collapsing them together and tailoring silicon to individual models. Much of today's AI infrastructure complexity exists because we are forcing general-purpose systems to do a job that increasingly rewards specialization.
+
+## Same destination, different routes
+
+This is what makes these two stories rhyme.
+
+Google is saying: intelligence becomes more useful when the memory burden comes down.
+
+Taalas is saying: intelligence becomes more useful when the hardware burden comes down.
+
+Different methods. Same destination. Cheaper tokens. Lower latency. Less system drag. More room for AI to move out of the demo layer and into everyday operations.
+
+<EfficiencyStack />
+
+## The part people miss about training versus deployment
+
+We still talk about AI progress as though the only thing that matters is what happens in training. Bigger clusters. Better pretraining mixes. Stronger reasoning. Longer context windows.
+
+But deployment is starting to matter just as much.
+
+A model that is slightly worse on paper but dramatically cheaper, faster, and lighter to serve can be more economically important than a model that is nominally better and painfully expensive to run. The history of technology is full of moments where the winning system was not the most impressive in the lab. It was the one that crossed the threshold into practical ubiquity.
+
+The "bigger model versus smaller model" framing is often too shallow. The more revealing divide may be between intelligence that is expensive enough to remain exceptional and intelligence that becomes cheap enough to disappear into the environment.
+
+## When intelligence gets cheap enough, the product changes
+
+Once intelligence gets cheaper to deliver, the second-order effects begin. That is the part I care about most.
+
+When latency drops far enough, AI stops feeling like a tool you call and starts feeling like a material you build with.
+
+You design differently when the model responds at conversational speed instead of reflective speed. You build different products when inference is cheap enough to stay always-on. You attempt different workflows when context is no longer a luxury purchase. You can keep the model in the loop more often, in more places, at smaller margins, for more users.
+
+<CostThreshold />
+
+A lot of AI today still behaves like premium compute. It is powerful, but you can feel the meter running.
+
+The more efficient version starts to behave like infrastructure.
+
+That changes what becomes economically reasonable. Real-time copilots. Ambient voice systems. Narrow vertical tools that would have been too small to justify expensive inference. On-device and near-edge use cases. Internal workflows that were too latency-sensitive to hand off to a remote model. Agentic systems that fail today not because they are impossible, but because the response-time and cost structure are still wrong.
+
+## The bottleneck moves
+
+Once intelligence is cheap and fast, the bottleneck moves. It moves toward trust, judgment, orchestration, and product design. Not because the models stop mattering, but because the system around the model suddenly becomes the scarce thing.
+
+When generation is abundant, selection matters more. When inference is cheap, workflow integration matters more. When latency collapses, the question becomes: what useful experiences were previously uneconomical to build?
+
+That is a very different competitive landscape from the one most people are picturing.
+
+The winner may not always be the company with the single smartest model. It may be the company that can package useful intelligence with the best economics, the lowest friction, and the most natural fit inside a real workflow.
+
+## What these mean through a strategy lens
+
+What makes these developments strategically important is that they attack the same problem from opposite directions. TurboQuant tries to make working memory cheaper in software. Taalas tries to collapse model and machine together in hardware. Different layer, same target: the cost, latency, and energy burden of serving intelligence.
+
+That is why I think the next big AI competition is less about raw model IQ alone and more about delivery economics. Training remains glamorous. Deployment decides ubiquity.
+
+The market likely splits in two. There will be frontier intelligence, where flexibility matters most and costs stay high. And there will be utility intelligence, where models are stable enough to compress, cache, compile, harden, or even embody in silicon. The second category may end up being bigger than people expect, because most businesses buy reliability and economics before they buy bragging rights.
+
+<MarketSplit />
+
+That also changes who gains leverage. Open model ecosystems could matter more, not less, because open weights are easier to optimize deeply. A model family that is slightly behind on benchmark IQ but easier to quantize, certify, and deploy may become more commercially durable than a superior model that remains operationally expensive.
+
+The second-order effects are where it gets interesting. When intelligence gets cheaper to deliver, usage does not stay flat. Teams run more queries, hold more context, keep more agents alive in the background, and embed AI into narrower workflows that used to be too small to justify the cost. The rebound effect could be strong: lower cost per inference may reduce cost per task while still increasing total AI usage.
+
+As that happens, the bottleneck moves up the stack. More value goes to evaluation, permissions, data quality, workflow design, verification, and accountability. Cheap intelligence does not eliminate human work. It changes where the scarce work sits. The more abundant generation becomes, the more valuable routing, judgment, and trust become.
+
+## The efficiency story we are underestimating
+
+My strongest take is this: TurboQuant and ChatJimmy matter less as isolated announcements than as signals. They suggest AI is moving from a phase defined by proving capability to a phase defined by making capability cheap, fast, and structurally deployable. Historically, that is the phase when a technology stops looking impressive and starts reorganizing industries.
+
+I am more confident in that strategic direction than in every exact headline metric. TurboQuant is backed by a Google Research blog and paper. Taalas's demo is real and was reported by Reuters and EE Times, but the biggest performance claims are still largely Taalas claims, with limited third-party benchmarking so far.
+
+The next important AI story will not just be about capability. It will be about efficiency stacks — compression, memory systems, inference architecture, deployment tooling, model specialization, and product experiences designed around much faster response loops.
+
+The first era of AI was about proving that machines could generate.
+
+The next one may be about making generation so fast, cheap, and embedded that we stop treating it as an event at all.
+
+That is the efficiency story I think we are underestimating. And it may end up being the one that matters most.

@@ -1,0 +1,71 @@
+---
+title: "ChatJimmy and the Return of the AI Appliance"
+date: "2026-03-22"
+excerpt: "Most AI demos are framed as intelligence demos. ChatJimmy is more interesting as an economics demo."
+tags: ["AI Strategy", "Infrastructure", "Futures"]
+published: true
+series: "efficiency-stack"
+seriesOrder: 2
+---
+
+Most AI demos are framed as intelligence demos.
+
+ChatJimmy is more interesting as an economics demo.
+
+The strange thing about it is not that the model is radically smarter than everything else. It is that the system feels like it has shed a huge amount of the usual overhead. The wait disappears. The software stack feels thinner. The whole interaction starts to feel less like calling a remote model and more like touching a native capability.
+
+That is the bet Taalas is making.
+
+## The numbers
+
+Taalas says its HC1 technology demonstrator hardwires Meta's Llama 3.1 8B into silicon and reaches roughly 17,000 tokens per second per user — nearly an order of magnitude faster than the current state of the art — while using materially less power and cost to build. EE Times says it saw 15,000+ tokens per second in the online demo, and Reuters reports that Taalas customizes only the final two metal layers of an almost-complete chip, with about a two-month turnaround at TSMC for a new model-specific version.
+
+<AnimatedStat value="17,000" startFrom="0" label="Tokens per second per user" context="Taalas claims nearly 10x the current state of the art, achieved by collapsing memory and compute onto purpose-built silicon." />
+
+I would still treat the exact magnitude with some caution. The biggest performance numbers are still largely company-reported, and the tradeoff is real: HC1 runs a specific model, not arbitrary ones, and meaningful model updates require a new fabrication run. EE Times and SDXCentral both underline that specificity as the price of the speed.
+
+But strategically, that tradeoff is exactly why it matters.
+
+## The appliance pattern
+
+Most technologies begin in general-purpose form because the market is still discovering what it wants. Later, once the workload stabilizes, specialization wins. The general server gets surrounded by appliances. The CPU gets joined by accelerators. The flexible stack gives way, in some domains, to the brutally optimized stack.
+
+Taalas is making a very aggressive claim that AI inference is approaching that moment.
+
+We have spent the last few years acting as though AI must remain maximally programmable at every layer. That made sense in research. It may be wasteful in deployment. Most businesses do not need the newest model every Tuesday. They need a good model, low latency, predictable cost, and an operational profile they can actually live with.
+
+## The split market
+
+That suggests a split market.
+
+<MarketSplit />
+
+One lane stays frontier, flexible, and expensive. It lives on general-purpose accelerators, changes quickly, and absorbs the churn of research. The other lane becomes industrial: stable model families, lower power, lower cost, and very high-volume serving. The smartest model and the most economically important model may not be the same thing.
+
+That is the real significance of ChatJimmy. It is not mainly a chatbot story. It is a market-structure story. It hints that inference may become its own industrial layer, with separate leaders, separate moats, and separate economics from frontier training.
+
+## When latency collapses, the product changes
+
+Latency is part of why that matters. SDXCentral reports Taalas describing HC1 as producing responses in under 200 milliseconds at roughly 14,000 tokens per second, and EE Times reports that a 10-card server draws about 2.5 kilowatts and fits in standard air-cooled racks.
+
+<AnimatedStat value="<200" startFrom="2000" label="Milliseconds to response" context="Once systems get that fast and that operationally simple, AI stops feeling like a remote service and starts feeling like a native capability." />
+
+Once systems get that fast and that operationally simple, AI stops feeling like a remote service you call and starts feeling like a native capability inside voice systems, enterprise tools, edge deployments, and control loops.
+
+## Second-order effects
+
+The second-order effects spread outward from there.
+
+Open-weight models become more strategically valuable because they can be compressed, hardened, certified, and embodied in hardware without waiting for a closed vendor to expose the right interface. Model stability becomes valuable too. A world of hardwired inference rewards model families that change less chaotically and support long-lived deployment branches.
+
+That does not mean every model should be etched into silicon. It should not. Flexibility still matters. Research still matters. Fast-moving model categories still belong on general-purpose systems.
+
+But it does mean the industry may have overlearned one assumption: that flexibility is always worth the cost.
+
+Taalas's current demo runs an aggressively quantized Llama 3.1 8B, and the same specificity that makes the system fast can also make it stale. That is the risk. It is also the insight. The interesting question is not whether all AI becomes hardwired. It will not. The interesting question is which workloads become stable enough that hardwiring becomes rational.
+
+That is why ChatJimmy matters.
+
+The first-order story is faster tokens.
+
+The second-order story is a new industrial form for AI.

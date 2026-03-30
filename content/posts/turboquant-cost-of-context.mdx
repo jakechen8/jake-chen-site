@@ -1,0 +1,67 @@
+---
+title: "TurboQuant and the Cost of Context"
+date: "2026-03-21"
+excerpt: "In many real systems, the scarce thing is not intelligence itself. It is working memory — the cost of keeping enough of the past alive for the model to be useful in the present."
+tags: ["AI Strategy", "Infrastructure", "Futures"]
+published: true
+series: "efficiency-stack"
+seriesOrder: 1
+---
+
+Everyone likes to talk about AI as though intelligence were the scarce thing.
+
+Lately, I think that is only half true.
+
+In many real systems, the scarce thing is not intelligence itself. It is working memory. It is the cost of keeping enough of the past alive for the model to be useful in the present.
+
+That is what makes Google Research's TurboQuant interesting.
+
+## What TurboQuant actually does
+
+In its March 24 blog post and accompanying paper, Google says TurboQuant reduces LLM key-value cache memory by at least 6x, can quantize the KV cache to roughly 3 bits without training or fine-tuning, and can deliver up to 8x faster attention-logit computation on H100 GPUs while preserving downstream accuracy on long-context benchmarks. The same work is also positioned as useful for vector search, where the paper reports near-zero indexing time relative to conventional approaches.
+
+<AnimatedStat value="6x" startFrom="1x" label="KV cache memory reduction" context="TurboQuant compresses to roughly 3 bits with no fine-tuning required — freeing memory for longer contexts and more concurrent users on existing hardware." />
+
+That sounds like plumbing. It is actually strategy.
+
+An AI system is not just a model. It is a map of bottlenecks. For a while, we have been focused on the obvious ones: model size, training compute, benchmark performance. But a lot of the real pain in deployment lives elsewhere. It lives in the quiet tax of memory. It lives in the cost of serving long context. It lives in the fact that remembering is expensive.
+
+TurboQuant matters because it attacks that hidden tax directly. Google's write-up describes a two-stage approach: a PolarQuant step that rotates and compresses vectors efficiently, followed by a 1-bit QJL correction on the residual so inner-product estimates stay accurate enough for attention and retrieval. The paper's broader claim is that this gets close to theoretical lower bounds on distortion while staying lightweight enough for online use cases like KV-cache quantization.
+
+<AnimatedStat value="8x" startFrom="1x" label="Faster attention-logit computation" context="On H100 GPUs, while preserving downstream accuracy across long-context benchmarks on Gemma and Mistral." />
+
+## When something useful gets cheaper, people use more of it
+
+The strategic story starts once you stop holding demand constant.
+
+When something useful gets cheaper, people do not use the same amount and pocket the savings. They use more of it. If context becomes cheaper, people stop rationing it so aggressively. They include more documents. They preserve more conversation history. They keep more traces, more logs, more memory, more state. They ask models to carry more of the world forward instead of constantly compressing it back down.
+
+That changes product design.
+
+A lot of enterprise AI today is really an elaborate negotiation with expensive memory. We summarize because we cannot afford to carry everything. We prune because we cannot afford to remember everything. We build brittle retrieval layers partly because context is scarce. Some of that architecture is intelligent. Some of it is just scarcity management wearing the costume of elegance.
+
+Make working memory cheaper and the stack changes.
+
+<EfficiencyStack />
+
+## This is not just an LLM trick
+
+Google is also explicit that TurboQuant is not just an LLM trick. It is framed as infrastructure for vector search and semantic retrieval too, and the paper reports stronger recall than standard baselines while reducing indexing time to virtually zero. That matters because it points to a broader shift: not just cheaper model memory, but cheaper system memory across search, retrieval, and recommendation.
+
+That is the second-order effect I think people miss.
+
+If retrieval gets cheaper, more teams will retrieve more things. Assistants will check more sources before answering. Search systems will index fresher corpora. Monitoring tools will keep more operational context alive. Enterprise software will move from "ask the model one question" toward "keep the model inside the workflow the whole time."
+
+## Once memory becomes abundant, the bottleneck moves
+
+And once memory becomes more abundant, the bottleneck moves.
+
+It moves toward relevance, permissions, provenance, and judgment. Cheap context does not solve selection. It makes selection more valuable. The more information a system can carry, the more important it becomes to decide what deserves to be carried, what is trustworthy, what is stale, what is sensitive, and what should actually influence the answer.
+
+That also pressures business models. When long context is expensive, providers sell it like premium seating. When it gets cheaper, competition shifts upward. The moat becomes less about advertising the biggest context window and more about building the best memory system around the model: the right retrieval layer, the right access controls, the right evaluation loop, the right workflow fit.
+
+The first-order story of long context is that models can read more.
+
+The second-order story is that organizations can afford to remember more.
+
+That is why TurboQuant matters. Not because it makes a benchmark chart prettier. Because it lowers the cost of remembering.

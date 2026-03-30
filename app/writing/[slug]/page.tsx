@@ -18,6 +18,11 @@ import SecondOrderChain from '@/components/SecondOrderChain'
 import BottleneckShift from '@/components/BottleneckShift'
 import ValueMigration from '@/components/ValueMigration'
 import StrategyBifurcation from '@/components/StrategyBifurcation'
+import EfficiencyStack from '@/components/EfficiencyStack'
+import CostThreshold from '@/components/CostThreshold'
+import MarketSplit from '@/components/MarketSplit'
+import SoraEconomics from '@/components/SoraEconomics'
+import ModelConvergence from '@/components/ModelConvergence'
 
 interface Props {
   params: { slug: string }
@@ -36,6 +41,11 @@ const mdxComponents = {
   BottleneckShift,
   ValueMigration,
   StrategyBifurcation,
+  EfficiencyStack,
+  CostThreshold,
+  MarketSplit,
+  SoraEconomics,
+  ModelConvergence,
 }
 
 export async function generateStaticParams() {
